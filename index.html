@@ -4,170 +4,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Name | Web Developer</title>
+    <meta name="description"
+        content="Bogomil Roussev - AWS & Terraform Automation Consultant specializing in Python, Raspberry Pi, and cloud infrastructure solutions">
+    <title>Bogomil Roussev | AWS & Terraform Automation Consultant</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/dark-mode.css" id="darkModeStyle" disabled>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #2A7DEC;
-            --dark: #1A202C;
-            --light: #F7FAFC;
-            --gray: #E2E8F0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 5%;
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .logo {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--primary);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        .hero {
-            background: linear-gradient(135deg, #F7FAFC 0%, #EBF4FF 100%);
-            padding: 5rem 5%;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            max-width: 700px;
-            margin: 0 auto 2rem;
-            color: #4A5568;
-        }
-
-        .cta-button {
-            background-color: var(--primary);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.375rem;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
-            transition: background-color 0.3s;
-        }
-
-        .cta-button:hover {
-            background-color: #1C6FD8;
-        }
-
-        .features {
-            padding: 5rem 5%;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            background: white;
-            border-radius: 0.5rem;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .feature-card h3 {
-            margin-top: 1rem;
-        }
-
-        footer {
-            background-color: var(--dark);
-            color: white;
-            padding: 3rem 5%;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
     <nav class="navbar">
-        <div class="logo">YourName</div>
+        <div class="logo">Bogomil Roussev</div>
         <div class="nav-links">
             <a href="#services">Services</a>
             <a href="#projects">Projects</a>
             <a href="#about">About</a>
             <a href="#blog">Blog</a>
-            <a href="#contact" class="cta-button">Contact</a>
+            <a href="https://github.com/bogsi" class="github-link" target="_blank">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="#contact" class="cta-button">Book a Demo</a>
+            <button id="darkModeToggle" class="dark-mode-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
         </div>
+        <button class="mobile-menu-button">
+            <i class="fas fa-bars"></i>
+        </button>
     </nav>
 
-    <section class="hero">
-        <h1>Modern Web Development Solutions</h1>
-        <p>Building high-performance, scalable web applications with cutting-edge technologies.</p>
-        <a href="#contact" class="cta-button">Get in Touch</a>
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>AWS & Terraform Automation Solutions</h1>
+            <p>Building scalable cloud infrastructure and automation solutions with Python, Terraform, and AWS.</p>
+            <div class="hero-buttons">
+                <a href="#contact" class="cta-button">Get in Touch</a>
+                <a href="#projects" class="secondary-button">View Projects</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="images/cloud-infra.svg" alt="Cloud Infrastructure" class="animate-float">
+        </div>
     </section>
 
-    <section class="features">
-        <div class="feature-card">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                <polyline points="13 2 13 9 20 9"></polyline>
-            </svg>
-            <h3>Custom Web Development</h3>
-            <p>Tailored solutions designed specifically for your business needs and goals.</p>
-        </div>
+    <section class="services" id="services">
+        <h2 class="section-title">My Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fab fa-aws"></i>
+                </div>
+                <h3>AWS Infrastructure</h3>
+                <p>Design, deploy, and optimize AWS cloud infrastructure tailored to your specific needs.</p>
+            </div>
 
-        <div class="feature-card">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                <line x1="8" y1="21" x2="16" y2="21"></line>
-                <line x1="12" y1="17" x2="12" y2="21"></line>
-            </svg>
-            <h3>Responsive Design</h3>
-            <p>Websites that look and function perfectly on all devices and screen sizes.</p>
-        </div>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3>Terraform Automation</h3>
+                <p>Infrastructure as Code solutions using Terraform for reproducible, version-controlled environments.
+                </p>
+            </div>
 
-        <div class="feature-card">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-            </svg>
-            <h3>Performance Optimization</h3>
-            <p>Lightning-fast load times and smooth user experiences that convert visitors.</p>
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fab fa-python"></i>
+                </div>
+                <h3>Python Development</h3>
+                <p>Custom Python solutions for automation, data processing, and system integration.</p>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>Raspberry Pi Solutions</h3>
+                <p>IoT and edge computing solutions leveraging Raspberry Pi hardware.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="projects" id="projects">
+        <h2 class="section-title">Featured Projects</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="images/terraform-aws.png" alt="Terraform AWS Project">
+                </div>
+                <div class="project-content">
+                    <h3>AWS Automation with Terraform</h3>
+                    <p>Complete automation of AWS infrastructure provisioning using Terraform modules, including VPCs,
+                        EC2 instances, and S3 buckets with proper IAM roles and security policies.</p>
+                    <a href="https://github.com/bogsi/terraform-aws-automation" class="project-link"
+                        target="_blank">View on GitHub</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="images/raspberry-pi.png" alt="Raspberry Pi Project">
+                </div>
+                <div class="project-content">
+                    <h3>Raspberry Pi Home Automation</h3>
+                    <p>Python-based home automation system using Raspberry Pi with sensor integration and AWS IoT Core
+                        for remote monitoring and control.</p>
+                    <a href="https://github.com/bogsi/pi-home-automation" class="project-link" target="_blank">View on
+                        GitHub</a>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-image">
+                    <img src="images/python-automation.png" alt="Python Automation Project">
+                </div>
+                <div class="project-content">
+                    <h3>Python Automation Framework</h3>
+                    <p>Custom automation framework for AWS operations using Python and Boto3, including automated
+                        backups, monitoring, and reporting.</p>
+                    <a href="https://github.com/bogsi/python-aws-automation" class="project-link" target="_blank">View
+                        on GitHub</a>
+                </div>
+            </div>
+        </div>
+        <div class="centered-link">
+            <a href="https://www.linkedin.com/in/bogomilroussev/" class="secondary-button" target="_blank">View More on
+                LinkedIn</a>
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="about-content">
+            <h2 class="section-title">About Me</h2>
+            <p>I'm Bogomil Roussev, an AWS and Terraform automation consultant with expertise in building scalable cloud
+                infrastructure solutions.</p>
+            <p>With a strong background in Python development and Raspberry Pi IoT solutions, I help businesses automate
+                their operations and optimize their cloud environments.</p>
+            <p>My approach combines technical expertise with practical business understanding to deliver solutions that
+                are both powerful and maintainable.</p>
+            <div class="skills">
+                <div class="skill-tag">AWS</div>
+                <div class="skill-tag">Terraform</div>
+                <div class="skill-tag">Python</div>
+                <div class="skill-tag">Raspberry Pi</div>
+                <div class="skill-tag">DevOps</div>
+                <div class="skill-tag">CI/CD</div>
+            </div>
+        </div>
+        <div class="about-image">
+            <img src="images/profile.jpg" alt="Bogomil Roussev">
+        </div>
+    </section>
+
+    <section class="blog" id="blog">
+        <h2 class="section-title">From My Blog</h2>
+        <div class="blog-grid">
+            <div class="blog-card">
+                <h3>Terraform Best Practices</h3>
+                <p>Learn how to structure your Terraform projects for maintainability and scalability in production
+                    environments.</p>
+                <a href="https://bogomils-organization.gitbook.io/bogomil-roussev-s-personal-book-of-it-life-and-more/"
+                    class="blog-link" target="_blank">Read More</a>
+            </div>
+
+            <div class="blog-card">
+                <h3>AWS Cost Optimization</h3>
+                <p>Practical strategies for reducing your AWS bill without compromising performance or reliability.</p>
+                <a href="https://bogomils-organization.gitbook.io/bogomil-roussev-s-personal-book-of-it-life-and-more/"
+                    class="blog-link" target="_blank">Read More</a>
+            </div>
+
+            <div class="blog-card">
+                <h3>Python for DevOps</h3>
+                <p>How to leverage Python scripting to automate common DevOps tasks and workflows.</p>
+                <a href="https://bogomils-organization.gitbook.io/bogomil-roussev-s-personal-book-of-it-life-and-more/"
+                    class="blog-link" target="_blank">Read More</a>
+            </div>
+        </div>
+        <div class="centered-link">
+            <a href="https://app.gitbook.com/o/oEtxqQppLRLq2RNJ5VkB/s/YAWUsG4dXhPUXBViZgXQ/" class="secondary-button"
+                target="_blank">Visit My GitBook</a>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <h2 class="section-title">Get In Touch</h2>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h3>Contact Information</h3>
+                <p><i class="fas fa-phone"></i> +359 878 880 112</p>
+                <p><i class="fas fa-envelope"></i> your.email@example.com</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/bogomilroussev/" target="_blank"><i
+                            class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/bogsi" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="https://app.gitbook.com/o/oEtxqQppLRLq2RNJ5VkB/s/YAWUsG4dXhPUXBViZgXQ/" target="_blank"><i
+                            class="fas fa-book"></i></a>
+                </div>
+            </div>
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="subject" name="subject" placeholder="Subject">
+                </div>
+                <div class="form-group">
+                    <textarea id="message" name="message" placeholder="Your Message" required></textarea>
+                </div>
+                <button type="submit" class="cta-button">Send Message</button>
+            </form>
         </div>
     </section>
 
     <footer>
-        <p>© 2023 Your Name. All rights reserved.</p>
-        <div style="margin-top: 1rem;">
-            <a href="#" style="color: white; margin: 0 0.5rem;">GitHub</a>
-            <a href="#" style="color: white; margin: 0 0.5rem;">LinkedIn</a>
-            <a href="#" style="color: white; margin: 0 0.5rem;">Twitter</a>
+        <div class="footer-content">
+            <div class="footer-logo">Bogomil Roussev</div>
+            <div class="footer-links">
+                <a href="#services">Services</a>
+                <a href="#projects">Projects</a>
+                <a href="#about">About</a>
+                <a href="#blog">Blog</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="footer-social">
+                <a href="https://www.linkedin.com/in/bogomilroussev/" target="_blank"><i
+                        class="fab fa-linkedin"></i></a>
+                <a href="https://github.com/bogsi" target="_blank"><i class="fab fa-github"></i></a>
+                <a href="https://app.gitbook.com/o/oEtxqQppLRLq2RNJ5VkB/s/YAWUsG4dXhPUXBViZgXQ/" target="_blank"><i
+                        class="fas fa-book"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2023 Bogomil Roussev. All rights reserved.</p>
         </div>
     </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/animations.js"></script>
 </body>
 
 </html>
