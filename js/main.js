@@ -13,12 +13,6 @@ function disableDarkMode() {
     darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
 }
 
-// Initialize dark mode on page load
-document.addEventListener('DOMContentLoaded', () => {
-    if (localStorage.getItem('darkMode') === 'enabled') {
-        enableDarkMode();
-    }
-});
 
 // Add this to main.js for mobile dropdown functionality
 document.addEventListener('DOMContentLoaded', () => {
@@ -51,4 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+});
+
+
+// Initialize dark mode on page load
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        enableDarkMode();
+    }
 });
