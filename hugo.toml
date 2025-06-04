@@ -1,4 +1,4 @@
-baseURL = 'https://bogomilroussev.com/'
+baseURL = 'https://roussev.dev'
 languageCode = 'en-us'
 title = 'Bogomil Roussev | AWS & Terraform Automation Consultant'
 theme = 'personal-theme'
@@ -10,7 +10,7 @@ theme = 'personal-theme'
   phone = '+359 878 880 112'
   linkedin = 'https://www.linkedin.com/in/bogomilroussev/'
   github = 'https://github.com/bogsi'
-  gitbook = 'https://app.gitbook.com/o/oEtxqQppLRLq2RNJ5VkB/s/YAWUsG4dXhPUXBViZgXQ/'
+  
 
 [menu]
   [[menu.main]]
