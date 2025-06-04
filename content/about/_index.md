@@ -25,12 +25,13 @@ Senior DevOps Engineer @ Paysafe
 
 $ cat experience/previous.txt
 === Previous Roles ===
-Cloud Solutions @ IBM
-March 2024 - Present
-• Junior AWS DevOps Engineer focusing on cloud infrastructure
-• Platform Specialist working with Kubernetes and OpenShift
-• Solving 70+ customer cases related to OpenShift and K8s
-• Experience with Helm, Terraform, and container technologies
+Junior AWS DevOps Engineer
+March 2025 - Now
+https://thecloudsolutions.com/
+
+• Terraform Automation
+• AWS Infrastructure management
+
 
 Site Reliability Engineer @ Fadata Group
 December 2022 - January 2024
