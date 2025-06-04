@@ -1,0 +1,11 @@
+<div class="footer-social">
+  {{ with .Site.Params.linkedin }}
+    <a href="{{ . }}" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
+  {{ end }}
+  {{ with .Site.Params.github }}
+    <a href="{{ . }}" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
+  {{ end }}
+  {{ with .Site.Params.email }}
+    <a href="mailto:{{ . }}" target="_blank" rel="noopener"><i class="fas fa-envelope"></i></a>
+  {{ end }}
+</div> 

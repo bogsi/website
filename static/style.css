@@ -30,4 +30,30 @@
 .button:hover {
   background: var(--accent);
   color: var(--background);
+}
+
+/* Fix footer icons */
+.footer-social a {
+  color: var(--accent) !important;
+}
+
+.footer-social a:hover {
+  color: var(--background) !important;
+  background-color: var(--accent) !important;
+}
+
+/* Ensure all icons are visible */
+.fa, .fab, .fas {
+  color: var(--accent);
+}
+
+/* Social links in footer */
+.social-links a {
+  color: var(--accent) !important;
+  margin: 0 10px;
+  font-size: 1.5rem;
+}
+
+.social-links a:hover {
+  opacity: 0.8;
 } 

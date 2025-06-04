@@ -36,6 +36,13 @@ theme = 'terminal'
   linkedin = 'https://www.linkedin.com/in/bogomilroussev/'
   github = 'https://github.com/bogsi'
 
+  # Theme colors
+  [params.style]
+    backgroundColor = "#000000"
+    foregroundColor = "#00ff00"
+    accentColor = "#00ff00"
+    borderColor = "#00ff00"
+
 [languages]
   [languages.en]
     languageName = "English"
