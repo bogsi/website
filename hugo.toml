@@ -1,35 +1,88 @@
 baseURL = 'https://roussev.dev'
 languageCode = 'en-us'
 title = 'Bogomil Roussev | AWS & Terraform Automation Consultant'
-theme = 'personal-theme'
+theme = 'terminal'
 
 [params]
-  description = 'AWS & Terraform Automation Consultant specializing in Python, Raspberry Pi, and cloud infrastructure solutions'
+  # dir name of your main content (default is `content/posts`).
+  contentTypeName = "posts"
+  
+  # Set theme colors
+  themeColor = "green"
+  
+  # show selector to switch language
+  showLanguageSelector = false
+  
+  # set theme to full screen width
+  fullWidthTheme = true
+  
+  # center theme with default width
+  centerTheme = true
+
+  # if your resource directory contains an image called `cover.(jpg|png|webp)`,
+  # then the file will be used as a cover automatically.
+  autoCover = true
+
+  # Show reading time
+  readingTime = true
+
+  # Show table of contents
+  Toc = true
+  
+  # Author info
   author = 'Bogomil Roussev'
   email = 'your.email@example.com'
   phone = '+359 878 880 112'
   linkedin = 'https://www.linkedin.com/in/bogomilroussev/'
   github = 'https://github.com/bogsi'
-  
 
-[menu]
-  [[menu.main]]
-    name = 'Services'
-    url = '#services'
-    weight = 1
-  [[menu.main]]
-    name = 'Projects'
-    url = '#projects'
-    weight = 2
-  [[menu.main]]
-    name = 'About'
-    url = '#about'
-    weight = 3
-  [[menu.main]]
-    name = 'Blog'
-    url = '#blog'
-    weight = 4
-  [[menu.main]]
-    name = 'Contact'
-    url = '#contact'
-    weight = 5
+[languages]
+  [languages.en]
+    languageName = "English"
+    title = "Bogomil Roussev"
+    subtitle = "AWS & Terraform Automation Consultant"
+    owner = "Bogomil Roussev"
+    keywords = "AWS, Terraform, DevOps, Automation, Cloud Infrastructure"
+    copyright = "© 2024 Bogomil Roussev"
+    menuMore = "Show more"
+    readMore = "Read more"
+    readOtherPosts = "Read other posts"
+    newerPosts = "Newer posts"
+    olderPosts = "Older posts"
+    missingContentMessage = "Page not found..."
+    missingBackButtonLabel = "Back to home page"
+
+    [languages.en.params.logo]
+      logoText = "Bogomil Roussev"
+      logoHomeLink = "/"
+
+    [languages.en.menu]
+      [[languages.en.menu.main]]
+        identifier = "services"
+        name = "Services"
+        url = "#services"
+        weight = 1
+      [[languages.en.menu.main]]
+        identifier = "projects"
+        name = "Projects"
+        url = "#projects"
+        weight = 2
+      [[languages.en.menu.main]]
+        identifier = "about"
+        name = "About"
+        url = "#about"
+        weight = 3
+      [[languages.en.menu.main]]
+        identifier = "blog"
+        name = "Blog"
+        url = "#blog"
+        weight = 4
+      [[languages.en.menu.main]]
+        identifier = "contact"
+        name = "Contact"
+        url = "#contact"
+        weight = 5
+
+[markup]
+  [markup.highlight]
+    noClasses = false
