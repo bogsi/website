@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ .Site.Params.description }}">
+    <title>{{ .Site.Title }}</title>
+    {{ $style := resources.Get "css/styles.css" | resources.Minify }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}">
+    <link rel="stylesheet" href="{{ "css/dark-mode.css" | relURL }}" id="darkModeStyle" disabled>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    {{ partial "header.html" . }}
+    <main>
+        {{ block "main" . }}{{ end }}
+    </main>
+    {{ partial "footer.html" . }}
+    <script src="{{ "js/main.js" | relURL }}"></script>
+    <script src="{{ "js/animations.js" | relURL }}"></script>
+</body>
+</html> 

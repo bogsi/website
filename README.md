@@ -1,10 +1,51 @@
-# Roussev.dev
+# Personal Website
 
-![Website Banner](https://roussev.dev/banner.png) <!-- Optional if you add one -->
+This is my personal website built with Hugo, showcasing my work as an AWS & Terraform Automation Consultant.
 
-**Personal portfolio site for Bogomil Roussev — Security Analyst & DevOps Enthusiast**
+## Prerequisites
 
-Deployed on [Vercel](https://vercel.com), this site serves as my digital home: showcasing my background, projects, and blog. Built with Next.js and Tailwind CSS, it's clean, responsive, and easy to maintain.
+- Hugo (v0.92.0 or later)
+- Git
+
+## Local Development
+
+1. Clone this repository:
+```bash
+git clone https://github.com/bogsi/personal-website.git
+cd personal-website
+```
+
+2. Start the Hugo development server:
+```bash
+hugo server -D
+```
+
+The site will be available at http://localhost:1313/
+
+## Building for Production
+
+To build the site for production:
+
+```bash
+hugo --minify
+```
+
+The built site will be in the `public` directory.
+
+## Deployment
+
+This site is deployed using Cloudflare Pages. Any push to the main branch will trigger an automatic deployment.
+
+## Structure
+
+- `content/`: Contains the site's content
+- `themes/personal-theme/`: Custom theme for the site
+- `static/`: Static assets (images, CSS, JavaScript)
+- `config.toml`: Site configuration
+
+## License
+
+All rights reserved. © Bogomil Roussev
 
 ---
 

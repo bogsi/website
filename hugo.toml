@@ -1,0 +1,35 @@
+baseURL = 'https://bogomilroussev.com/'
+languageCode = 'en-us'
+title = 'Bogomil Roussev | AWS & Terraform Automation Consultant'
+theme = 'personal-theme'
+
+[params]
+  description = 'AWS & Terraform Automation Consultant specializing in Python, Raspberry Pi, and cloud infrastructure solutions'
+  author = 'Bogomil Roussev'
+  email = 'your.email@example.com'
+  phone = '+359 878 880 112'
+  linkedin = 'https://www.linkedin.com/in/bogomilroussev/'
+  github = 'https://github.com/bogsi'
+  gitbook = 'https://app.gitbook.com/o/oEtxqQppLRLq2RNJ5VkB/s/YAWUsG4dXhPUXBViZgXQ/'
+
+[menu]
+  [[menu.main]]
+    name = 'Services'
+    url = '#services'
+    weight = 1
+  [[menu.main]]
+    name = 'Projects'
+    url = '#projects'
+    weight = 2
+  [[menu.main]]
+    name = 'About'
+    url = '#about'
+    weight = 3
+  [[menu.main]]
+    name = 'Blog'
+    url = '#blog'
+    weight = 4
+  [[menu.main]]
+    name = 'Contact'
+    url = '#contact'
+    weight = 5
