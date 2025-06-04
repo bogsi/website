@@ -138,4 +138,85 @@
 .see-more a:hover {
   background: var(--accent);
   color: var(--background);
+}
+
+/* Services page specific styles */
+.terminal-output pre {
+  background-color: var(--background);
+  border: 1px solid var(--accent);
+  padding: 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-family: 'Fira Code', monospace;
+}
+
+.terminal-output h3 {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 10px;
+  margin-top: 30px;
+}
+
+.service-cta {
+  text-align: center;
+  margin: 40px 0;
+}
+
+.service-cta .button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.service-cta .button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
+}
+
+/* Service description styling */
+.terminal-output ul {
+  list-style: none;
+  padding-left: 20px;
+}
+
+.terminal-output ul li::before {
+  content: "•";
+  color: var(--accent);
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+/* Command styling */
+.terminal-output .command {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.terminal-output .command::before {
+  content: "$ ";
+  opacity: 0.7;
+}
+
+/* File content styling */
+.terminal-output .file-content {
+  border-left: 2px solid var(--accent);
+  margin-left: 10px;
+  padding-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+/* Directory listing styling */
+.terminal-output .directory {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+.terminal-output .directory::before {
+  content: "📁 ";
 } 
