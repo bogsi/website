@@ -67,7 +67,7 @@ theme = 'terminal'
       [[languages.en.menu.main]]
         identifier = "services"
         name = "Services"
-        url = "#services"
+        url = "/services/"
         weight = 1
       [[languages.en.menu.main]]
         identifier = "projects"

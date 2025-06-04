@@ -1,9 +1,9 @@
 +++
 title = "Services"
-framed = true
+type = "page"
 +++
 
-```bash
+```terminal
 $ ls -la /services/
 total 4
 drwxr-xr-x  AWS/

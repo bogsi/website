@@ -140,16 +140,48 @@
   color: var(--background);
 }
 
-/* Services page specific styles */
-.terminal-output pre {
+/* Terminal content styling */
+.terminal-output {
   background-color: var(--background);
-  border: 1px solid var(--accent);
   padding: 20px;
+  border-radius: 5px;
   margin: 20px 0;
-  overflow-x: auto;
-  font-family: 'Fira Code', monospace;
 }
 
+.terminal-output pre {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-family: 'Fira Code', monospace;
+  white-space: pre-wrap;
+}
+
+.terminal-output code {
+  background: transparent;
+  padding: 0;
+  color: var(--accent);
+}
+
+/* Service headings */
+.terminal-output pre code {
+  display: block;
+}
+
+/* Directory listings */
+.terminal-output pre code span.directory {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* Command output */
+.terminal-output pre code span.output {
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+/* Service descriptions */
 .terminal-output h3 {
   color: var(--accent);
   border-bottom: 1px solid var(--accent);
@@ -157,6 +189,35 @@
   margin-top: 30px;
 }
 
+/* Bullet points */
+.terminal-output ul {
+  list-style: none;
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.terminal-output ul li {
+  color: var(--accent);
+  margin: 5px 0;
+}
+
+.terminal-output ul li::before {
+  content: "•";
+  color: var(--accent);
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+/* Command prompt */
+.terminal-output .prompt::before {
+  content: "$ ";
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+/* Service CTA button */
 .service-cta {
   text-align: center;
   margin: 40px 0;
@@ -169,6 +230,7 @@
   padding: 15px 30px;
   font-size: 1.1rem;
   transition: all 0.3s ease;
+  text-decoration: none;
 }
 
 .service-cta .button:hover {
@@ -176,47 +238,21 @@
   box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
 }
 
-/* Service description styling */
-.terminal-output ul {
-  list-style: none;
-  padding-left: 20px;
-}
-
-.terminal-output ul li::before {
-  content: "•";
-  color: var(--accent);
-  font-weight: bold;
-  display: inline-block;
-  width: 1em;
-  margin-left: -1em;
-}
-
-/* Command styling */
-.terminal-output .command {
-  color: var(--accent);
-  font-weight: bold;
-}
-
-.terminal-output .command::before {
-  content: "$ ";
-  opacity: 0.7;
-}
-
-/* File content styling */
-.terminal-output .file-content {
+/* File sections */
+.file-section {
+  margin: 20px 0;
+  padding: 15px;
   border-left: 2px solid var(--accent);
-  margin-left: 10px;
-  padding-left: 20px;
-  margin-top: 10px;
-  margin-bottom: 20px;
 }
 
-/* Directory listing styling */
-.terminal-output .directory {
+.file-section h4 {
   color: var(--accent);
-  font-weight: bold;
+  margin: 0 0 10px 0;
 }
 
-.terminal-output .directory::before {
-  content: "📁 ";
+/* Make code blocks scrollable on small screens */
+@media (max-width: 768px) {
+  .terminal-output pre {
+    overflow-x: auto;
+  }
 } 
