@@ -31,7 +31,7 @@ theme = 'terminal'
   
   # Author info
   author = 'Bogomil Roussev'
-  email = 'your.email@example.com'
+  email = 'bogomil.roussev@gmail.com'
   phone = '+359 878 880 112'
   linkedin = 'https://www.linkedin.com/in/bogomilroussev/'
   github = 'https://github.com/bogsi'
@@ -82,7 +82,7 @@ theme = 'terminal'
       [[languages.en.menu.main]]
         identifier = "blog"
         name = "Blog"
-        url = "#blog"
+        url = "https://bogomils-organization.gitbook.io/bogomil-roussev-s-personal-book-of-it-life-and-more/"
         weight = 4
       [[languages.en.menu.main]]
         identifier = "contact"
