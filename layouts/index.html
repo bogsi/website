@@ -1,0 +1,24 @@
+{{ define "main" }}
+  <div class="post">
+    <h1 class="post-title">{{ .Title }}</h1>
+    {{ .Content }}
+    
+    <div class="posts-group">
+      <div class="post-year">Recent Posts</div>
+      {{ range first 5 (where .Site.RegularPages "Type" "posts") }}
+        <div class="post-item">
+          <a href="{{ .RelPermalink }}">
+            <span class="post-title">{{ .Title }}</span>
+            <span class="post-day">{{ .Date.Format "Jan 2" }}</span>
+          </a>
+        </div>
+      {{ end }}
+    </div>
+
+    {{ if gt (len (where .Site.RegularPages "Type" "posts")) 5 }}
+      <div class="see-more">
+        <a href="/posts">See more posts...</a>
+      </div>
+    {{ end }}
+  </div>
+{{ end }} 

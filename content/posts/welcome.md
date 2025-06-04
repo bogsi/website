@@ -1,27 +1,57 @@
 +++
-title = "Welcome to My Site"
+title = "Welcome to My Digital Workshop"
 date = "2024-03-19"
 author = "Bogomil Roussev"
-description = "Welcome to my personal website where I share my expertise in AWS, Terraform, and cloud automation."
+cover = ""
+description = "Welcome to my corner of the internet where I share my expertise in AWS, Terraform, and cloud automation. Let me show you around!"
+keywords = ["AWS", "Terraform", "Cloud", "Automation", "DevOps"]
 +++
 
-# Welcome
+## 👋 Hello, Cloud Enthusiasts!
 
-Hello! I'm Bogomil Roussev, an AWS & Terraform Automation Consultant specializing in building scalable cloud infrastructure solutions. This site serves as a platform where I share my knowledge, experiences, and insights in:
+I'm Bogomil Roussev, and I'm thrilled to welcome you to my digital workshop. As an AWS & Terraform Automation Consultant, I specialize in building scalable cloud infrastructure solutions that help businesses thrive in the digital age.
 
-- AWS Infrastructure Design & Implementation
-- Terraform Automation
-- Python Development
-- Cloud Architecture
-- DevOps Practices
+## 🚀 What I Do
 
-## What to Expect
+My expertise spans across:
 
-Here you'll find:
-- Technical articles about cloud infrastructure
-- Best practices for AWS and Terraform
-- Automation tips and tricks
-- Project showcases
-- Regular updates about my work and services
+- **AWS Infrastructure Design & Implementation**
+  - Architecture optimization
+  - Cost management
+  - Security best practices
 
-Stay tuned for regular updates and feel free to [get in touch](#contact) if you'd like to discuss how I can help with your cloud infrastructure needs. 
+- **Terraform Automation**
+  - Infrastructure as Code (IaC)
+  - Module development
+  - State management
+
+- **Python Development**
+  - Automation scripts
+  - AWS SDK integration
+  - Custom tooling
+
+- **Cloud Architecture**
+  - Scalable solutions
+  - High availability
+  - Performance optimization
+
+- **DevOps Practices**
+  - CI/CD pipelines
+  - Monitoring
+  - Infrastructure automation
+
+## 📚 What to Expect
+
+On this site and in my [blog](https://bogomils-organization.gitbook.io/bogomil-roussev-s-personal-book-of-it-life-and-more/), you'll find:
+
+- In-depth technical articles about cloud infrastructure
+- Best practices for AWS and Terraform implementations
+- Automation tips and tricks that save hours of work
+- Real-world project showcases and case studies
+- Regular updates about my services and expertise
+
+## 🤝 Let's Connect
+
+I'm always excited to connect with fellow cloud enthusiasts and professionals. Whether you have questions about cloud infrastructure, need consulting services, or just want to chat about technology, feel free to [reach out](mailto:bogomil.roussev@gmail.com).
+
+Stay tuned for regular updates, and let's build something amazing together! 

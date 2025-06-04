@@ -56,4 +56,86 @@
 
 .social-links a:hover {
   opacity: 0.8;
+}
+
+/* Terminal-style home page */
+.post pre {
+  background-color: var(--background);
+  border: 1px solid var(--accent);
+  padding: 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+}
+
+.post code {
+  color: var(--accent);
+  font-family: 'Fira Code', monospace;
+}
+
+/* Command prompt styling */
+.post code::before {
+  content: "";
+  color: var(--accent);
+}
+
+/* Directory listing styling */
+.post code .directory {
+  color: var(--accent);
+  font-weight: bold;
+}
+
+/* Command output styling */
+.post code .output {
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+/* Posts group styling */
+.posts-group {
+  margin-top: 40px;
+  border-top: 1px solid var(--accent);
+  padding-top: 20px;
+}
+
+.post-year {
+  color: var(--accent);
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+.post-item {
+  margin: 10px 0;
+}
+
+.post-item a {
+  display: flex;
+  justify-content: space-between;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.post-item a:hover {
+  opacity: 0.8;
+}
+
+.post-day {
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+.see-more {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.see-more a {
+  color: var(--accent);
+  text-decoration: none;
+  border: 1px solid var(--accent);
+  padding: 5px 10px;
+}
+
+.see-more a:hover {
+  background: var(--accent);
+  color: var(--background);
 } 
