@@ -1,0 +1,37 @@
+{{ define "main" }}
+<article class="post">
+  <h1 class="post-title">{{ .Title }}</h1>
+  
+  <div class="post-content terminal-output">
+    {{ .Content }}
+  </div>
+
+  <div class="certificate-providers">
+    <h3>Certification Providers</h3>
+    <div class="provider-icons">
+      <div class="provider-icon">
+        <img src="https://d1.awsstatic.com/training-and-certification/certification-badges/AWS-Certified-Solutions-Architect-Associate_badge.3419559c4379a44bd964983f8d59e5ea5b6a6bd4.png" alt="AWS Certification">
+        <span>Amazon Web Services</span>
+      </div>
+      <div class="provider-icon">
+        <img src="https://www.datocms-assets.com/2885/1620155116-brandhcterraformverticalcolor.svg" alt="HashiCorp Certification">
+        <span>HashiCorp</span>
+      </div>
+      <div class="provider-icon">
+        <img src="https://www.redhat.com/cms/managed-files/RHCP-RHCSA.png" alt="Red Hat Certification">
+        <span>Red Hat</span>
+      </div>
+      <div class="provider-icon">
+        <img src="https://images.credly.com/images/683783d8-eaac-4c37-a14d-11bd8a36321d/ccna_600.png" alt="Cisco Certification">
+        <span>Cisco</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="about-cta">
+    <a href="https://www.linkedin.com/in/bogomilroussev/" class="button" target="_blank">
+      <i class="fab fa-linkedin"></i> Connect on LinkedIn
+    </a>
+  </div>
+</article>
+{{ end }} 
