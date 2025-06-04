@@ -25,10 +25,9 @@ Senior DevOps Engineer @ Paysafe
 
 $ cat experience/previous.txt
 === Previous Roles ===
-Junior AWS DevOps Engineer
+Junior AWS DevOps Engineer @ The Cloud Solutions
 March 2025 - Now
 https://thecloudsolutions.com/
-
 • Terraform Automation
 • AWS Infrastructure management
 
@@ -59,8 +58,7 @@ total 5
 -rw-r--r-- AWS-Solutions-Architect-Associate.cert    # Amazon Web Services
 -rw-r--r-- AWS-Developer-Associate.cert              # Amazon Web Services
 -rw-r--r-- HashiCorp-Terraform-Associate.cert        # HashiCorp
--rw-r--r-- RHCSA.cert                                # Red Hat
--rw-r--r-- CCNA.cert                                 # Cisco
+
 
 $ cat skills.txt
 === Technical Expertise ===
