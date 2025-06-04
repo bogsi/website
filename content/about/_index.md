@@ -16,21 +16,14 @@ scalable cloud solutions that drive business efficiency and innovation.
 
 $ cat experience/current.md
 === Current Position ===
-Senior DevOps Engineer @ Paysafe
-2021 - Present
-• Leading infrastructure automation initiatives using Terraform and AWS
-• Implementing CI/CD pipelines and DevOps best practices
-• Managing and optimizing cloud infrastructure costs
-• Mentoring team members in cloud technologies and DevOps practices
-
-$ cat experience/previous.txt
-=== Previous Roles ===
 Junior AWS DevOps Engineer @ The Cloud Solutions
 March 2025 - Now
 https://thecloudsolutions.com/
 • Terraform Automation
 • AWS Infrastructure management
 
+$ cat experience/previous.txt
+=== Previous Roles ===
 
 Site Reliability Engineer @ Fadata Group
 December 2022 - January 2024
