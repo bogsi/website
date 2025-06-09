@@ -17,6 +17,7 @@ drwxr-xr-x  AWS-Infrastructure/     # Design and optimize cloud architectures
 drwxr-xr-x  Terraform-Automation/   # Infrastructure as Code solutions
 drwxr-xr-x  Python-Development/     # Custom automation tools
 drwxr-xr-x  Cloud-Architecture/     # Scalable cloud solutions
+drwxr-xr-x  AI/                     # Building AI Agents and Workflows
 
 $ cat contact.txt
 Email: bogomil.roussev@gmail.com

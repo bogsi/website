@@ -2,7 +2,6 @@
 title: "About"
 ---
 
-# AI Services
 
 ## Infrastructure as Code
 - Terraform automation and management
