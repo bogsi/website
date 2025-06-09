@@ -1,5 +1,19 @@
 export async function onRequest(context) {
   try {
+    // Check if API key is configured
+    if (!context.env.OPENAI_API_KEY) {
+      console.error('OpenAI API key is not configured');
+      return new Response(JSON.stringify({ 
+        error: 'OpenAI API key is not configured. Please add OPENAI_API_KEY to your environment variables.' 
+      }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
     // Get the request body
     const request = await context.request.json();
     const { message, context: chatContext } = request;
@@ -39,7 +53,36 @@ export async function onRequest(context) {
       }),
     });
 
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('OpenAI API error:', errorData);
+      return new Response(JSON.stringify({ 
+        error: 'Error calling OpenAI API',
+        details: errorData
+      }), {
+        status: response.status,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
+
     const data = await response.json();
+
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Unexpected OpenAI API response:', data);
+      return new Response(JSON.stringify({ 
+        error: 'Unexpected response format from OpenAI API',
+        details: data
+      }), {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
 
     // Return the response
     return new Response(JSON.stringify({
@@ -52,7 +95,11 @@ export async function onRequest(context) {
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+    console.error('Server error:', error);
+    return new Response(JSON.stringify({ 
+      error: 'Internal server error',
+      details: error.message
+    }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json',

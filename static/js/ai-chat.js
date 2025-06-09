@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({
                 message: message,
-                context: 'aws_terraform' // This helps the AI understand the context
+                context: 'aws_terraform'
             })
         })
         .then(response => response.json())
@@ -62,20 +62,33 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide typing indicator
             aiTyping.style.display = 'none';
             
-            // Add AI response to chat
-            addMessage(data.response, 'ai-message');
+            if (data.error) {
+                // Handle error response
+                console.error('API Error:', data);
+                addMessage(`Error: ${data.error}${data.details ? '\nDetails: ' + JSON.stringify(data.details) : ''}`, 'error-message');
+            } else {
+                // Add AI response to chat
+                addMessage(data.response, 'ai-message');
+            }
         })
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Network Error:', error);
             aiTyping.style.display = 'none';
-            addMessage('Sorry, I encountered an error. Please try again.', 'ai-message');
+            addMessage('Sorry, I encountered a network error. Please try again.', 'error-message');
         });
     }
 
     function addMessage(text, className) {
         const messageDiv = document.createElement('div');
         messageDiv.className = className;
-        messageDiv.textContent = text;
+        
+        // Handle multiline text
+        const formattedText = text.split('\n').map(line => {
+            if (line.trim() === '') return '<br>';
+            return line;
+        }).join('<br>');
+        
+        messageDiv.innerHTML = formattedText;
         chatMessages.appendChild(messageDiv);
         
         // Scroll to bottom

@@ -64,6 +64,16 @@
     align-self: flex-end;
 }
 
+.error-message {
+    background: #442222;
+    color: #ff6b6b;
+    padding: 10px 15px;
+    border-left: 2px solid #ff6b6b;
+    max-width: 80%;
+    align-self: flex-start;
+    font-size: 0.9rem;
+}
+
 .ai-chat-input {
     padding: 15px;
     border-top: 1px solid #333;
