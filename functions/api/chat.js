@@ -5,7 +5,7 @@ export async function onRequest(context) {
     // Check if API key is configured
     if (!context.env.OPENAI_API_KEY) {
       console.error('OpenAI API key is missing in environment variables');
-      return new Response(JSON.stringify({ 
+      return new Response(JSON.stringify({
         error: 'Configuration Error: OpenAI API key is not set. Please configure OPENAI_API_KEY in Cloudflare Pages environment variables.',
         details: {
           missingKey: 'OPENAI_API_KEY',
@@ -61,7 +61,7 @@ export async function onRequest(context) {
         'Authorization': `Bearer ${context.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -82,7 +82,7 @@ export async function onRequest(context) {
     if (!response.ok) {
       const errorData = await response.json().catch(e => ({ error: 'Failed to parse error response' }));
       console.error('OpenAI API error:', errorData);
-      return new Response(JSON.stringify({ 
+      return new Response(JSON.stringify({
         error: 'Error calling OpenAI API',
         details: errorData,
         status: response.status
@@ -100,7 +100,7 @@ export async function onRequest(context) {
 
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
       console.error('Unexpected OpenAI API response:', data);
-      return new Response(JSON.stringify({ 
+      return new Response(JSON.stringify({
         error: 'Unexpected response format from OpenAI API',
         details: data
       }), {
@@ -127,7 +127,7 @@ export async function onRequest(context) {
 
   } catch (error) {
     console.error('Server error:', error);
-    return new Response(JSON.stringify({ 
+    return new Response(JSON.stringify({
       error: 'Internal server error',
       details: error.message,
       stack: error.stack
@@ -139,4 +139,4 @@ export async function onRequest(context) {
       },
     });
   }
-} 
+}
