@@ -1,132 +1,155 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const chatToggle = document.getElementById('aiChatToggle');
-    const chatContainer = document.getElementById('aiChatContainer');
-    const chatClose = document.getElementById('aiChatClose');
-    const chatInput = document.getElementById('aiChatInput');
-    const chatSend = document.getElementById('aiChatSend');
-    const chatMessages = document.getElementById('aiChatMessages');
-    const aiTyping = document.getElementById('aiTyping');
+// Optimized AI Chat JavaScript
+document.addEventListener('DOMContentLoaded', () => {
+    // Cache DOM elements
+    const elements = {
+        chatToggle: document.getElementById('aiChatToggle'),
+        chatContainer: document.getElementById('aiChatContainer'),
+        chatClose: document.getElementById('aiChatClose'),
+        chatInput: document.getElementById('aiChatInput'),
+        chatSend: document.getElementById('aiChatSend'),
+        chatMessages: document.getElementById('aiChatMessages'),
+        aiTyping: document.getElementById('aiTyping')
+    };
 
     let isWaitingForResponse = false;
+    let messageQueue = [];
+    let isProcessingQueue = false;
 
-    // Toggle chat window
-    chatToggle.addEventListener('click', () => {
-        chatContainer.style.display = chatContainer.style.display === 'none' ? 'flex' : 'none';
-        if (chatContainer.style.display === 'flex') {
-            chatInput.focus();
+    // Debounce function for performance
+    const debounce = (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    };
+
+    // Toggle chat window with animation
+    elements.chatToggle.addEventListener('click', () => {
+        const isVisible = elements.chatContainer.style.display === 'flex';
+        elements.chatContainer.style.display = isVisible ? 'none' : 'flex';
+        if (!isVisible) {
+            elements.chatInput.focus();
         }
     });
 
     // Close chat window
-    chatClose.addEventListener('click', () => {
-        chatContainer.style.display = 'none';
+    elements.chatClose.addEventListener('click', () => {
+        elements.chatContainer.style.display = 'none';
     });
 
-    // Send message on enter
-    chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && !isWaitingForResponse && chatInput.value.trim()) {
+    // Handle input events with debouncing
+    elements.chatInput.addEventListener('keypress', debounce((e) => {
+        if (e.key === 'Enter' && !isWaitingForResponse && elements.chatInput.value.trim()) {
             sendMessage();
         }
-    });
+    }, 250));
 
     // Send message on button click
-    chatSend.addEventListener('click', () => {
-        if (!isWaitingForResponse && chatInput.value.trim()) {
+    elements.chatSend.addEventListener('click', () => {
+        if (!isWaitingForResponse && elements.chatInput.value.trim()) {
             sendMessage();
         }
     });
 
     function setLoadingState(loading) {
         isWaitingForResponse = loading;
-        chatInput.disabled = loading;
-        chatSend.disabled = loading;
-        aiTyping.style.display = loading ? 'flex' : 'none';
+        elements.chatInput.disabled = loading;
+        elements.chatSend.disabled = loading;
+        elements.aiTyping.style.display = loading ? 'flex' : 'none';
     }
 
-    function sendMessage() {
-        const message = chatInput.value.trim();
-        
-        // Add user message to chat
-        addMessage(message, 'user-message');
-        
-        // Clear input
-        chatInput.value = '';
-        
-        // Show loading state
-        setLoadingState(true);
-        
-        // Send to backend API
-        fetch('/api/chat', {
+    async function processMessageQueue() {
+        if (isProcessingQueue || messageQueue.length === 0) return;
+
+        isProcessingQueue = true;
+        const message = messageQueue.shift();
+
+        try {
+            await sendMessageToAPI(message);
+        } catch (error) {
+            console.error('Error processing message:', error);
+            addMessage('Sorry, I encountered an error. Please try again.', 'error-message');
+        } finally {
+            isProcessingQueue = false;
+            if (messageQueue.length > 0) {
+                processMessageQueue();
+            }
+        }
+    }
+
+    async function sendMessageToAPI(message) {
+        const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                message: message,
+                message,
                 context: 'aws_terraform'
             })
-        })
-        .then(async response => {
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(JSON.stringify({
-                    status: response.status,
-                    ...data
-                }));
-            }
-            return data;
-        })
-        .then(data => {
-            if (data.error) {
-                // Handle error response
-                console.error('API Error:', data);
-                let errorMessage = `Error: ${data.error}`;
-                if (data.details) {
-                    errorMessage += '\n\nDetails: ' + JSON.stringify(data.details, null, 2);
-                }
-                addMessage(errorMessage, 'error-message');
-            } else {
-                // Add AI response to chat
-                addMessage(data.response, 'ai-message');
-            }
-        })
-        .catch(error => {
-            console.error('Network/API Error:', error);
-            let errorMessage = 'Sorry, I encountered an error. Please try again.';
-            try {
-                const errorData = JSON.parse(error.message);
-                errorMessage = `Error (${errorData.status}): ${errorData.error}`;
-                if (errorData.details) {
-                    errorMessage += '\n\nDetails: ' + JSON.stringify(errorData.details, null, 2);
-                }
-            } catch (e) {
-                errorMessage += '\n\nDetails: ' + error.message;
-            }
-            addMessage(errorMessage, 'error-message');
-        })
-        .finally(() => {
-            setLoadingState(false);
         });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(JSON.stringify({
+                status: response.status,
+                ...data
+            }));
+        }
+
+        if (data.error) {
+            throw new Error(JSON.stringify(data));
+        }
+
+        return data;
+    }
+
+    function sendMessage() {
+        const message = elements.chatInput.value.trim();
+
+        // Add user message to chat
+        addMessage(message, 'user-message');
+
+        // Clear input
+        elements.chatInput.value = '';
+
+        // Show loading state
+        setLoadingState(true);
+
+        // Add to message queue
+        messageQueue.push(message);
+        processMessageQueue();
     }
 
     function addMessage(text, className) {
         const messageDiv = document.createElement('div');
         messageDiv.className = className;
-        
-        // Handle multiline text and code blocks
-        const formattedText = text.split('\n').map(line => {
-            if (line.trim() === '') return '<br>';
-            // Preserve whitespace
-            return line.replace(/ /g, '&nbsp;');
-        }).join('<br>');
-        
-        messageDiv.innerHTML = formattedText;
-        chatMessages.appendChild(messageDiv);
-        
-        // Scroll to bottom
-        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Sanitize and format text
+        const sanitizedText = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .split('\n')
+            .map(line => line.trim() === '' ? '<br>' : line.replace(/ /g, '&nbsp;'))
+            .join('<br>');
+
+        messageDiv.innerHTML = sanitizedText;
+        elements.chatMessages.appendChild(messageDiv);
+
+        // Smooth scroll to bottom
+        elements.chatMessages.scrollTo({
+            top: elements.chatMessages.scrollHeight,
+            behavior: 'smooth'
+        });
     }
 
     // Initial setup
-    chatContainer.style.display = 'none';
-}); 
+    elements.chatContainer.style.display = 'none';
+});

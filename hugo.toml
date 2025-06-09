@@ -6,16 +6,16 @@ theme = 'terminal'
 [params]
   # dir name of your main content (default is `content/posts`).
   contentTypeName = "posts"
-  
+
   # Set theme colors
   themeColor = "green"
-  
+
   # show selector to switch language
   showLanguageSelector = false
-  
+
   # set theme to full screen width
   fullWidthTheme = true
-  
+
   # center theme with default width
   centerTheme = true
 
@@ -28,7 +28,7 @@ theme = 'terminal'
 
   # Show table of contents
   Toc = true
-  
+
   # Author info
   author = 'Bogomil Roussev'
   email = 'bogomil.roussev@gmail.com'
@@ -42,6 +42,14 @@ theme = 'terminal'
     foregroundColor = "#00ff00"
     accentColor = "#00ff00"
     borderColor = "#00ff00"
+
+  # Performance optimizations
+  enableMinify = true
+  enableGzip = true
+  enableBrotli = true
+  enableImageProcessing = true
+  enableWebp = true
+  enableCache = true
 
 [languages]
   [languages.en]
@@ -88,3 +96,22 @@ theme = 'terminal'
 [markup]
   [markup.highlight]
     noClasses = false
+
+[build]
+  writeStats = true
+
+[server]
+  enableCompression = true
+
+[imaging]
+  quality = 85
+  resampleFilter = "lanczos"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[outputFormats]
+  [outputFormats.JSON]
+    mediaType = "application/json"
+    isPlainText = true
+    notAlternative = true
