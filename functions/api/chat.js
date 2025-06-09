@@ -4,9 +4,13 @@ export async function onRequest(context) {
 
     // Check if API key is configured
     if (!context.env.OPENAI_API_KEY) {
-      console.error('OpenAI API key is not configured');
+      console.error('OpenAI API key is missing in environment variables');
       return new Response(JSON.stringify({ 
-        error: 'OpenAI API key is not configured. Please add OPENAI_API_KEY to your environment variables.' 
+        error: 'Configuration Error: OpenAI API key is not set. Please configure OPENAI_API_KEY in Cloudflare Pages environment variables.',
+        details: {
+          missingKey: 'OPENAI_API_KEY',
+          availableEnvVars: Object.keys(context.env)
+        }
       }), {
         status: 500,
         headers: {
@@ -17,7 +21,7 @@ export async function onRequest(context) {
     }
 
     // Log that we have an API key (without showing it)
-    console.log('OpenAI API key is configured');
+    console.log('OpenAI API key is configured, length:', context.env.OPENAI_API_KEY.length);
 
     // Handle preflight CORS request
     if (context.request.method === 'OPTIONS') {
