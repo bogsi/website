@@ -3,4 +3,7 @@
 <!-- Custom chat styles -->
 <link rel="stylesheet" href="/css/ai-chat.css">
 <!-- Custom chat functionality -->
-<script src="/js/ai-chat.js" defer></script> 
+<script src="/js/ai-chat.js" defer></script>
+<!-- Custom styles -->
+{{ $custom := resources.Get "css/custom.css" | minify }}
+<link rel="stylesheet" href="{{ $custom.RelPermalink }}"> 
