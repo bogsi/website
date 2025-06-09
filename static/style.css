@@ -35,11 +35,14 @@
 /* Fix footer icons */
 .footer-social a {
   color: var(--accent) !important;
+  margin: 0 15px;
+  font-size: 2rem;
+  transition: transform 0.3s ease;
 }
 
 .footer-social a:hover {
-  color: var(--background) !important;
-  background-color: var(--accent) !important;
+  opacity: 0.8;
+  transform: scale(1.1);
 }
 
 /* Ensure all icons are visible */
@@ -50,12 +53,14 @@
 /* Social links in footer */
 .social-links a {
   color: var(--accent) !important;
-  margin: 0 10px;
-  font-size: 1.5rem;
+  margin: 0 15px;
+  font-size: 2rem;
+  transition: transform 0.3s ease;
 }
 
 .social-links a:hover {
   opacity: 0.8;
+  transform: scale(1.1);
 }
 
 /* Terminal-style home page */
@@ -358,5 +363,78 @@
   opacity: 0.7;
   margin-bottom: 20px;
   font-size: 0.9em;
+}
+
+/* Terminal-style About Page */
+.post-content {
+    background-color: #000;
+    color: #00ff00;
+    font-family: 'Fira Code', monospace;
+    padding: 20px;
+    border: 1px solid #00ff00;
+    border-radius: 5px;
+    position: relative;
+}
+
+.post-content::before {
+    content: "bogomil@roussev.dev:~$";
+    display: block;
+    color: #00ff00;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.post-content h1, 
+.post-content h2 {
+    color: #00ff00;
+    border-bottom: 1px solid #00ff00;
+    padding-bottom: 5px;
+}
+
+.post-content h1::before {
+    content: "# ";
+    color: #00ff00;
+}
+
+.post-content h2::before {
+    content: "## ";
+    color: #00ff00;
+}
+
+.post-content ul {
+    list-style: none;
+    padding-left: 20px;
+}
+
+.post-content ul li::before {
+    content: "> ";
+    color: #00ff00;
+}
+
+.post-content pre {
+    background-color: #000;
+    border: 1px solid #00ff00;
+    padding: 15px;
+    margin: 15px 0;
+    overflow-x: auto;
+}
+
+.post-content code {
+    font-family: 'Fira Code', monospace;
+    color: #00ff00;
+}
+
+/* Blinking cursor effect */
+.post-content::after {
+    content: "█";
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: #00ff00;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 } 
- 
