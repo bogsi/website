@@ -17,41 +17,53 @@ scalable cloud solutions that drive business efficiency and innovation.
 $ cat experience/current.md
 === Current Position ===
 Junior AWS DevOps Engineer @ The Cloud Solutions
-March 2025 - Now
-https://thecloudsolutions.com/
-• Terraform Automation
-• AWS Infrastructure management
+March 2025 - Present
+• AWS Infrastructure Management & Automation
+• Terraform Development & Implementation
 
 $ cat experience/previous.txt
 === Previous Roles ===
+Platform Specialist @ IBM
+April 2024 - August 2024
+• Specialized in Kubernetes, OpenShift, and Serverless computing.
+• Resolved over 70 complex customer cases related to container orchestration.
+• Utilized Helm, Terraform, and Ansible for scripting and automation.
 
 Site Reliability Engineer @ Fadata Group
 December 2022 - January 2024
-• Managed WebLogic middleware and application servers
-• Implemented DevOps practices and automation
-• Oracle DB SQL scripting and software deployment
-• Documentation management and ITIL methodology implementation
+• Managed WebLogic middleware and Oracle DB scripting.
+• Deployed software versions using Nexus Repository.
+• Streamlined processes using Atlassian Jira, Tempo, and Confluence.
 
 Infrastructure Engineer @ NTT DATA Business Solutions
 June 2021 - September 2022
-• Managed complex Public/Hybrid Cloud landscapes on AWS
-• Implemented IAM roles and VPC networking
-• Configured S3 buckets for database migrations
-• Optimized EC2 instances for enhanced performance
+• Managed complex Public/Hybrid Cloud landscapes on AWS.
+• Designed and implemented IAM roles, VPC networking, and S3 buckets.
+• Optimized EC2 instances for enhanced database performance.
 
-DevOps Engineer @ Scalefocus
+Infrastructure Engineer & Support @ DIGITALL
+April 2021 - June 2021
+• Maintained and troubleshot CI/CD workflows in Jenkins.
+• Deployed and managed applications in a Cloud Foundry environment.
+• Performed proactive problem management using a GitOps methodology.
+
+DevOps Engineer II @ Scalefocus
 September 2020 - March 2021
-• Designed and implemented CI/CD processes
-• Deployed solutions in Azure and AWS clouds
-• Set up Azure DevOps environments
-• Built and maintained distributed applications
+• Implemented CI/CD processes for applications on Azure and AWS.
+• Set up and managed Azure DevOps Environments, including Test Plans.
+• Built, deployed, and maintained distributed applications.
+
+Cloud Infrastructure Engineer I @ PROS
+April 2018 - April 2020
+• Managed cloud and on-premise infrastructure using IBM Cloud.
+• Automated configurations with Puppet and managed it via The Foreman.
+• Monitored systems with Nagios, Prometheus, and Grafana.
 
 $ ls -l certificates/
-total 5
+total 3
 -rw-r--r-- AWS-Solutions-Architect-Associate.cert    # Amazon Web Services
 -rw-r--r-- AWS-Developer-Associate.cert              # Amazon Web Services
 -rw-r--r-- HashiCorp-Terraform-Associate.cert        # HashiCorp
-
 
 $ cat skills.txt
 === Technical Expertise ===
