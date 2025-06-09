@@ -348,4 +348,15 @@
   .provider-icons {
     grid-template-columns: 1fr;
   }
+}
+
+/* Single Post Meta */
+.post-meta {
+  display: flex;
+  gap: 10px;
+  color: var(--accent);
+  opacity: 0.7;
+  margin-bottom: 20px;
+  font-size: 0.9em;
 } 
+ 

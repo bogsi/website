@@ -62,3 +62,4 @@ LinkedIn: linkedin.com/in/bogomilroussev
 
 $ echo "Ready to optimize your cloud infrastructure?"
 🚀 Let's transform your infrastructure into a well-oiled machine! 
+ 

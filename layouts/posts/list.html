@@ -1,0 +1,21 @@
+{{ define "main" }}
+  <div class="post">
+    <h1 class="post-title">{{ .Title }}</h1>
+    
+    <div class="post-content terminal-output">
+      {{ .Content }}
+    </div>
+
+    <div class="posts-group">
+      <div class="post-year">All Posts</div>
+      {{ range .Pages }}
+        <div class="post-item">
+          <a href="{{ .RelPermalink }}">
+            <span class="post-title">{{ .Title }}</span>
+            <span class="post-day">{{ .Date.Format "Jan 2, 2006" }}</span>
+          </a>
+        </div>
+      {{ end }}
+    </div>
+  </div>
+{{ end }} 

@@ -55,3 +55,4 @@ On this site and in my [blog](https://bogomils-organization.gitbook.io/bogomil-r
 I'm always excited to connect with fellow cloud enthusiasts and professionals. Whether you have questions about cloud infrastructure, need consulting services, or just want to chat about technology, feel free to [reach out](mailto:bogomil.roussev@gmail.com).
 
 Stay tuned for regular updates, and let's build something amazing together! 
+ 
