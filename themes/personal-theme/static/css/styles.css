@@ -489,7 +489,6 @@ footer {
 
 /* Animations */
 @keyframes float {
-
     0%,
     100% {
         transform: translateY(0);
@@ -612,4 +611,173 @@ body.dark-mode .dropdown-content a {
 
 body.dark-mode .dropdown-content a:hover {
     background-color: #2d2d2d;
+}
+
+/* AI Chat Styles */
+.ai-chat-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 400px;
+    max-height: 600px;
+    background: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.ai-chat-header {
+    padding: 15px;
+    background: var(--primary);
+    color: var(--white);
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ai-chat-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.ai-chat-close {
+    background: none;
+    border: none;
+    color: var(--white);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.ai-chat-messages {
+    padding: 15px;
+    overflow-y: auto;
+    max-height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ai-message {
+    background: var(--gray);
+    padding: 10px 15px;
+    border-radius: 15px 15px 15px 0;
+    max-width: 80%;
+    align-self: flex-start;
+}
+
+.user-message {
+    background: var(--primary);
+    color: var(--white);
+    padding: 10px 15px;
+    border-radius: 15px 15px 0 15px;
+    max-width: 80%;
+    align-self: flex-end;
+}
+
+.ai-chat-input {
+    padding: 15px;
+    border-top: 1px solid var(--gray);
+    display: flex;
+    gap: 10px;
+}
+
+.ai-chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--gray);
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+.ai-chat-input button {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.ai-chat-input button:hover {
+    background: var(--primary-dark);
+}
+
+.ai-chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary);
+    color: var(--white);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: none;
+    z-index: 999;
+}
+
+.ai-chat-toggle i {
+    font-size: 1.5rem;
+}
+
+.ai-chat-toggle:hover {
+    background: var(--primary-dark);
+}
+
+.ai-typing {
+    display: flex;
+    gap: 5px;
+    padding: 10px;
+    align-items: center;
+    color: var(--dark-gray);
+}
+
+.ai-typing span {
+    width: 8px;
+    height: 8px;
+    background: var(--dark-gray);
+    border-radius: 50%;
+    animation: typing 1s infinite;
+}
+
+.ai-typing span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.ai-typing span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typing {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Dark mode support for AI chat */
+body.dark-mode .ai-chat-container {
+    background: var(--dark);
+    border: 1px solid var(--primary);
+}
+
+body.dark-mode .ai-message {
+    background: var(--dark-gray);
+    color: var(--white);
+}
+
+body.dark-mode .ai-chat-input input {
+    background: var(--dark);
+    color: var(--white);
+    border-color: var(--primary);
 }
