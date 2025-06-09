@@ -13,6 +13,13 @@ With deep expertise in hardware infrastructure, server architecture, and datacen
 I bring a comprehensive understanding of both physical and cloud environments. My experience spans
 multiple tiers of support, from hardware troubleshooting to complex cloud architecture design.
 
+## Let's Connect
+
+* Email: <bogomil.roussev@gmail.com>
+* LinkedIn: linkedin.com/in/bogomilroussev
+* GitHub: github.com/bogsi
+* Phone: +359 878 880 112
+
 ### Technical Expertise
 
 #### Hardware & Infrastructure
@@ -38,10 +45,3 @@ multiple tiers of support, from hardware troubleshooting to complex cloud archit
 - L4: Strategic planning and optimization
 - L5: Enterprise architecture and innovation
 
-### Let's Connect
-* Email: bogomil.roussev@gmail.com
-* LinkedIn: linkedin.com/in/bogomilroussev
-* GitHub: github.com/bogsi
-* Phone: +359 878 880 112
-
-```
