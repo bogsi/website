@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatMessages = document.getElementById('aiChatMessages');
     const aiTyping = document.getElementById('aiTyping');
 
+    let isWaitingForResponse = false;
+
     // Toggle chat window
     chatToggle.addEventListener('click', () => {
         chatContainer.style.display = chatContainer.style.display === 'none' ? 'flex' : 'none';
@@ -22,17 +24,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Send message on enter
     chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && chatInput.value.trim()) {
+        if (e.key === 'Enter' && !isWaitingForResponse && chatInput.value.trim()) {
             sendMessage();
         }
     });
 
     // Send message on button click
     chatSend.addEventListener('click', () => {
-        if (chatInput.value.trim()) {
+        if (!isWaitingForResponse && chatInput.value.trim()) {
             sendMessage();
         }
     });
+
+    function setLoadingState(loading) {
+        isWaitingForResponse = loading;
+        chatInput.disabled = loading;
+        chatSend.disabled = loading;
+        aiTyping.style.display = loading ? 'flex' : 'none';
+    }
 
     function sendMessage() {
         const message = chatInput.value.trim();
@@ -43,8 +52,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Clear input
         chatInput.value = '';
         
-        // Show typing indicator
-        aiTyping.style.display = 'flex';
+        // Show loading state
+        setLoadingState(true);
         
         // Send to backend API
         fetch('/api/chat', {
@@ -57,24 +66,46 @@ document.addEventListener('DOMContentLoaded', function() {
                 context: 'aws_terraform'
             })
         })
-        .then(response => response.json())
+        .then(async response => {
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(JSON.stringify({
+                    status: response.status,
+                    ...data
+                }));
+            }
+            return data;
+        })
         .then(data => {
-            // Hide typing indicator
-            aiTyping.style.display = 'none';
-            
             if (data.error) {
                 // Handle error response
                 console.error('API Error:', data);
-                addMessage(`Error: ${data.error}${data.details ? '\nDetails: ' + JSON.stringify(data.details) : ''}`, 'error-message');
+                let errorMessage = `Error: ${data.error}`;
+                if (data.details) {
+                    errorMessage += '\n\nDetails: ' + JSON.stringify(data.details, null, 2);
+                }
+                addMessage(errorMessage, 'error-message');
             } else {
                 // Add AI response to chat
                 addMessage(data.response, 'ai-message');
             }
         })
         .catch(error => {
-            console.error('Network Error:', error);
-            aiTyping.style.display = 'none';
-            addMessage('Sorry, I encountered a network error. Please try again.', 'error-message');
+            console.error('Network/API Error:', error);
+            let errorMessage = 'Sorry, I encountered an error. Please try again.';
+            try {
+                const errorData = JSON.parse(error.message);
+                errorMessage = `Error (${errorData.status}): ${errorData.error}`;
+                if (errorData.details) {
+                    errorMessage += '\n\nDetails: ' + JSON.stringify(errorData.details, null, 2);
+                }
+            } catch (e) {
+                errorMessage += '\n\nDetails: ' + error.message;
+            }
+            addMessage(errorMessage, 'error-message');
+        })
+        .finally(() => {
+            setLoadingState(false);
         });
     }
 
@@ -82,10 +113,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const messageDiv = document.createElement('div');
         messageDiv.className = className;
         
-        // Handle multiline text
+        // Handle multiline text and code blocks
         const formattedText = text.split('\n').map(line => {
             if (line.trim() === '') return '<br>';
-            return line;
+            // Preserve whitespace
+            return line.replace(/ /g, '&nbsp;');
         }).join('<br>');
         
         messageDiv.innerHTML = formattedText;
