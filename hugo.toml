@@ -84,11 +84,6 @@ theme = 'terminal'
         name = "Blog"
         url = "https://medium.com/@bogomilroussev"
         weight = 4
-      [[languages.en.menu.main]]
-        identifier = "contact"
-        name = "Contact"
-        url = "#contact"
-        weight = 5
 
 [markup]
   [markup.highlight]
