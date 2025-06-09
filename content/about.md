@@ -6,7 +6,7 @@ title: "About"
 ## Infrastructure as Code
 
 - Terraform automation and management
-- AWS CloudFormation expertise
+- AWS Cloud Management extensive knowledge
 - Infrastructure version control
 - Modular infrastructure design
 
