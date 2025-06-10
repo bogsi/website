@@ -1,0 +1,102 @@
+/* Critical CSS for above-the-fold content */
+:root {
+  --accent: #00ff00;
+  --background: #000000;
+  --color: #00ff00;
+  --border-color: #00ff00;
+}
+
+/* Base styles */
+body {
+  background: var(--background);
+  color: var(--color);
+  font-family: 'Fira Code', monospace;
+}
+
+/* Critical menu styles */
+.navigation-menu {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin: 20px 1px;
+}
+
+.navigation-menu__inner {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation-menu__inner > li {
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+  white-space: nowrap;
+}
+
+.navigation-menu__inner > li:not(:last-of-type) {
+  margin-right: 20px;
+}
+
+/* Critical Font Awesome styles */
+.fa, .fab, .fas {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+/* Terminal content - critical for homepage */
+.terminal-output {
+  background-color: var(--background);
+  border: 1px solid var(--accent);
+  padding: 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+}
+
+.terminal-output code {
+  color: var(--accent);
+  font-family: 'Fira Code', monospace;
+  background: transparent;
+}
+
+/* Essential button styles */
+.button {
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  padding: 10px 20px;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+}
+
+/* Essential responsive design */
+@media (max-width: 768px) {
+  .terminal-output {
+    padding: 10px;
+    font-size: 0.9em;
+  }
+  
+  .navigation-menu {
+    margin: 0;
+  }
+
+  .navigation-menu__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
+  }
+
+  .navigation-menu__inner li {
+    margin: 0;
+    padding: 5px;
+  }
+} 
