@@ -25,29 +25,8 @@
           </div>
         {{ end }}
         
-        <div class="menu">
-          <nav class="menu__inner">
-            {{ if .Site.Params.showMenuItems | default false }}
-              {{ $currentPage := . }}
-              {{ range first .Site.Params.showMenuItems .Site.Menus.main }}
-                <a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>
-                  {{ .Name }}
-                </a>
-              {{ end }}
-              
-              {{ if gt (len .Site.Menus.main) .Site.Params.showMenuItems }}
-                <span class="menu__sub-inner-more-trigger">
-                  {{ .Site.Params.MenuMore | default "Show more" }}
-                  <span class="menu__sub-inner-more-trigger-icon">▾</span>
-                </span>
-                <div class="menu__sub-inner-more">
-                  {{ range last (sub (len .Site.Menus.main) .Site.Params.showMenuItems) .Site.Menus.main }}
-                    <a href="{{ .URL | absLangURL }}" class="menu__sub-inner-more-item">{{ .Name }}</a>
-                  {{ end }}
-                </div>
-              {{ end }}
-            {{ end }}
-          </nav>
+        <div class="header__right">
+          {{ partial "menu.html" . }}
         </div>
       </div>
     </header>

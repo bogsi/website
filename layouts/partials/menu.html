@@ -1,0 +1,37 @@
+{{ $currentPage := . }}
+<nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    {{ if .Site.Params.showMenuItems | default false }}
+      {{ range first .Site.Params.showMenuItems .Site.Menus.main }}
+        <li><a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>{{ .Name }}</a></li>
+      {{ end }}
+      {{ if gt (len .Site.Menus.main) .Site.Params.showMenuItems }}
+        <ul class="menu__sub-inner">
+          <li class="menu__sub-inner-more-trigger">
+            {{ .Site.Params.MenuMore | default "Show more" }} ▾
+          </li>
+          <ul class="menu__sub-inner-more hidden">
+            {{ range last (sub (len .Site.Menus.main) .Site.Params.showMenuItems) .Site.Menus.main }}
+              <li><a href="{{ .URL | absLangURL }}">{{ .Name }}</a></li>
+            {{ end }}
+          </ul>
+        </ul>
+      {{ end }}
+    {{ end }}
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    {{ range .Site.Menus.main }}
+      <li><a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>{{ .Name }}</a></li>
+    {{ end }}
+  </ul>
+</nav>
+
+{{ if gt (len .Site.Menus.main) .Site.Params.showMenuItems }}
+  <script type="text/javascript">
+    document.querySelector('.menu__sub-inner-more-trigger').addEventListener('click', function() {
+      var menu = document.querySelector('.menu__sub-inner-more');
+      menu.classList.toggle('hidden');
+    });
+  </script>
+{{ end }} 
