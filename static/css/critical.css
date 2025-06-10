@@ -1,23 +1,184 @@
-/* Critical CSS for above-the-fold content */
+/* Terminal Theme Base */
 :root {
-  --accent: #ff8700;
-  --background: #1a1b1d;
-  --color: #fff;
-  --border-color: #ff8700;
-  --terminal-shadow: 0 5px 15px rgba(255, 135, 0, 0.2);
+  --terminal-orange: #ff8700;
+  --terminal-bg: #282c34;
+  --terminal-text: #abb2bf;
+  --terminal-prompt: var(--terminal-orange);
+  --terminal-selection: rgba(255, 135, 0, 0.3);
 }
 
-/* Base styles - high priority for terminal display */
+/* Base Styles */
 body {
-  background: var(--background);
-  color: var(--color);
-  font-family: 'Fira Code', monospace;
+  background-color: var(--terminal-bg);
+  color: var(--terminal-text);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  line-height: 1.6;
   margin: 0;
   padding: 20px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+}
+
+/* Terminal Window */
+.terminal-window {
+  background-color: var(--terminal-bg);
+  border-radius: 6px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+  margin: 0 auto;
+  max-width: 1000px;
+  overflow: hidden;
+}
+
+.terminal-header {
+  background-color: #21252b;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  display: flex;
+  padding: 10px;
+  position: relative;
+}
+
+.terminal-buttons {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  left: 10px;
+}
+
+.terminal-button {
+  background-color: #ff5f56;
+  border-radius: 50%;
+  height: 12px;
+  width: 12px;
+}
+
+.terminal-button.minimize {
+  background-color: #ffbd2e;
+}
+
+.terminal-button.maximize {
+  background-color: #27c93f;
+}
+
+.terminal-title {
+  color: var(--terminal-text);
+  flex-grow: 1;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Terminal Content */
+.terminal-content {
+  padding: 20px;
+}
+
+/* Terminal Prompt */
+.terminal-prompt {
+  color: var(--terminal-prompt);
+  margin-bottom: 10px;
+}
+
+.prompt-symbol {
+  color: var(--terminal-prompt);
+  margin-right: 8px;
+}
+
+/* Terminal Output */
+.terminal-output {
+  color: var(--terminal-text);
+  margin: 10px 0;
+}
+
+/* Links */
+a {
+  color: var(--terminal-orange);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* Code Blocks */
+pre {
+  background-color: #21252b;
+  border-radius: 4px;
+  margin: 20px 0;
+  padding: 20px;
+  position: relative;
+}
+
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Terminal Cursor Animation */
+.cursor {
+  animation: blink 1s step-end infinite;
+  background-color: var(--terminal-orange);
+  display: inline-block;
+  height: 1em;
+  margin-left: 2px;
+  width: 2px;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Selection */
+::selection {
+  background-color: var(--terminal-selection);
+}
+
+/* Navigation */
+nav {
+  margin: 20px 0;
+}
+
+nav a {
+  color: var(--terminal-orange);
+  margin-right: 20px;
+}
+
+/* Lists */
+ul, ol {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+li::before {
+  color: var(--terminal-orange);
+  content: ">";
+  margin-right: 10px;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--terminal-orange);
+}
+
+/* Posts and Articles */
+.post {
+  margin: 40px 0;
+}
+
+.post-title {
+  color: var(--terminal-orange);
+  font-size: 24px;
+}
+
+.post-meta {
+  color: var(--terminal-text);
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid #3e4451;
+  margin-top: 40px;
+  padding-top: 20px;
 }
 
 /* Terminal content - highest priority for LCP */
@@ -29,14 +190,14 @@ body {
 
 pre {
   background-color: #252525;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--terminal-orange);
   padding: 20px;
   margin: 20px 0;
   overflow-x: auto;
   font-family: 'Fira Code', monospace;
   font-size: 14px;
   line-height: 1.6;
-  color: var(--accent);
+  color: var(--terminal-orange);
   border-radius: 4px;
   -webkit-overflow-scrolling: touch;
   position: relative;
@@ -45,11 +206,11 @@ pre {
   box-sizing: border-box;
   contain: content;
   will-change: transform;
-  box-shadow: var(--terminal-shadow);
+  box-shadow: 0 5px 15px rgba(255, 135, 0, 0.2);
 }
 
 pre code {
-  color: var(--accent);
+  color: var(--terminal-orange);
   font-family: 'Fira Code', monospace;
   background: transparent;
   padding: 0;
@@ -61,13 +222,13 @@ pre code {
 
 .chroma {
   background-color: transparent;
-  color: var(--accent);
+  color: var(--terminal-orange);
 }
 
 /* Terminal prompt styling */
 pre code::before {
   content: "$ ";
-  color: #ff8700;
+  color: var(--terminal-orange);
   opacity: 0.8;
 }
 
@@ -79,7 +240,7 @@ pre code span.output {
 
 /* Directory listing styling */
 pre code span.directory {
-  color: #ff8700;
+  color: var(--terminal-orange);
   font-weight: bold;
 }
 
@@ -113,7 +274,7 @@ pre code span.directory {
 }
 
 .navigation-menu__inner a {
-  color: var(--accent);
+  color: var(--terminal-orange);
   text-decoration: none;
   transition: all 0.3s ease;
 }
@@ -132,13 +293,13 @@ pre code span.directory {
   font-variant: normal;
   text-rendering: auto;
   line-height: 1;
-  color: var(--accent);
+  color: var(--terminal-orange);
 }
 
 /* Essential button styles */
 .button {
-  border: 2px solid var(--accent);
-  color: var(--accent);
+  border: 2px solid var(--terminal-orange);
+  color: var(--terminal-orange);
   padding: 10px 20px;
   text-transform: uppercase;
   font-size: 0.8rem;
@@ -152,25 +313,10 @@ pre code span.directory {
 }
 
 .button:hover {
-  background: var(--accent);
-  color: var(--background);
+  background: var(--terminal-orange);
+  color: var(--terminal-bg);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 135, 0, 0.3);
-}
-
-/* Terminal cursor effect */
-.cursor {
-  display: inline-block;
-  width: 8px;
-  height: 16px;
-  background: var(--accent);
-  margin-left: 5px;
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
 }
 
 /* Essential responsive design */
@@ -212,11 +358,6 @@ pre code span.directory {
 }
 
 /* Terminal theme specific styles */
-::selection {
-  background: rgba(255, 135, 0, 0.3);
-  color: #fff;
-}
-
 ::-moz-selection {
   background: rgba(255, 135, 0, 0.3);
   color: #fff;

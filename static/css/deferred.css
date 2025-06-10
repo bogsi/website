@@ -206,4 +206,153 @@
   box-shadow: 
     20px 0 0 #ffbd2e,
     40px 0 0 #27c93f;
+}
+
+/* Additional Terminal Theme Styles */
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  margin: 20px 0;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #3e4451;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background-color: #21252b;
+  color: var(--terminal-orange);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 3px solid var(--terminal-orange);
+  color: var(--terminal-text);
+  font-style: italic;
+  margin: 20px 0;
+  padding-left: 20px;
+}
+
+/* Images */
+img {
+  border: 2px solid var(--terminal-orange);
+  border-radius: 4px;
+  max-width: 100%;
+}
+
+/* Form Elements */
+input, textarea, select {
+  background-color: #21252b;
+  border: 1px solid var(--terminal-orange);
+  border-radius: 4px;
+  color: var(--terminal-text);
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  padding: 8px 12px;
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--terminal-orange);
+  box-shadow: 0 0 0 2px rgba(255, 135, 0, 0.2);
+  outline: none;
+}
+
+/* Buttons */
+button {
+  background-color: transparent;
+  border: 2px solid var(--terminal-orange);
+  border-radius: 4px;
+  color: var(--terminal-orange);
+  cursor: pointer;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  padding: 8px 16px;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background-color: var(--terminal-orange);
+  color: var(--terminal-bg);
+}
+
+/* Syntax Highlighting */
+.highlight {
+  background-color: #21252b;
+  border-radius: 4px;
+  margin: 20px 0;
+  padding: 20px;
+}
+
+.highlight pre {
+  margin: 0;
+  padding: 0;
+}
+
+/* Terminal Command History */
+.command-history {
+  list-style: none;
+  padding: 0;
+}
+
+.command-history li {
+  margin: 10px 0;
+}
+
+.command-history .command::before {
+  color: var(--terminal-orange);
+  content: "$ ";
+}
+
+.command-history .output {
+  color: var(--terminal-text);
+  margin-left: 20px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  .terminal-window {
+    margin: 0;
+  }
+
+  .terminal-content {
+    padding: 10px;
+  }
+
+  pre {
+    padding: 10px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background-color: white;
+    color: black;
+  }
+
+  .terminal-window {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .terminal-header {
+    display: none;
+  }
 } 

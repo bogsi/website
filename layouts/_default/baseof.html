@@ -5,25 +5,43 @@
     <title>{{ if .IsHome }}{{ $.Site.Title }}{{ else }}{{ .Title }} :: {{ $.Site.Title }}{{ end }}</title>
   {{ end }}
   {{ partial "head.html" . }}
-  {{ partial "custom-head.html" . }}
 </head>
-<body>
-{{ $container := cond ($.Site.Params.FullWidthTheme | default false) "container full" (cond ($.Site.Params.CenterTheme | default false) "container center" "container") }}
+<body class="terminal-theme">
+  <div class="terminal-window">
+    <div class="terminal-header">
+      <div class="terminal-buttons">
+        <span class="terminal-button close"></span>
+        <span class="terminal-button minimize"></span>
+        <span class="terminal-button maximize"></span>
+      </div>
+      <div class="terminal-title">{{ if .IsHome }}~{{ else }}~/{{ .Section }}/{{ .Title }}{{ end }}</div>
+    </div>
 
-<div class="{{- $container -}}{{- cond ($.Site.Params.oneHeadingSize | default false) " headings--one-size" "" }}">
+    <div class="terminal-content">
+      {{ block "header" . }}
+        {{ partial "header.html" . }}
+      {{ end }}
 
-  {{ partial "header.html" . }}
+      <div class="content">
+        {{ block "main" . }}{{ end }}
+      </div>
 
-  <div class="content">
-    {{ block "main" . }}
-    {{ end }}
+      {{ block "footer" . }}
+        {{ partial "footer.html" . }}
+      {{ end }}
+    </div>
   </div>
 
-  {{ block "footer" . }}
-    {{ partial "footer.html" . }}
-    {{ partial "custom-footer.html" . }}
-  {{ end }}
-</div>
-
+  <!-- Terminal cursor animation -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const pre = document.querySelector('pre');
+      if (pre) {
+        const cursor = document.createElement('span');
+        cursor.className = 'cursor';
+        pre.appendChild(cursor);
+      }
+    });
+  </script>
 </body>
 </html> 
