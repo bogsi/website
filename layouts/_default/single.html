@@ -1,43 +1,41 @@
 {{ define "main" }}
-<article class="post terminal-section">
-  <div class="terminal-prompt">
-    <span class="prompt-symbol">$</span> cat {{ .File.BaseFileName }}.md
+<article class="post">
+  <div class="post-header terminal-prompt">
+    <h1 class="post-title">{{ .Title }}</h1>
+
+    {{ if .Params.date }}
+      <div class="post-meta">
+        <span class="post-date">
+          <span class="prompt-symbol">$</span> date
+          {{ .Date.Format "2006-01-02" }}
+        </span>
+        {{ if .Params.Author }}
+          <span class="post-author">
+            <span class="prompt-symbol">$</span> whoami
+            {{ .Params.Author }}
+          </span>
+        {{ end }}
+      </div>
+    {{ end }}
   </div>
 
-  <h1 class="post-title terminal-output">{{ .Title }}</h1>
-  
-  {{ if .Params.date }}
-    <div class="post-meta terminal-output">
-      <span class="post-date">
-        <span class="prompt-symbol">$</span> date
-        {{ .Date.Format "2006-01-02" }}
-      </span>
-      {{ if .Params.Author }}
-        <span class="post-author">
-          <span class="prompt-symbol">$</span> whoami
-          {{ .Params.Author }}
-        </span>
-      {{ end }}
-    </div>
-  {{ end }}
-
-  <div class="post-content terminal-output">
+  <div class="post-content">
     {{ .Content }}
   </div>
 
   {{ if .Params.tags }}
-    <div class="post-tags terminal-output">
+    <div class="post-tags">
       <span class="prompt-symbol">$</span> ls -l tags/
       {{ range .Params.tags }}
-        <a href="{{ (urlize (printf "tags/%s/" .)) | absLangURL }}">{{ . }}</a>
+        <a href="{{ (urlize (printf "tags/%s/" .)) | absLangURL }}" class="tag">{{ . }}</a>
       {{ end }}
     </div>
   {{ end }}
 </article>
 
 {{ if and (.Site.Params.comments) (eq .Site.Params.comments.engine "disqus") (.Site.Params.comments.disqusShortname) }}
-  <div class="terminal-section">
-    <div class="terminal-prompt">
+  <div class="comments">
+    <div class="comments-header">
       <span class="prompt-symbol">$</span> ./load-comments.sh
     </div>
     {{ template "_internal/disqus.html" . }}

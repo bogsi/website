@@ -6,13 +6,17 @@ theme = "terminal"
 # Terminal theme settings
 [params]
   # Terminal theme colors and styling
+  contentTypeName = "posts"
   themeColor = "orange"
   fullWidthTheme = false
   centerTheme = true
   
   # Site information
   author = "Bogomil Roussev"
-  info = "AWS & Terraform Automation Consultant"
+  info = [
+    "AWS & Terraform Automation Consultant",
+    "Specializing in cloud infrastructure and automation solutions"
+  ]
   description = "Cloud Infrastructure and Automation Solutions"
   keywords = "AWS, Terraform, Cloud, Infrastructure, Automation, DevOps"
   
@@ -27,6 +31,10 @@ theme = "terminal"
     disqusShortname = ""
 
 # Social media links
+[[params.social]]
+  name = "email"
+  url = "mailto:bogomil.roussev@gmail.com"
+
 [[params.social]]
   name = "github"
   url = "https://github.com/bogsi"
@@ -65,9 +73,10 @@ theme = "terminal"
 [markup]
   [markup.highlight]
     codeFences = true
-    guessSyntax = true
-    lineNos = false
-    noClasses = false
+    guessSyntax = false
+    lineNos = true
+    lineNumbersInTable = true
+    noClasses = true
     style = "monokai"
 
 # Privacy settings

@@ -5,31 +5,29 @@
     <title>{{ if .IsHome }}{{ $.Site.Title }}{{ else }}{{ .Title }} :: {{ $.Site.Title }}{{ end }}</title>
   {{ end }}
   {{ partial "head.html" . }}
+  <style>
+    :root {
+      --accent: #ff8700;
+      --background: #282c34;
+      --color: #abb2bf;
+      --border-color: #ff8700;
+      --terminal-shadow: 0 5px 15px rgba(255, 135, 0, 0.2);
+    }
+  </style>
 </head>
-<body class="terminal-theme">
-  <div class="terminal-window">
-    <div class="terminal-header">
-      <div class="terminal-buttons">
-        <span class="terminal-button close"></span>
-        <span class="terminal-button minimize"></span>
-        <span class="terminal-button maximize"></span>
-      </div>
-      <div class="terminal-title">{{ if .IsHome }}~{{ else }}~/{{ .Section }}/{{ .Title }}{{ end }}</div>
+<body class="terminal">
+  <div class="container {{ if .Site.Params.fullWidthTheme }}full{{ else }}center{{ end }}">
+    <header class="header">
+      {{ partial "header.html" . }}
+    </header>
+
+    <div class="content">
+      {{ block "main" . }}{{ end }}
     </div>
 
-    <div class="terminal-content">
-      {{ block "header" . }}
-        {{ partial "header.html" . }}
-      {{ end }}
-
-      <div class="content">
-        {{ block "main" . }}{{ end }}
-      </div>
-
-      {{ block "footer" . }}
-        {{ partial "footer.html" . }}
-      {{ end }}
-    </div>
+    <footer class="footer">
+      {{ partial "footer.html" . }}
+    </footer>
   </div>
 
   <!-- Terminal cursor animation -->
