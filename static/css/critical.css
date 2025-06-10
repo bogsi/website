@@ -1,9 +1,10 @@
 /* Critical CSS for above-the-fold content */
 :root {
-  --accent: #00ff00;
-  --background: #000000;
-  --color: #00ff00;
-  --border-color: #00ff00;
+  --accent: #ff8700;
+  --background: #1a1b1d;
+  --color: #fff;
+  --border-color: #ff8700;
+  --terminal-shadow: 0 5px 15px rgba(255, 135, 0, 0.2);
 }
 
 /* Base styles - high priority for terminal display */
@@ -27,7 +28,7 @@ body {
 }
 
 pre {
-  background-color: var(--background);
+  background-color: #252525;
   border: 1px solid var(--accent);
   padding: 20px;
   margin: 20px 0;
@@ -44,6 +45,7 @@ pre {
   box-sizing: border-box;
   contain: content;
   will-change: transform;
+  box-shadow: var(--terminal-shadow);
 }
 
 pre code {
@@ -62,12 +64,33 @@ pre code {
   color: var(--accent);
 }
 
+/* Terminal prompt styling */
+pre code::before {
+  content: "$ ";
+  color: #ff8700;
+  opacity: 0.8;
+}
+
+/* Command output styling */
+pre code span.output {
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* Directory listing styling */
+pre code span.directory {
+  color: #ff8700;
+  font-weight: bold;
+}
+
 /* Critical menu styles */
 .navigation-menu {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   margin: 20px 1px;
+  border-bottom: 1px solid rgba(255, 135, 0, 0.2);
+  padding-bottom: 20px;
 }
 
 .navigation-menu__inner {
@@ -89,6 +112,17 @@ pre code {
   margin-right: 20px;
 }
 
+.navigation-menu__inner a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.navigation-menu__inner a:hover {
+  color: #fff;
+  text-shadow: 0 0 8px rgba(255, 135, 0, 0.5);
+}
+
 /* Critical Font Awesome styles */
 .fa, .fab, .fas {
   -moz-osx-font-smoothing: grayscale;
@@ -98,6 +132,7 @@ pre code {
   font-variant: normal;
   text-rendering: auto;
   line-height: 1;
+  color: var(--accent);
 }
 
 /* Essential button styles */
@@ -110,6 +145,32 @@ pre code {
   font-weight: bold;
   letter-spacing: 0.1em;
   transition: all 0.3s ease;
+  background: transparent;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 2px 8px rgba(255, 135, 0, 0.2);
+}
+
+.button:hover {
+  background: var(--accent);
+  color: var(--background);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 135, 0, 0.3);
+}
+
+/* Terminal cursor effect */
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: var(--accent);
+  margin-left: 5px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Essential responsive design */
@@ -129,6 +190,7 @@ pre code {
   
   .navigation-menu {
     margin: 0;
+    padding-bottom: 15px;
   }
 
   .navigation-menu__inner {
@@ -147,4 +209,15 @@ pre code {
 .post {
   content-visibility: auto;
   contain-intrinsic-size: 0 500px;
+}
+
+/* Terminal theme specific styles */
+::selection {
+  background: rgba(255, 135, 0, 0.3);
+  color: #fff;
+}
+
+::-moz-selection {
+  background: rgba(255, 135, 0, 0.3);
+  color: #fff;
 } 

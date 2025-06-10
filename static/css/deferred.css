@@ -1,32 +1,42 @@
 /* Non-critical styles */
 
+/* Terminal theme specific styles */
+.post-title {
+  color: var(--accent);
+  font-size: 2em;
+  margin-bottom: 30px;
+  text-shadow: 0 0 10px rgba(255, 135, 0, 0.3);
+}
+
 /* Button hover effects */
 .button:hover {
   background: var(--accent);
   color: var(--background);
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 135, 0, 0.3);
 }
 
-/* Social icons */
+/* Social icons with terminal theme */
 .footer-social a,
 .social-links a {
   color: var(--accent);
   margin: 0 15px;
   font-size: 2rem;
   transition: transform 0.3s ease;
+  text-shadow: 0 0 10px rgba(255, 135, 0, 0.2);
 }
 
 .footer-social a:hover,
 .social-links a:hover {
-  opacity: 0.8;
+  color: #fff;
   transform: scale(1.1);
+  text-shadow: 0 0 15px rgba(255, 135, 0, 0.5);
 }
 
-/* Posts and navigation */
+/* Posts and navigation with terminal theme */
 .posts-group {
   margin-top: 40px;
-  border-top: 1px solid var(--accent);
+  border-top: 1px solid rgba(255, 135, 0, 0.2);
   padding-top: 20px;
 }
 
@@ -34,10 +44,12 @@
   color: var(--accent);
   font-size: 1.5em;
   margin-bottom: 20px;
+  text-shadow: 0 0 8px rgba(255, 135, 0, 0.2);
 }
 
 .post-item {
   margin: 10px 0;
+  transition: all 0.3s ease;
 }
 
 .post-item a {
@@ -45,54 +57,72 @@
   justify-content: space-between;
   color: var(--accent);
   text-decoration: none;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
 }
 
 .post-item a:hover {
-  opacity: 0.8;
+  background: rgba(255, 135, 0, 0.1);
+  transform: translateX(5px);
 }
 
 .post-day {
-  color: var(--accent);
-  opacity: 0.7;
+  color: rgba(255, 255, 255, 0.7);
 }
 
-/* Post content styles */
+/* Post content styles with terminal theme */
 .post-content {
   margin: 20px 0;
+  line-height: 1.8;
 }
 
 .post-content a {
   color: var(--accent);
-  text-decoration: underline;
+  text-decoration: none;
+  border-bottom: 1px dashed var(--accent);
+  transition: all 0.3s ease;
 }
 
 .post-content a:hover {
-  text-decoration: none;
+  color: #fff;
+  border-bottom-style: solid;
+  text-shadow: 0 0 8px rgba(255, 135, 0, 0.5);
 }
 
 .post-content pre {
-  background-color: var(--background);
+  background-color: #252525;
   border: 1px solid var(--accent);
   padding: 20px;
   margin: 20px 0;
   overflow-x: auto;
+  box-shadow: var(--terminal-shadow);
 }
 
 .post-content code {
   color: var(--accent);
   font-family: 'Fira Code', monospace;
+  text-shadow: 0 0 2px rgba(255, 135, 0, 0.2);
 }
 
-/* Service and About sections */
+/* Service and About sections with terminal theme */
 .service-cta,
 .about-cta {
   margin: 40px 0;
   text-align: center;
+  padding: 30px;
+  background: rgba(255, 135, 0, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 135, 0, 0.2);
+  box-shadow: var(--terminal-shadow);
 }
 
-/* Certificate providers section */
+/* Certificate providers section with terminal theme */
 .certificate-providers {
   margin: 40px 0;
+  padding: 20px;
+  background: rgba(255, 135, 0, 0.05);
+  border-radius: 8px;
 }
 
 .provider-icons {
@@ -105,15 +135,27 @@
 .provider-icon {
   text-align: center;
   transition: transform 0.3s ease;
+  padding: 15px;
+  background: rgba(37, 37, 37, 0.5);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 135, 0, 0.1);
 }
 
 .provider-icon:hover {
-  transform: scale(1.1);
+  transform: translateY(-5px);
+  box-shadow: var(--terminal-shadow);
+  border-color: var(--accent);
 }
 
 .provider-icon img {
   max-width: 80px;
   height: auto;
+  filter: brightness(0.9) sepia(0.2) hue-rotate(5deg);
+  transition: all 0.3s ease;
+}
+
+.provider-icon:hover img {
+  filter: brightness(1) sepia(0) hue-rotate(0deg);
 }
 
 /* Responsive design for non-critical elements */
@@ -125,10 +167,43 @@
   .provider-icon img {
     max-width: 60px;
   }
+
+  .post-title {
+    font-size: 1.5em;
+  }
+
+  .service-cta,
+  .about-cta {
+    padding: 20px;
+  }
 }
 
 @media (max-width: 480px) {
   .provider-icons {
     grid-template-columns: 1fr;
   }
+
+  .post-item a {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+
+/* Terminal theme decorative elements */
+.terminal-decoration {
+  position: relative;
+}
+
+.terminal-decoration::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 10px;
+  width: 12px;
+  height: 12px;
+  background: #ff5f56;
+  border-radius: 50%;
+  box-shadow: 
+    20px 0 0 #ffbd2e,
+    40px 0 0 #27c93f;
 } 
