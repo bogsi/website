@@ -1,5 +1,8 @@
-{{ $critical := resources.Get "css/critical.css" | minify | fingerprint }}
-<style>{{ $critical.Content | safeCSS }}</style>
+{{ with resources.Get "css/critical.css" }}
+  {{ with .Content }}
+    <style>{{ . | safeCSS }}</style>
+  {{ end }}
+{{ end }}
 
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,13 +20,25 @@
 {{ template "_internal/google_analytics.html" . }}
 
 <!-- Deferred CSS -->
-{{ $deferred := resources.Get "css/deferred.css" | minify | fingerprint }}
-{{ $menu := resources.Get "css/menu.css" | minify | fingerprint }}
-<link rel="preload" href="{{ $deferred.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<link rel="preload" href="{{ $menu.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+{{ with resources.Get "css/deferred.css" }}
+  {{ $deferred := . | minify | fingerprint }}
+  <link rel="preload" href="{{ $deferred.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+{{ end }}
+
+{{ with resources.Get "css/menu.css" }}
+  {{ $menu := . | minify | fingerprint }}
+  <link rel="preload" href="{{ $menu.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+{{ end }}
+
 <noscript>
-  <link rel="stylesheet" href="{{ $deferred.RelPermalink }}">
-  <link rel="stylesheet" href="{{ $menu.RelPermalink }}">
+  {{ with resources.Get "css/deferred.css" }}
+    {{ $deferred := . | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $deferred.RelPermalink }}">
+  {{ end }}
+  {{ with resources.Get "css/menu.css" }}
+    {{ $menu := . | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $menu.RelPermalink }}">
+  {{ end }}
 </noscript>
 
 <!-- Async Font Awesome -->
