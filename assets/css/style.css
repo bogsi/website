@@ -859,3 +859,61 @@ figure figcaption {
     font-size: 1.2rem;
   }
 }
+
+/* Projects list specific styles */
+.posts {
+  width: 100%;
+  max-width: 800px;
+}
+
+.post.on-list {
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.post.on-list:last-of-type {
+  border-bottom: none;
+}
+
+.post.on-list .post-title {
+  font-size: 1.625rem;
+  margin-bottom: 10px;
+}
+
+.post.on-list .post-meta {
+  margin-bottom: 15px;
+  color: color-mix(in srgb, var(--color) 80%, transparent);
+  font-size: 0.9rem;
+}
+
+.post.on-list .post-content {
+  margin: 15px 0;
+  color: var(--color);
+}
+
+.post.on-list .read-more {
+  display: inline-block;
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--accent);
+  padding: 5px 0;
+  transition: color 0.2s ease;
+}
+
+.post.on-list .read-more:hover {
+  color: color-mix(in srgb, var(--accent) 80%, white);
+}
+
+/* Optimize performance */
+.post.on-list {
+  contain: content;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+@media (max-width: 684px) {
+  .post.on-list .post-title {
+    font-size: 1.375rem;
+  }
+}
