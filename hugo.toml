@@ -2,37 +2,30 @@ baseURL = "https://roussev.dev"
 languageCode = "en-us"
 title = "Terminal"
 theme = "terminal"
-paginate = 5
 
-# Terminal theme settings
+[pagination]
+  pagerSize = 5
+
 [params]
-  # Terminal theme colors and styling
+  # dir name of your main content (default is `content/posts`).
+  # the list of articles will be on this page
   contentTypeName = "posts"
+
+  # ["orange", "blue", "red", "green", "pink"]
+  # default is orange
   themeColor = "orange"
-  fullWidthTheme = false
-  centerTheme = true
-  
-  # Site information
-  author = "Bogomil Roussev"
-  info = [
-    "AWS & Terraform Automation Consultant",
-    "Specializing in cloud infrastructure and automation solutions"
-  ]
-  description = "Cloud Infrastructure and Automation Solutions"
-  keywords = "AWS, Terraform, Cloud, Infrastructure, Automation, DevOps"
-  
-  # Menu configuration
+
+  # if you set this to 0, only submenu trigger will be visible
   showMenuItems = 4
-  
-  # Comments configuration
-  [params.comments]
-    # Disable comments by default
-    enabled = false
-    engine = "none"
-    disqusShortname = ""
 
   # show selector to switch language
   showLanguageSelector = false
+
+  # set theme to full screen width
+  fullWidthTheme = false
+
+  # center theme with default width
+  centerTheme = true
 
   # if your resource directory contains an image called `cover.(jpg|png|webp)`,
   # then the file will be used as a cover automatically.
@@ -86,10 +79,9 @@ paginate = 5
 [markup]
   [markup.highlight]
     codeFences = true
-    guessSyntax = false
-    lineNos = true
-    lineNumbersInTable = true
-    noClasses = true
+    guessSyntax = true
+    lineNos = false
+    noClasses = false
     style = "monokai"
 
 # Privacy settings
@@ -100,7 +92,7 @@ paginate = 5
     disable = true
   [privacy.instagram]
     disable = true
-  [privacy.twitter]
+  [privacy.x]
     disable = true
   [privacy.vimeo]
     disable = true
@@ -160,7 +152,7 @@ paginate = 5
   resampleFilter = "lanczos"
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS"]
 
 [outputFormats]
   [outputFormats.JSON]
