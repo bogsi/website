@@ -1,6 +1,6 @@
 baseURL = "https://roussev.dev"
 languageCode = "en-us"
-title = "Terminal"
+title = "Bogomil Roussev"
 theme = "terminal"
 
 [pagination]
@@ -102,8 +102,8 @@ theme = "terminal"
 [languages]
   [languages.en]
     languageName = "English"
-    title = "Terminal"
-    subtitle = "A simple, retro theme for Hugo"
+    title = "Bogomil Roussev"
+    subtitle = "AWS & Terraform Automation Consultant"
     owner = "Bogomil Roussev"
     keywords = "AWS, Terraform, Cloud, Infrastructure, Automation, DevOps"
     copyright = ""
@@ -116,7 +116,7 @@ theme = "terminal"
     missingBackButtonLabel = "Back to home page"
 
     [languages.en.params.logo]
-      logoText = "Terminal"
+      logoText = "Bogomil Roussev"
       logoHomeLink = "/"
 
     [languages.en.menu]

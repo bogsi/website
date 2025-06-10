@@ -1,53 +1,85 @@
 +++
 title = "Services"
-type = "page"
 +++
 
-# DevOps & Cloud Services
+# Cloud Infrastructure Services
+
+```bash
+$ ls -l services/
+drwxr-xr-x  AWS-Management/
+drwxr-xr-x  Terraform-Automation/
+drwxr-xr-x  CI-CD-Pipeline/
+drwxr-xr-x  Support/
+```
 
 ## AWS Management & Migration
 
-- Full infrastructure audit and optimization
-- Migration planning and execution
-- Cost analysis and optimization strategies
-- Security best practices implementation
-- Performance monitoring and scaling
-- Disaster recovery planning
+```yaml
+Services:
+  - Full infrastructure audit and optimization
+  - Migration planning and execution
+  - Cost analysis and optimization
+  - Security best practices implementation
+  - Performance monitoring and scaling
+  - Disaster recovery planning
+```
 
 ## Terraform Automation
 
-- Custom module development
-- State management and optimization
-- Multi-environment setup
-- Version control integration
-- Documentation and knowledge transfer
-- Best practices implementation
-- Automated testing and validation
+```yaml
+Expertise:
+  - Custom module development
+  - State management and optimization
+  - Multi-environment setup
+  - Version control integration
+  - Documentation and knowledge transfer
+  - Best practices implementation
+  - Automated testing and validation
+```
 
 ## CI/CD Pipeline Development
 
-- Custom pipeline design and implementation
-- Integration with popular tools (Jenkins, GitHub Actions, GitLab CI)
-- Automated testing integration
-- Deployment strategy implementation
-- Security scanning integration
-- Monitoring and alerting setup
-- Performance optimization
+```yaml
+Features:
+  - Custom pipeline design
+  - Integration with popular tools
+    - Jenkins
+    - GitHub Actions
+    - GitLab CI
+  - Automated testing integration
+  - Deployment strategy implementation
+  - Security scanning integration
+  - Monitoring and alerting setup
+  - Performance optimization
+```
 
 ## Subscription Support
 
-- 24/7 infrastructure monitoring
-- Regular security audits
-- Performance optimization
-- Cost optimization reviews
-- Monthly reporting and recommendations
-- Priority incident response
-- Technical consultation and advisory
+```yaml
+Support Tiers:
+  24/7 Monitoring:
+    - Infrastructure monitoring
+    - Performance tracking
+    - Alert management
+  
+  Regular Maintenance:
+    - Security audits
+    - Performance optimization
+    - Cost optimization reviews
+    
+  Consulting:
+    - Monthly reporting
+    - Technical consultation
+    - Strategic planning
+```
 
-## Contact Information
+## Get in Touch
 
-📧 Email: [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com)
-📱 Phone: [+359 878 880 112](tel:+359878880112)
-💼 LinkedIn: [linkedin.com/in/bogomilroussev](https://linkedin.com/in/bogomilroussev)
+```bash
+$ cat contact_info.txt
+📧 Email: bogomil.roussev@gmail.com
+📱 Phone: +359 878 880 112
+💼 LinkedIn: linkedin.com/in/bogomilroussev
 
-> 🚀 Ready to optimize your cloud infrastructure? Let's transform your infrastructure into a well-oiled machine!
+$ echo "Ready to optimize your cloud infrastructure?"
+> 🚀 Let's transform your infrastructure into a well-oiled machine!

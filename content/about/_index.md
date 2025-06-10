@@ -1,47 +1,79 @@
 +++
 title = "About Me"
-type = "page"
 +++
 
-### About Me
+# About Me
 
 Results-driven Cloud Infrastructure Engineer with extensive experience in AWS,
 Terraform, and DevOps practices. Specializing in building and optimizing
 scalable cloud solutions that drive business efficiency and innovation.
 
-With deep expertise in hardware infrastructure, server architecture, and datacenter operations,
-I bring a comprehensive understanding of both physical and cloud environments. My experience spans
-multiple tiers of support, from hardware troubleshooting to complex cloud architecture design.
+## Experience & Expertise
+
+```bash
+$ whoami
+> Cloud Infrastructure Engineer
+> AWS Solutions Architect
+> Terraform Specialist
+
+$ cat skills.txt
+Languages:
+  - Python
+  - Bash
+  - HCL (Terraform)
+  
+Infrastructure:
+  - AWS Cloud Architecture
+  - Infrastructure as Code
+  - CI/CD Pipeline Design
+  - Container Orchestration
+  - High Availability Systems
+  
+Tools & Platforms:
+  - Terraform
+  - AWS Services
+  - Docker & Kubernetes
+  - Jenkins & GitHub Actions
+  - Monitoring & Logging
+```
+
+## Technical Background
+
+```yaml
+Hardware & Infrastructure:
+  - Enterprise server hardware (Dell, HP, Cisco UCS)
+  - Storage systems (SAN, NAS, DAS)
+  - Network infrastructure
+  - Data center operations
+  - High-availability systems
+  - Hardware virtualization
+
+Cloud & Multi-Cloud:
+  - AWS architecture
+  - Hybrid cloud solutions
+  - Multi-cloud strategy
+  - Cloud migration
+  - Infrastructure as Code
+  - Container orchestration
+
+Support Expertise:
+  - L1: Hardware support
+  - L2: System administration
+  - L3: Architecture design
+  - L4: Strategic planning
+  - L5: Enterprise architecture
+```
 
 ## Let's Connect
 
-* Email: <bogomil.roussev@gmail.com>
-* LinkedIn: linkedin.com/in/bogomilroussev
-* GitHub: github.com/bogsi
-* Phone: +359 878 880 112
+```bash
+$ cat contact.txt
+Email: bogomil.roussev@gmail.com
+LinkedIn: linkedin.com/in/bogomilroussev
+GitHub: github.com/bogsi
+Phone: +359 878 880 112
 
-### Technical Expertise
-
-#### Hardware & Infrastructure
-- Enterprise server hardware (Dell, HP, Cisco UCS)
-- Storage systems (SAN, NAS, DAS)
-- Network infrastructure (Cisco, Juniper)
-- Data center operations and management
-- High-availability systems design
-- Hardware virtualization (VMware, Hyper-V)
-
-#### Cloud & Multi-Cloud
-- AWS, Azure, and GCP architecture
-- Hybrid cloud solutions
-- Multi-cloud strategy and implementation
-- Cloud migration and optimization
-- Infrastructure as Code (Terraform, CloudFormation)
-- Container orchestration (Kubernetes, Docker Swarm)
-
-#### Support Tiers
-- L1: Hardware and basic infrastructure support
-- L2: System administration and troubleshooting
-- L3: Architecture design and implementation
-- L4: Strategic planning and optimization
-- L5: Enterprise architecture and innovation
+$ echo "Ready to discuss your cloud infrastructure needs?"
+> Let's transform your infrastructure into a well-oiled machine!
+```
 
