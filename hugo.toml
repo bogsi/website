@@ -1,7 +1,8 @@
 baseURL = "https://roussev.dev"
 languageCode = "en-us"
-title = "Bogomil Roussev"
+title = "Terminal"
 theme = "terminal"
+paginate = 5
 
 # Terminal theme settings
 [params]
@@ -29,6 +30,18 @@ theme = "terminal"
     enabled = false
     engine = "none"
     disqusShortname = ""
+
+  # show selector to switch language
+  showLanguageSelector = false
+
+  # if your resource directory contains an image called `cover.(jpg|png|webp)`,
+  # then the file will be used as a cover automatically.
+  # default is false
+  autoCover = true
+
+  # set post to show the last updated
+  # If you use git, you can set `enableGitInfo` to `true` and then post will automatically get the last updated
+  showLastUpdated = false
 
 # Social media links
 [[params.social]]
@@ -97,11 +110,11 @@ theme = "terminal"
 [languages]
   [languages.en]
     languageName = "English"
-    title = "Bogomil Roussev"
-    subtitle = "AWS & Terraform Automation Consultant"
+    title = "Terminal"
+    subtitle = "A simple, retro theme for Hugo"
     owner = "Bogomil Roussev"
-    keywords = "AWS, Terraform, DevOps, Automation, Cloud Infrastructure"
-    copyright = "© 2025 Bogomil Roussev"
+    keywords = "AWS, Terraform, Cloud, Infrastructure, Automation, DevOps"
+    copyright = ""
     menuMore = "Show more"
     readMore = "Read more"
     readOtherPosts = "Read other posts"
@@ -111,29 +124,29 @@ theme = "terminal"
     missingBackButtonLabel = "Back to home page"
 
     [languages.en.params.logo]
-      logoText = "Bogomil Roussev"
+      logoText = "Terminal"
       logoHomeLink = "/"
 
     [languages.en.menu]
       [[languages.en.menu.main]]
+        identifier = "about"
+        name = "About"
+        url = "/about"
+        weight = 1
+      [[languages.en.menu.main]]
         identifier = "services"
         name = "Services"
-        url = "/services/"
-        weight = 1
+        url = "/services"
+        weight = 2
       [[languages.en.menu.main]]
         identifier = "projects"
         name = "Projects"
-        url = "/projects/"
-        weight = 2
-      [[languages.en.menu.main]]
-        identifier = "about"
-        name = "About"
-        url = "/about/"
+        url = "/projects"
         weight = 3
       [[languages.en.menu.main]]
         identifier = "blog"
         name = "Blog"
-        url = "https://medium.com/@bogomilroussev"
+        url = "/blog"
         weight = 4
 
 [build]

@@ -1,0 +1,11 @@
+{{ if $.Site.Copyright }}
+  <div class="copyright">
+    {{ $.Site.Copyright }}
+  </div>
+{{ else }}
+  <div class="copyright">
+    <span>© {{ now.Year }} Powered by <a href="http://gohugo.io">Hugo</a></span>
+    <span>::</span>
+    <span>Theme made by <a href="https://github.com/panr">panr</a></span>
+  </div>
+{{ end }} 
