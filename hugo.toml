@@ -1,55 +1,89 @@
-baseURL = 'https://roussev.dev'
-languageCode = 'en-us'
-title = 'Bogomil Roussev | AWS & Terraform Automation Consultant'
-theme = 'terminal'
+baseURL = "https://roussev.dev"
+languageCode = "en-us"
+title = "Bogomil Roussev"
+theme = "terminal"
 
+# Terminal theme settings
 [params]
-  # dir name of your main content (default is `content/posts`).
-  contentTypeName = "posts"
-
-  # Set theme colors
-  themeColor = "green"
-
-  # show selector to switch language
-  showLanguageSelector = false
-
-  # set theme to full screen width
-  fullWidthTheme = true
-
-  # center theme with default width
+  # Terminal theme colors and styling
+  themeColor = "orange"
+  fullWidthTheme = false
   centerTheme = true
+  
+  # Site information
+  author = "Bogomil Roussev"
+  info = "AWS & Terraform Automation Consultant"
+  description = "Cloud Infrastructure and Automation Solutions"
+  keywords = "AWS, Terraform, Cloud, Infrastructure, Automation, DevOps"
+  
+  # Menu configuration
+  showMenuItems = 4
+  
+  # Comments configuration
+  [params.comments]
+    # Disable comments by default
+    enabled = false
+    engine = "none"
+    disqusShortname = ""
 
-  # if your resource directory contains an image called `cover.(jpg|png|webp)`,
-  # then the file will be used as a cover automatically.
-  autoCover = true
+# Social media links
+[[params.social]]
+  name = "github"
+  url = "https://github.com/bogsi"
 
-  # Show reading time
-  readingTime = true
+[[params.social]]
+  name = "linkedin"
+  url = "https://linkedin.com/in/bogomilroussev"
 
-  # Show table of contents
-  Toc = true
+# Menu items
+[menu]
+  [[menu.main]]
+    identifier = "services"
+    name = "Services"
+    url = "/services"
+    weight = 1
+  
+  [[menu.main]]
+    identifier = "projects"
+    name = "Projects"
+    url = "/projects"
+    weight = 2
+  
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about"
+    weight = 3
+  
+  [[menu.main]]
+    identifier = "blog"
+    name = "Blog"
+    url = "/posts"
+    weight = 4
 
-  # Author info
-  author = 'Bogomil Roussev'
-  email = 'bogomil.roussev@gmail.com'
-  phone = '+359 878 880 112'
-  linkedin = 'https://www.linkedin.com/in/bogomilroussev/'
-  github = 'https://github.com/bogsi'
+# Syntax highlighting
+[markup]
+  [markup.highlight]
+    codeFences = true
+    guessSyntax = true
+    lineNos = false
+    noClasses = false
+    style = "monokai"
 
-  # Theme colors
-  [params.style]
-    backgroundColor = "#000000"
-    foregroundColor = "#00ff00"
-    accentColor = "#00ff00"
-    borderColor = "#00ff00"
-
-  # Performance optimizations
-  enableMinify = true
-  enableGzip = true
-  enableBrotli = true
-  enableImageProcessing = true
-  enableWebp = true
-  enableCache = true
+# Privacy settings
+[privacy]
+  [privacy.disqus]
+    disable = true
+  [privacy.googleAnalytics]
+    disable = true
+  [privacy.instagram]
+    disable = true
+  [privacy.twitter]
+    disable = true
+  [privacy.vimeo]
+    disable = true
+  [privacy.youtube]
+    disable = true
 
 [languages]
   [languages.en]
@@ -92,10 +126,6 @@ theme = 'terminal'
         name = "Blog"
         url = "https://medium.com/@bogomilroussev"
         weight = 4
-
-[markup]
-  [markup.highlight]
-    noClasses = false
 
 [build]
   writeStats = true

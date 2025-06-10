@@ -35,7 +35,7 @@
   {{ end }}
 </article>
 
-{{ if .Site.DisqusShortname }}
+{{ if and (.Site.Params.comments) (eq .Site.Params.comments.engine "disqus") (.Site.Params.comments.disqusShortname) }}
   <div class="terminal-section">
     <div class="terminal-prompt">
       <span class="prompt-symbol">$</span> ./load-comments.sh
