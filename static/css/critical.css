@@ -6,11 +6,60 @@
   --border-color: #00ff00;
 }
 
-/* Base styles */
+/* Base styles - high priority for terminal display */
 body {
   background: var(--background);
   color: var(--color);
   font-family: 'Fira Code', monospace;
+  margin: 0;
+  padding: 20px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Terminal content - highest priority for LCP */
+.post {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+pre {
+  background-color: var(--background);
+  border: 1px solid var(--accent);
+  padding: 20px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--accent);
+  border-radius: 4px;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  contain: content;
+  will-change: transform;
+}
+
+pre code {
+  color: var(--accent);
+  font-family: 'Fira Code', monospace;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: normal;
+  word-wrap: normal;
+}
+
+.chroma {
+  background-color: transparent;
+  color: var(--accent);
 }
 
 /* Critical menu styles */
@@ -51,21 +100,6 @@ body {
   line-height: 1;
 }
 
-/* Terminal content - critical for homepage */
-.terminal-output {
-  background-color: var(--background);
-  border: 1px solid var(--accent);
-  padding: 20px;
-  margin: 20px 0;
-  overflow-x: auto;
-}
-
-.terminal-output code {
-  color: var(--accent);
-  font-family: 'Fira Code', monospace;
-  background: transparent;
-}
-
 /* Essential button styles */
 .button {
   border: 2px solid var(--accent);
@@ -80,9 +114,17 @@ body {
 
 /* Essential responsive design */
 @media (max-width: 768px) {
-  .terminal-output {
-    padding: 10px;
-    font-size: 0.9em;
+  body {
+    padding: 15px;
+  }
+
+  pre {
+    padding: 15px;
+    font-size: 13px;
+    margin: 15px -15px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
   }
   
   .navigation-menu {
@@ -99,4 +141,10 @@ body {
     margin: 0;
     padding: 5px;
   }
+}
+
+/* Content visibility optimization */
+.post {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
 } 
