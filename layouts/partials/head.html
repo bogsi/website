@@ -18,8 +18,21 @@
 
 <!-- Deferred CSS -->
 {{ $deferred := resources.Get "css/deferred.css" | minify | fingerprint }}
+{{ $menu := resources.Get "css/menu.css" | minify | fingerprint }}
 <link rel="preload" href="{{ $deferred.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="{{ $deferred.RelPermalink }}"></noscript>
+<link rel="preload" href="{{ $menu.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link rel="stylesheet" href="{{ $deferred.RelPermalink }}">
+  <link rel="stylesheet" href="{{ $menu.RelPermalink }}">
+</noscript>
+
+<!-- Async Font Awesome -->
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
+
+<!-- Preload Font Awesome font files -->
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- Icons -->
 <link rel="shortcut icon" href="{{ "favicon.png" | absURL }}">
