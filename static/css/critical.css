@@ -63,13 +63,14 @@ body {
   flex-grow: 1;
   font-size: 14px;
   text-align: center;
+
 }
 
 /* Terminal Logo */
 .terminal-logo {
-  position: absolute;
-  top: 50px;
-  left: 10px;
+  position: relative;
+  top: 55px;
+  left: 5px;
   width: 40px;
   height: 40px;
   z-index: 100;
