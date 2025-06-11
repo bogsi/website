@@ -22,15 +22,14 @@
         {{ if .Site.Params.logo.logoText }}
           <div class="header__logo">
             {{ partial "logo.html" . }}
+            <div class="terminal-logo">
+              <img src="/logo.png" alt="roussev.dev logo" />
+            </div>
           </div>
         {{ end }}
         
         <div class="header__right">
           {{ partial "menu.html" . }}
-        </div>
-
-        <div class="terminal-logo">
-          <img src="/logo.png" alt="roussev.dev logo" />
         </div>
       </div>
     </header>
