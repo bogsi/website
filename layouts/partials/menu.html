@@ -3,7 +3,20 @@
   <ul class="menu__inner menu__inner--desktop">
     {{ if .Site.Params.showMenuItems | default false }}
       {{ range first .Site.Params.showMenuItems .Site.Menus.main }}
-        <li><a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>{{ .Name }}</a></li>
+        <li>
+          <a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>
+            {{ if eq .Name "About" }}
+              <i class="fas fa-user-terminal"></i>
+            {{ else if eq .Name "Blog" }}
+              <i class="fas fa-terminal"></i>
+            {{ else if eq .Name "Projects" }}
+              <i class="fas fa-code"></i>
+            {{ else if eq .Name "Services" }}
+              <i class="fas fa-cogs"></i>
+            {{ end }}
+            <span>{{ .Name }}</span>
+          </a>
+        </li>
       {{ end }}
       {{ if gt (len .Site.Menus.main) .Site.Params.showMenuItems }}
         <ul class="menu__sub-inner">
@@ -22,7 +35,20 @@
 
   <ul class="menu__inner menu__inner--mobile">
     {{ range .Site.Menus.main }}
-      <li><a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>{{ .Name }}</a></li>
+      <li>
+        <a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>
+          {{ if eq .Name "About" }}
+            <i class="fas fa-user-terminal"></i>
+          {{ else if eq .Name "Blog" }}
+            <i class="fas fa-terminal"></i>
+          {{ else if eq .Name "Projects" }}
+            <i class="fas fa-code"></i>
+          {{ else if eq .Name "Services" }}
+            <i class="fas fa-cogs"></i>
+          {{ end }}
+          <span>{{ .Name }}</span>
+        </a>
+      </li>
     {{ end }}
   </ul>
 </nav>

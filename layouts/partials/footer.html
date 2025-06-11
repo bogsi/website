@@ -1,11 +1,24 @@
-{{ if $.Site.Copyright }}
-  <div class="copyright">
-    {{ $.Site.Copyright }}
+  <div class="social-links">
+    <a href="mailto:bogomil.roussev@gmail.com" class="social-link" aria-label="Email me">
+      <i class="fas fa-envelope"></i>
+      <span>bogomil.roussev@gmail.com</span>
+    </a>
+    <a href="https://www.linkedin.com/in/bogomilroussev/" class="social-link" target="_blank" rel="noopener" aria-label="LinkedIn Profile">
+      <i class="fab fa-linkedin"></i>
+      <span>LinkedIn Profile</span>
+    </a>
+    <a href="https://github.com/bogomilroussev" class="social-link" target="_blank" rel="noopener" aria-label="GitHub Profile">
+      <i class="fab fa-github"></i>
+      <span>GitHub Profile</span>
+    </a>
   </div>
-{{ else }}
+  
   <div class="copyright">
-    <span>© {{ now.Year }} Powered by <a href="http://gohugo.io">Hugo</a></span>
-    <span>::</span>
-    <span>Theme made by <a href="https://github.com/panr">panr</a></span>
-  </div>
-{{ end }} 
+    {{ if $.Site.Copyright }}
+      {{ $.Site.Copyright }}
+    {{ else }}
+      <span>© {{ now.Year }} Powered by <a href="http://gohugo.io">Hugo</a></span>
+      <span>::</span>
+      <span>Theme made by <a href="https://github.com/panr">panr</a></span>
+    {{ end }}
+  </div> 
