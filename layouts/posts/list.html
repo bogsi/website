@@ -6,9 +6,11 @@
       {{ .Content }}
     </div>
 
+    {{ $posts := where .Site.RegularPages "Type" "posts" }}
+    {{ if $posts }}
     <div class="posts-group">
       <div class="post-year">All Posts</div>
-      {{ range .Pages }}
+      {{ range $posts }}
         <div class="post-item">
           <a href="{{ .RelPermalink }}">
             <span class="post-title">{{ .Title }}</span>
@@ -17,5 +19,11 @@
         </div>
       {{ end }}
     </div>
+    {{ else }}
+    <div class="posts-group">
+      <div class="post-year">No posts yet</div>
+      <div class="post-item">Check back soon for new content!</div>
+    </div>
+    {{ end }}
   </div>
 {{ end }} 

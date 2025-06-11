@@ -1,6 +1,6 @@
 +++
 title = "Blog"
-type = "posts"
+description = "My thoughts and findings on AWS, Terraform, and cloud automation"
 +++
 
 ```terminal

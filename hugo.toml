@@ -18,6 +18,29 @@ theme = "terminal"
   # if you set this to 0, only submenu trigger will be visible
   showMenuItems = 4
 
+# Main menu configuration
+[menu]
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    url = "/about"
+    weight = 1
+  [[menu.main]]
+    identifier = "blog"
+    name = "Blog"
+    url = "/posts"
+    weight = 2
+  [[menu.main]]
+    identifier = "projects"
+    name = "Projects"
+    url = "/projects"
+    weight = 3
+  [[menu.main]]
+    identifier = "services"
+    name = "Services"
+    url = "/services"
+    weight = 4
+
   # show selector to switch language
   showLanguageSelector = false
 
