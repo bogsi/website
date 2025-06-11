@@ -6,7 +6,7 @@
         <li>
           <a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>
             {{ if eq .Name "About" }}
-              <i class="fas fa-user-terminal"></i>
+              <i class="fas fa-book"></i>
             {{ else if eq .Name "Blog" }}
               <i class="fas fa-terminal"></i>
             {{ else if eq .Name "Projects" }}

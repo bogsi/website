@@ -771,8 +771,26 @@ button {
 }
 
 .footer .social-link i {
-  font-size: 1.1em;
-  color: var(--accent);
+  background: var(--accent);
+  color: var(--background);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.footer .social-link:hover i {
+  transform: scale(1.1);
+  background: var(--color);
+  color: var(--background);
+}
+
+.footer .social-link span {
+  font-size: 0.9rem;
 }
 
 .footer .copyright {
@@ -792,6 +810,12 @@ button {
     width: 100%;
     max-width: 300px;
     justify-content: center;
+  }
+
+  .footer .social-link i {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
   }
 }
 
@@ -1169,8 +1193,26 @@ figure figcaption {
 }
 
 .footer .social-link i {
-  font-size: 1.1em;
-  color: var(--accent);
+  background: var(--accent);
+  color: var(--background);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.footer .social-link:hover i {
+  transform: scale(1.1);
+  background: var(--color);
+  color: var(--background);
+}
+
+.footer .social-link span {
+  font-size: 0.9rem;
 }
 
 .footer .copyright {
@@ -1190,6 +1232,12 @@ figure figcaption {
     width: 100%;
     max-width: 300px;
     justify-content: center;
+  }
+
+  .footer .social-link i {
+    width: 28px;
+    height: 28px;
+    font-size: 0.9rem;
   }
 }
 
