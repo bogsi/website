@@ -1055,7 +1055,7 @@ figure figcaption {
 
 .social-link {
   display: flex;
-  align-items: center;
+  align-items: left;
   gap: 12px;
   padding: 12px;
   text-decoration: none;
@@ -1082,8 +1082,3 @@ figure figcaption {
   font-size: 0.95em;
 }
 
-@media (max-width: 684px) {
-  .certification-badge img {
-    max-width: 180px;
-  }
-}
