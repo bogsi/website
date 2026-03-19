@@ -16,10 +16,10 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with your actual domain
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=["https://roussev.dev"],
+    allow_credentials=False,
+    allow_methods=["POST"],
+    allow_headers=["Content-Type"],
 )
 
 class ChatMessage(BaseModel):
@@ -56,7 +56,7 @@ async def chat(chat_message: ChatMessage):
         return {"response": ai_response}
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="An internal error occurred. Please try again later.")
 
 if __name__ == "__main__":
     import uvicorn
