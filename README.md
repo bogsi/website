@@ -15,6 +15,16 @@ git clone https://github.com/bogsi/personal-website.git
 cd personal-website
 ```
 
+
+
+
+
+
+
+
+
+
+
 2. Start the Hugo development server:
 ```bash
 hugo server -D
