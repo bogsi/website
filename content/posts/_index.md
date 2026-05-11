@@ -14,11 +14,8 @@ $ cat README.txt
 Welcome to my blog. Here I share my thoughts and findings on AWS, Terraform,
 and all things cloud automation.
 
-$ python3 connect_medium.py
-┌────────────────────────────────────────────────────────────┐
-│ 🚀 [Visit my Medium Blog](https://medium.com/@bogomilroussev) │
-│ for more articles on AWS, Terraform, and cloud automation  │
-└────────────────────────────────────────────────────────────┘
+$ echo "More posts on Medium..."
+```
 
-Connecting to Medium blog...
-``` 
+> **📝 Read more on Medium** — longer articles on AWS, Terraform, and cloud automation:
+> [medium.com/@bogomilroussev](https://medium.com/@bogomilroussev)
