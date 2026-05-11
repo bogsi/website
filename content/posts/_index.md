@@ -14,8 +14,8 @@ $ cat README.txt
 Welcome to my blog. Here I share my thoughts and findings on AWS, Terraform,
 and all things cloud automation.
 
-$ echo "More posts on Medium..."
-```
-
 > **📝 Read more on Medium** — longer articles on AWS, Terraform, and cloud automation:
 > [medium.com/@bogomilroussev](https://medium.com/@bogomilroussev)
+
+$ echo "More posts on Medium..."
+```
