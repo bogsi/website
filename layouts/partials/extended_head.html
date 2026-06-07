@@ -9,6 +9,11 @@
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/jetbrains-mono@1.0.6/css/jetbrains-mono.min.css" as="style">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jetbrains-mono@1.0.6/css/jetbrains-mono.min.css">
 
+<!-- Order form styles -->
+{{ if eq .Section "order" }}
+<link rel="stylesheet" href="{{ (resources.Get "css/order.css" | resources.Minify | resources.Fingerprint).RelPermalink }}">
+{{ end }}
+
 <!-- Custom styles -->
 <style>
   :root {

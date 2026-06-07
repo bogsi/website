@@ -114,6 +114,11 @@ theme = "terminal"
         name = "Blog"
         url = "/posts"
         weight = 4
+      [[languages.en.menu.main]]
+        identifier = "order"
+        name = "Inquiry"
+        url = "/order"
+        weight = 5
 
 [build]
   writeStats = true

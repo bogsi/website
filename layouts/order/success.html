@@ -1,0 +1,20 @@
+{{ define "main" }}
+<div class="post">
+  <h1 class="post-title">{{ .Title }}</h1>
+  <div class="post-content">
+    <div class="order-success">
+      <p>Your inquiry has been received. I'll get back to you within 24 hours.</p>
+      <p class="order-id" id="orderId"></p>
+      <p><a href="/">← Back to home</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  if (id) {
+    document.getElementById("orderId").textContent = id;
+  }
+</script>
+{{ end }}
