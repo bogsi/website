@@ -1,5 +1,4 @@
 ---
 title: "Inquiry Sent"
-date: 2026-06-08
 layout: "success"
 ---

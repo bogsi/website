@@ -1,63 +1,51 @@
 {{ $currentPage := . }}
-<nav class="menu">
-  <ul class="menu__inner menu__inner--desktop">
-    {{ if .Site.Params.showMenuItems | default false }}
-      {{ range first .Site.Params.showMenuItems .Site.Menus.main }}
-        <li>
-          <a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>
-            {{ if eq .Name "About" }}
-              <i class="fas fa-book"></i>
-            {{ else if eq .Name "Blog" }}
-              <i class="fas fa-terminal"></i>
-            {{ else if eq .Name "Projects" }}
-              <i class="fas fa-code"></i>
-            {{ else if eq .Name "Services" }}
-              <i class="fas fa-cogs"></i>
-            {{ end }}
-            <span>{{ .Name }}</span>
-          </a>
-        </li>
-      {{ end }}
-      {{ if gt (len .Site.Menus.main) .Site.Params.showMenuItems }}
-        <ul class="menu__sub-inner">
-          <li class="menu__sub-inner-more-trigger">
-            {{ .Site.Params.MenuMore | default "Show more" }} ▾
-          </li>
-          <ul class="menu__sub-inner-more hidden">
-            {{ range last (sub (len .Site.Menus.main) .Site.Params.showMenuItems) .Site.Menus.main }}
-              <li><a href="{{ .URL | absLangURL }}">{{ .Name }}</a></li>
-            {{ end }}
-          </ul>
-        </ul>
-      {{ end }}
-    {{ end }}
-  </ul>
 
-  <ul class="menu__inner menu__inner--mobile">
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var menus = document.querySelectorAll('.menu');
+  document.body.addEventListener('click', function () {
+    menus.forEach(function (m) { m.classList.remove('open'); });
+  });
+  menus.forEach(function (menu) {
+    var trigger = menu.querySelector('.menu__trigger');
+    if (!trigger) return;
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = menu.classList.contains('open');
+      menus.forEach(function (m) { m.classList.remove('open'); });
+      if (!isOpen) menu.classList.add('open');
+    });
+  });
+});
+</script>
+
+<nav class="navigation-menu">
+  {{/* Desktop: flat list of all items */}}
+  <ul class="navigation-menu__inner menu--desktop">
     {{ range .Site.Menus.main }}
       <li>
-        <a href="{{ .URL | absLangURL }}" {{ if eq $currentPage.RelPermalink .URL }}class="active"{{ end }}>
-          {{ if eq .Name "About" }}
-            <i class="fas fa-user-terminal"></i>
-          {{ else if eq .Name "Blog" }}
-            <i class="fas fa-terminal"></i>
-          {{ else if eq .Name "Projects" }}
-            <i class="fas fa-code"></i>
-          {{ else if eq .Name "Services" }}
-            <i class="fas fa-cogs"></i>
-          {{ end }}
-          <span>{{ .Name }}</span>
+        <a href="{{ .URL | absLangURL }}"
+          {{- if eq $currentPage.RelPermalink (.URL | absLangURL) }} class="active"{{ end }}>
+          {{ .Name }}
         </a>
       </li>
     {{ end }}
   </ul>
-</nav>
 
-{{ if gt (len .Site.Menus.main) .Site.Params.showMenuItems }}
-  <script type="text/javascript">
-    document.querySelector('.menu__sub-inner-more-trigger').addEventListener('click', function() {
-      var menu = document.querySelector('.menu__sub-inner-more');
-      menu.classList.toggle('hidden');
-    });
-  </script>
-{{ end }} 
+  {{/* Mobile: hamburger trigger + dropdown */}}
+  <ul class="menu menu--mobile">
+    <li class="menu__trigger">Menu&nbsp;▾</li>
+    <li>
+      <ul class="menu__dropdown">
+        {{ range .Site.Menus.main }}
+          <li>
+            <a href="{{ .URL | absLangURL }}"
+              {{- if eq $currentPage.RelPermalink (.URL | absLangURL) }} class="active"{{ end }}>
+              {{ .Name }}
+            </a>
+          </li>
+        {{ end }}
+      </ul>
+    </li>
+  </ul>
+</nav>

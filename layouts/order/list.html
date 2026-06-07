@@ -1,88 +1,135 @@
 {{ define "main" }}
-<div class="post">
-  <h1 class="post-title">{{ .Title }}</h1>
-  <div class="post-content">
-    {{ .Content }}
+<div class="inquiry-page">
+  <div class="inquiry-split">
 
-    <form class="order-form" id="orderForm" novalidate>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="name">Name <span class="required">*</span></label>
-          <input type="text" id="name" name="name" required autocomplete="name">
+    <!-- ── Left: info panel ── -->
+    <aside class="inquiry-info">
+      <p class="inquiry-info__cmd"><span class="prompt">$</span> ./book-consultation.sh</p>
+      <h1 class="inquiry-info__title">Book a Consultation</h1>
+      <p class="inquiry-info__sub">AWS &amp; Terraform strategy session tailored to your infrastructure needs.</p>
+
+      <div class="inquiry-block">
+        <p class="inquiry-block__label">// what's included</p>
+        <ul class="inquiry-list">
+          <li>Infrastructure architecture review</li>
+          <li>Terraform best practices assessment</li>
+          <li>Cloud cost optimisation analysis</li>
+          <li>Security &amp; compliance walkthrough</li>
+          <li>Written action plan &amp; roadmap</li>
+        </ul>
+      </div>
+
+      <div class="inquiry-block">
+        <p class="inquiry-block__label">// how it works</p>
+        <ol class="inquiry-steps">
+          <li><span class="step-num">01</span> Fill in the form</li>
+          <li><span class="step-num">02</span> I review within 24 h</li>
+          <li><span class="step-num">03</span> We schedule a call</li>
+          <li><span class="step-num">04</span> You receive a proposal</li>
+        </ol>
+      </div>
+
+      <div class="inquiry-block inquiry-contact">
+        <p class="inquiry-block__label">// contact</p>
+        <a href="mailto:bogomil.roussev@gmail.com" class="inquiry-link">
+          <i class="fas fa-envelope"></i> bogomil.roussev@gmail.com
+        </a>
+        <a href="https://linkedin.com/in/bogomilroussev" target="_blank" rel="noopener" class="inquiry-link">
+          <i class="fab fa-linkedin"></i> linkedin.com/in/bogomilroussev
+        </a>
+      </div>
+    </aside>
+
+    <!-- ── Right: form panel ── -->
+    <div class="inquiry-form-wrap">
+      <p class="inquiry-form-cmd"><span class="prompt">$</span> ./submit-inquiry.sh</p>
+
+      <form class="inquiry-form" id="inquiryForm" novalidate>
+        <div class="field-row">
+          <div class="field-group">
+            <label for="inq-name">Name <span class="req">*</span></label>
+            <input type="text" id="inq-name" name="name" required autocomplete="name" placeholder="Jane Smith">
+          </div>
+          <div class="field-group">
+            <label for="inq-email">Email <span class="req">*</span></label>
+            <input type="email" id="inq-email" name="email" required autocomplete="email" placeholder="jane@company.com">
+          </div>
         </div>
-        <div class="form-group">
-          <label for="email">Email <span class="required">*</span></label>
-          <input type="email" id="email" name="email" required autocomplete="email">
+
+        <div class="field-group">
+          <label for="inq-company">Company</label>
+          <input type="text" id="inq-company" name="company" autocomplete="organization" placeholder="Acme Corp">
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="company">Company</label>
-        <input type="text" id="company" name="company" autocomplete="organization">
-      </div>
-
-      <div class="form-group">
-        <label for="service">Service <span class="required">*</span></label>
-        <select id="service" name="service" required>
-          <option value="">— Select a service —</option>
-          <option value="AWS Infrastructure Setup">AWS Infrastructure Setup</option>
-          <option value="Terraform Automation">Terraform Automation</option>
-          <option value="CI/CD Pipeline">CI/CD Pipeline</option>
-          <option value="Cloud Cost Optimisation">Cloud Cost Optimisation</option>
-          <option value="Security & Compliance">Security &amp; Compliance</option>
-          <option value="Consulting / Audit">Consulting / Audit</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="description">Description <span class="required">*</span></label>
-        <textarea id="description" name="description" required placeholder="Describe what you need…"></textarea>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="budget">Budget (USD)</label>
-          <input type="text" id="budget" name="budget" placeholder="e.g. 2000–5000">
+        <div class="field-group">
+          <label for="inq-service">Service <span class="req">*</span></label>
+          <select id="inq-service" name="service" required>
+            <option value="">— select a service —</option>
+            <option value="AWS Infrastructure Setup">AWS Infrastructure Setup</option>
+            <option value="Terraform Automation">Terraform Automation</option>
+            <option value="CI/CD Pipeline">CI/CD Pipeline</option>
+            <option value="Cloud Cost Optimisation">Cloud Cost Optimisation</option>
+            <option value="Security &amp; Compliance">Security &amp; Compliance</option>
+            <option value="Consulting / Audit">Consulting / Audit</option>
+            <option value="Other">Other</option>
+          </select>
         </div>
-        <div class="form-group">
-          <label for="deadline">Deadline</label>
-          <input type="text" id="deadline" name="deadline" placeholder="e.g. end of July">
-        </div>
-      </div>
 
-      <button type="submit" class="btn-submit">Send Inquiry</button>
-      <div class="form-status" id="formStatus"></div>
-    </form>
+        <div class="field-group">
+          <label for="inq-desc">What do you need? <span class="req">*</span></label>
+          <textarea id="inq-desc" name="description" required rows="5"
+            placeholder="Describe your current setup and what you'd like to achieve…"></textarea>
+        </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label for="inq-budget">Budget (USD)</label>
+            <input type="text" id="inq-budget" name="budget" placeholder="e.g. 2 000 – 5 000">
+          </div>
+          <div class="field-group">
+            <label for="inq-deadline">Deadline</label>
+            <input type="text" id="inq-deadline" name="deadline" placeholder="e.g. end of July">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-send">
+          <span class="btn-send__text">Send Inquiry</span>
+          <span class="btn-send__arrow">→</span>
+        </button>
+
+        <p class="form-status" id="formStatus" aria-live="polite"></p>
+      </form>
+    </div>
   </div>
 </div>
 
 <script>
-document.getElementById("orderForm").addEventListener("submit", async function (e) {
+document.getElementById("inquiryForm").addEventListener("submit", async function (e) {
   e.preventDefault();
   const form = e.target;
-  const btn = form.querySelector(".btn-submit");
+  const btn  = form.querySelector(".btn-send");
   const status = document.getElementById("formStatus");
 
-  status.className = "form-status loading";
-  status.textContent = "Sending…";
   btn.disabled = true;
+  btn.classList.add("loading");
+  status.className = "form-status";
+  status.textContent = "Sending…";
 
   const data = {
-    name: form.name.value.trim(),
-    email: form.email.value.trim(),
-    company: form.company.value.trim(),
-    service: form.service.value,
+    name:        form.name.value.trim(),
+    email:       form.email.value.trim(),
+    company:     form.company.value.trim(),
+    service:     form.service.value,
     description: form.description.value.trim(),
-    budget: form.budget.value.trim(),
-    deadline: form.deadline.value.trim(),
+    budget:      form.budget.value.trim(),
+    deadline:    form.deadline.value.trim(),
   };
 
   try {
-    const res = await fetch("/api/order", {
-      method: "POST",
+    const res  = await fetch("/api/order", {
+      method:  "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body:    JSON.stringify(data),
     });
     const json = await res.json();
     if (res.ok && json.success) {
@@ -91,9 +138,10 @@ document.getElementById("orderForm").addEventListener("submit", async function (
       throw new Error(json.error || "Something went wrong");
     }
   } catch (err) {
-    status.className = "form-status error";
-    status.textContent = err.message || "Request failed. Please try again.";
+    status.className = "form-status form-status--error";
+    status.textContent = "✕ " + (err.message || "Request failed. Please try again.");
     btn.disabled = false;
+    btn.classList.remove("loading");
   }
 });
 </script>
