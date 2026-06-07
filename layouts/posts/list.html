@@ -1,16 +1,32 @@
 {{ define "main" }}
   <div class="post">
     <h1 class="post-title">{{ .Title }}</h1>
-    
+
     <div class="post-content terminal-output">
       {{ .Content }}
     </div>
 
-    {{ $posts := where .Site.RegularPages "Type" "posts" }}
-    {{ if $posts }}
-    <div class="posts-group">
-      <div class="post-year">All Posts</div>
-      {{ range $posts }}
+    <div class="medium-section">
+      <div class="medium-header">
+        <span class="prompt">$</span> curl https://medium.com/@bogomilroussev/feed | parse --latest
+      </div>
+
+      <div id="medium-posts" class="posts-group">
+        <div class="post-year">Loading articles...</div>
+      </div>
+
+      <div class="medium-cta">
+        <a href="https://medium.com/@bogomilroussev" target="_blank" rel="noopener noreferrer" class="medium-button">
+          Read all articles on Medium →
+        </a>
+      </div>
+    </div>
+
+    {{ $localPosts := where .Site.RegularPages "Type" "posts" }}
+    {{ if $localPosts }}
+    <div class="posts-group" style="margin-top: 2rem;">
+      <div class="post-year">Local Posts</div>
+      {{ range $localPosts }}
         <div class="post-item">
           <a href="{{ .RelPermalink }}">
             <span class="post-title">{{ .Title }}</span>
@@ -19,11 +35,101 @@
         </div>
       {{ end }}
     </div>
-    {{ else }}
-    <div class="posts-group">
-      <div class="post-year">No posts yet</div>
-      <div class="post-item">Check back soon for new content!</div>
-    </div>
     {{ end }}
   </div>
-{{ end }} 
+
+<style>
+.medium-section {
+  margin-top: 2rem;
+}
+.medium-header {
+  color: var(--color-secondary, #888);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  font-family: monospace;
+}
+.medium-header .prompt {
+  color: var(--color-primary, #00ff00);
+  margin-right: 0.5rem;
+}
+.medium-post-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--border-color, #333);
+  gap: 1rem;
+}
+.medium-post-item a {
+  color: inherit;
+  text-decoration: none;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.medium-post-item a:hover {
+  text-decoration: underline;
+}
+.medium-post-date {
+  color: var(--color-secondary, #888);
+  font-size: 0.85rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.medium-cta {
+  margin-top: 1.5rem;
+}
+.medium-button {
+  display: inline-block;
+  padding: 0.6rem 1.4rem;
+  border: 1px solid currentColor;
+  color: inherit;
+  text-decoration: none;
+  font-family: monospace;
+  font-size: 0.95rem;
+  transition: background 0.15s, color 0.15s;
+}
+.medium-button:hover {
+  background: var(--color-primary, #00ff00);
+  color: var(--background-color, #000);
+  border-color: var(--color-primary, #00ff00);
+}
+.medium-error {
+  color: var(--color-secondary, #888);
+  font-style: italic;
+}
+</style>
+
+<script>
+(function() {
+  var container = document.getElementById('medium-posts');
+  var rssUrl = 'https://medium.com/feed/@bogomilroussev';
+  var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl) + '&count=10';
+
+  fetch(apiUrl)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data.items || data.items.length === 0) {
+        container.innerHTML = '<div class="post-year">Coming soon on Medium</div>'
+          + '<div class="medium-post-item" style="color:var(--color-secondary,#888);font-style:italic;">No published articles yet — follow the profile to be notified.</div>';
+        return;
+      }
+      var html = '<div class="post-year">Latest from Medium</div>';
+      data.items.forEach(function(item) {
+        var date = new Date(item.pubDate);
+        var formatted = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        html += '<div class="medium-post-item">'
+          + '<a href="' + item.link + '" target="_blank" rel="noopener noreferrer">' + item.title + '</a>'
+          + '<span class="medium-post-date">' + formatted + '</span>'
+          + '</div>';
+      });
+      container.innerHTML = html;
+    })
+    .catch(function() {
+      container.innerHTML = '<div class="post-year medium-error">Could not load articles — <a href="https://medium.com/@bogomilroussev" target="_blank">view on Medium</a></div>';
+    });
+})();
+</script>
+{{ end }}
