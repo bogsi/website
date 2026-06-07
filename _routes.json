@@ -6,6 +6,10 @@
     {
       "pattern": "/api/chat",
       "function": "chat"
+    },
+    {
+      "pattern": "/api/order",
+      "function": "order"
     }
   ]
 } 
