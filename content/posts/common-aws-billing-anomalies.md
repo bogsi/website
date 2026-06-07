@@ -1,6 +1,6 @@
 +++
 title = "Common AWS Billing Anomalies: How to Spot, Understand, and Fix Unexpected Charges"
-date = "2026-06-08"
+date = "2026-06-07"
 author = "Bogomil Roussev"
 cover = ""
 description = "A breakdown of the most frequent AWS billing anomalies — data transfer, NAT Gateways, orphaned resources, and more — with practical steps to detect and prevent unexpected charges."
