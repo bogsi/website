@@ -11,7 +11,9 @@
 
 <!-- Order form styles -->
 {{ if eq .Section "order" }}
-<link rel="stylesheet" href="{{ (resources.Get "css/order.css" | resources.Minify | resources.Fingerprint).RelPermalink }}">
+  {{ with resources.Get "css/order.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ .RelPermalink }}">
+  {{ end }}
 {{ end }}
 
 <!-- Custom styles -->

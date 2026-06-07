@@ -1,20 +1,44 @@
 {{ define "main" }}
-<div class="post">
-  <h1 class="post-title">{{ .Title }}</h1>
-  <div class="post-content">
-    <div class="order-success">
-      <p>Your inquiry has been received. I'll get back to you within 24 hours.</p>
-      <p class="order-id" id="orderId"></p>
-      <p><a href="/">← Back to home</a></p>
+<div class="inquiry-page">
+  <div class="inquiry-success">
+    <p class="inquiry-info__cmd"><span class="prompt">$</span> ./confirm-inquiry.sh</p>
+    <h1 class="inquiry-success__title">Inquiry Received</h1>
+    <p class="inquiry-success__sub">Thank you — I'll review your request and reply within 24 hours.</p>
+
+    <div class="inquiry-success__id">
+      <span class="inquiry-block__label">// order reference</span>
+      <code id="orderId" class="order-ref"></code>
     </div>
+
+    <div class="inquiry-success__steps">
+      <div class="success-step">
+        <span class="step-num">01</span>
+        <span>Inquiry received &amp; logged</span>
+        <span class="step-done">✓</span>
+      </div>
+      <div class="success-step">
+        <span class="step-num">02</span>
+        <span>Review within 24 h</span>
+        <span class="step-pending">…</span>
+      </div>
+      <div class="success-step">
+        <span class="step-num">03</span>
+        <span>Schedule a call</span>
+        <span class="step-pending">…</span>
+      </div>
+      <div class="success-step">
+        <span class="step-num">04</span>
+        <span>Receive proposal</span>
+        <span class="step-pending">…</span>
+      </div>
+    </div>
+
+    <a href="/" class="btn-home">← Back to home</a>
   </div>
 </div>
 
 <script>
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
-  if (id) {
-    document.getElementById("orderId").textContent = id;
-  }
+  const id = new URLSearchParams(window.location.search).get("id");
+  if (id) document.getElementById("orderId").textContent = id;
 </script>
 {{ end }}
