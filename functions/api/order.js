@@ -64,7 +64,14 @@ async function appendToSheet(env, row) {
 
   const token = await getGoogleToken(GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY);
 
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SPREADSHEET_ID}/values/%D0%9F%D0%BE%D1%80%D1%8A%D1%87%D0%BA%D0%B8!A:J:append?valueInputOption=RAW`;
+  // Resolve the real tab title from the spreadsheet instead of hard-coding it.
+  // Non-Latin sheet names (e.g. "Поръчки") must be single-quoted in A1 notation,
+  // and a stray space in the tab name silently breaks the range with
+  // "Unable to parse range". Looking it up removes both failure modes.
+  const sheetTitle = await getFirstSheetTitle(GOOGLE_SPREADSHEET_ID, token);
+  const range = encodeURIComponent(`'${sheetTitle.replace(/'/g, "''")}'!A:J`);
+
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SPREADSHEET_ID}/values/${range}:append?valueInputOption=RAW`;
 
   const res = await fetch(url, {
     method: "POST",
@@ -79,6 +86,25 @@ async function appendToSheet(env, row) {
     const text = await res.text();
     throw new Error(`Sheets API error: ${res.status} ${text}`);
   }
+}
+
+// Reads the title of the first tab so the append range never depends on a
+// hand-typed sheet name. The service account already has access (it can write),
+// so this read succeeds with the same token.
+async function getFirstSheetTitle(spreadsheetId, token) {
+  const res = await fetch(
+    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?fields=sheets.properties.title`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+
+  if (!res.ok) {
+    throw new Error(`Sheets metadata error: ${res.status} ${await res.text()}`);
+  }
+
+  const data = await res.json();
+  const title = data?.sheets?.[0]?.properties?.title;
+  if (!title) throw new Error("No sheets found in spreadsheet");
+  return title;
 }
 
 async function getGoogleToken(clientEmail, privateKeyPem) {
