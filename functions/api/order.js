@@ -95,12 +95,19 @@ async function getGoogleToken(clientEmail, privateKeyPem) {
   const encode = (obj) => btoa(JSON.stringify(obj)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
   const signingInput = `${encode(header)}.${encode(payload)}`;
 
-  // Import private key
+  // Import private key — robust against literal "\n", real newlines, stray
+  // quotes, and PKCS1/PKCS8 marker variants. Order matters: convert escaped
+  // newlines and drop the BEGIN/END markers BEFORE stripping non-base64 chars,
+  // otherwise the marker letters would corrupt the decoded key.
   const pemBody = privateKeyPem
     .replace(/\\n/g, "\n")
-    .replace("-----BEGIN PRIVATE KEY-----", "")
-    .replace("-----END PRIVATE KEY-----", "")
-    .replace(/\s/g, "");
+    .replace(/-----BEGIN [\w ]+-----/g, "")
+    .replace(/-----END [\w ]+-----/g, "")
+    .replace(/[^A-Za-z0-9+/=]/g, "");
+
+  if (!pemBody) {
+    throw new Error("GOOGLE_PRIVATE_KEY is empty or malformed");
+  }
 
   const keyData = Uint8Array.from(atob(pemBody), (c) => c.charCodeAt(0));
   const cryptoKey = await crypto.subtle.importKey(
