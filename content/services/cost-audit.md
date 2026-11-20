@@ -1,14 +1,10 @@
 ---
 title: "AWS Cost Audit with CostLens"
 description: "A read-only AWS cost audit with a ranked report, evidence, data gaps and remediation examples."
-draft: true
+draft: false
 service_summary: "Review AWS spending, investigate growth and assess possible savings with a consultant-led, read-only audit."
 inquiry_service: "CostLens AWS Cost Audit"
 ---
-
-<!-- T080 approved private CostLens 0.1.0 on 2026-11-20, including documented
-validation limits. Keep this existing page in draft pending visual/owner review
-of the public offering; CLI approval does not publish the service page. -->
 
 Understand your AWS spending and decide what to change. A roussev.dev consultant
 runs a read-only CostLens audit and delivers a ranked report with evidence,

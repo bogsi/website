@@ -69,12 +69,11 @@ All rights reserved. © Bogomil Roussev
 
 This is a [Next.js](https://nextjs.org/) project using the `/app` directory (App Router) and styled with [Tailwind CSS](https://tailwindcss.com/).
 
-## CostLens service draft
+## CostLens service
 
-The existing `content/services/cost-audit.md` remains `draft: true` at
-`/services/cost-audit/`. Preview it with `hugo server -D`. Normal `hugo --minify`
-builds exclude the page, its generated Services listing and its inquiry option.
-The inquiry link preselects the service without submitting the form.
+`content/services/cost-audit.md` is published at `/services/cost-audit/`, listed
+on the Services page and announced on the homepage. The inquiry link preselects
+the service without submitting the form.
 
 Reviewed public client downloads live in `static/downloads/costlens/`: the kit
 ZIP and read-only CloudFormation template. They were copied from the CostLens

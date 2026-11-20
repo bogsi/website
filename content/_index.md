@@ -12,7 +12,8 @@ AWS & Terraform Automation Consultant
 Specializing in cloud infrastructure and automation solutions
 
 $ ls -l services/
-total 4
+total 6
+drwxr-xr-x  AWS-Cost-Audit/         # NEW: read-only CostLens cost audit
 drwxr-xr-x  AWS-Infrastructure/     # Design and optimize cloud architectures
 drwxr-xr-x  Terraform-Automation/   # Infrastructure as Code solutions
 drwxr-xr-x  Python-Development/     # Custom automation tools
@@ -27,6 +28,7 @@ GitHub: github.com/bogsi
 Blog: gitbook.io/bogomil-roussev
 
 $ cat latest_projects.txt
+> CostLens: read-only AWS cost audit tool (v0.1.0)
 > AWS Infrastructure Automation with Terraform
 > Python-based Cloud Management Tools
 > DevOps Pipeline Optimization
@@ -37,3 +39,8 @@ Ready to transform your cloud infrastructure?
 
 $ ./get_started.sh
 🚀 Let's build something amazing together!
+```
+
+**New: [AWS Cost Audit with CostLens](/services/cost-audit/)**: a read-only,
+consultant-led review of your AWS spending with a ranked report, evidence and
+remediation examples. [Request an audit](/order/?service=CostLens%20AWS%20Cost%20Audit).

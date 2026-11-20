@@ -6,11 +6,30 @@ title = "Services"
 
 ```bash
 $ ls -l services/
+drwxr-xr-x  AWS-Cost-Audit/         # CostLens read-only cost audit
 drwxr-xr-x  AWS-Management/
 drwxr-xr-x  Terraform-Automation/
 drwxr-xr-x  CI-CD-Pipeline/
 drwxr-xr-x  Support/
 ```
+
+## AWS Cost Audit with CostLens
+
+A fixed-scope, read-only audit of your AWS spending, run by a consultant with
+CostLens. You receive a ranked report showing which services, Regions, accounts
+and tags drive cost, where spend is growing and which changes may save the most,
+with remediation examples for your team to review.
+
+```yaml
+Audit:
+  - Read-only cross-account role you deploy and revoke
+  - Ranked findings with evidence and confidence
+  - Markdown, HTML and CSV deliverables
+  - Terraform/OpenTofu and AWS CLI remediation examples
+  - Visible data gaps; savings are estimates, not guarantees
+```
+
+[Explore the CostLens audit →](/services/cost-audit/)
 
 ## AWS Management & Migration
 
