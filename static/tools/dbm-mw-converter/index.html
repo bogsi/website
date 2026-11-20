@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dBm ↔ mW Converter</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--text:#1d1d1b;--muted:#5d5d58;--border:#d6d6d0;--accent:#1f5fbf;--err:#b3261e;--tint:#eef4fc;}
+@media (prefers-color-scheme: dark){:root{--bg:#161615;--card:#1f1f1d;--text:#ececea;--muted:#a3a39c;--border:#3a3a36;--accent:#7aa7ec;--err:#f2867e;--tint:#1d2633;}}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);padding:16px}
+main{max-width:720px;margin:0 auto;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+h1{font-size:1.4rem;margin:0 0 4px}
+h2{font-size:1.05rem;margin:0 0 12px}
+.sub{color:var(--muted);margin:0;font-size:.95rem}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media (max-width:560px){.fields{grid-template-columns:1fr}}
+label{display:block;font-weight:600;margin-bottom:6px}
+.inp{display:flex;gap:8px}
+input,select{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;min-width:0}
+input{width:100%}
+input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px}
+select{flex:0 0 auto}
+input[aria-invalid="true"]{border-color:var(--err)}
+.err{color:var(--err);font-size:.9rem;min-height:1.3em;margin:6px 0 0}
+.sentence{font-size:1.15rem;font-weight:600;margin:0 0 10px}
+.formula{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--tint);border-radius:8px;padding:8px 10px;margin:0 0 10px;overflow-x:auto;min-height:2.2em}
+.note{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+ul{margin:0;padding-left:20px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:8px;border-bottom:1px solid var(--border)}
+th{font-size:.9rem;color:var(--muted)}
+td.num{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<main>
+
+<section class="card">
+  <h1>dBm ↔ mW Converter</h1>
+  <p class="sub">Convert power between dBm (decibels relative to 1 milliwatt) and milliwatts for wireless links. Edit either field and the other updates.</p>
+  <div class="fields">
+    <div>
+      <label for="dbm">Power (dBm)</label>
+      <input id="dbm" inputmode="decimal" autocomplete="off" placeholder="e.g. -30" aria-describedby="dbm-err">
+      <p class="err" id="dbm-err" role="alert"></p>
+    </div>
+    <div>
+      <label for="mw">Power</label>
+      <div class="inp">
+        <input id="mw" inputmode="decimal" autocomplete="off" placeholder="e.g. 0.001" aria-describedby="mw-err">
+        <select id="unit" aria-label="Unit for power field">
+          <option value="W">W</option>
+          <option value="mW" selected>mW</option>
+          <option value="µW">µW</option>
+          <option value="nW">nW</option>
+          <option value="pW">pW</option>
+        </select>
+      </div>
+      <p class="err" id="mw-err" role="alert"></p>
+    </div>
+  </div>
+</section>
+
+<section class="card" aria-live="polite">
+  <h2>Explanation</h2>
+  <p class="sentence" id="sentence">Enter a value to see the conversion.</p>
+  <p class="formula" id="formula"></p>
+  <p class="note" id="context"></p>
+  <h2 style="margin-top:16px">Power change</h2>
+  <p class="note">+3 dB roughly doubles power, −3 dB roughly halves it, +10 dB multiplies power by 10, and −10 dB divides it by 10.</p>
+  <ul id="shifts"></ul>
+</section>
+
+<section class="card">
+  <h2>Reference</h2>
+  <table>
+    <thead><tr><th>dBm</th><th>mW</th></tr></thead>
+    <tbody>
+      <tr><td class="num">−90</td><td class="num">0.000000001 mW (1 pW)</td></tr>
+      <tr><td class="num">−60</td><td class="num">0.000001 mW (1 nW)</td></tr>
+      <tr><td class="num">−30</td><td class="num">0.001 mW (1 µW)</td></tr>
+      <tr><td class="num">0</td><td class="num">1 mW</td></tr>
+      <tr><td class="num">3</td><td class="num">≈ 2 mW</td></tr>
+      <tr><td class="num">10</td><td class="num">10 mW</td></tr>
+      <tr><td class="num">20</td><td class="num">100 mW</td></tr>
+      <tr><td class="num">30</td><td class="num">1000 mW (1 W)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+<script>
+const UNITS = {"W": 1000, "mW": 1, "µW": 1e-3, "nW": 1e-6, "pW": 1e-9}; // mW per unit
+const $ = id => document.getElementById(id);
+const dbmEl = $("dbm"), mwEl = $("mw"), unitEl = $("unit");
+const dbmErr = $("dbm-err"), mwErr = $("mw-err");
+const sentence = $("sentence"), formula = $("formula"), context = $("context"), shifts = $("shifts");
+let currentMw = null;
+
+function clean(s) { return s.trim().replace(/−/g, "-"); }
+function fmtDbm(x) { return x.toFixed(2).replace("-", "−"); }
+function fmtSig(x) { return x.toPrecision(4); }
+
+function bestUnit(mw) {
+  for (const u of ["W", "mW", "µW", "nW", "pW"]) {
+    if (mw >= UNITS[u] * 0.999999) return u;
+  }
+  return "pW";
+}
+
+function contextNote(d) {
+  let t;
+  if (d > 30) t = "Above 30 dBm (more than 1 W): far higher than most Wi-Fi equipment is permitted to transmit.";
+  else if (d >= 15) t = "Typical range for Wi-Fi access point transmit power, around 20 dBm. Regulatory limits vary by country and band.";
+  else if (d >= -50) t = "Strong signal level, such as a Wi-Fi client close to its access point.";
+  else if (d >= -67) t = "Good Wi-Fi received signal, usually enough for full data rates.";
+  else if (d >= -80) t = "Marginal signal; expect reduced throughput or dropped packets.";
+  else if (d >= -90) t = "Very weak; approaching the receiver sensitivity limit of many Wi-Fi devices.";
+  else t = "Below the sensitivity of most Wi-Fi receivers; a link at this level is usually unusable.";
+  return t + " Approximate: check your device datasheet and local regulations.";
+}
+
+function setError(el, input, msg) {
+  el.textContent = msg;
+  input.setAttribute("aria-invalid", msg ? "true" : "false");
+}
+
+function clearOutput() {
+  sentence.textContent = "Enter a value to see the conversion.";
+  formula.textContent = "";
+  context.textContent = "";
+  shifts.innerHTML = "";
+  currentMw = null;
+}
+
+function show(d, mw, formulaText) {
+  const bu = bestUnit(mw);
+  let s = `${fmtDbm(d)} dBm equals ${fmtSig(mw)} mW`;
+  if (bu !== "mW") s += `, or ${fmtSig(mw / UNITS[bu])} ${bu}`;
+  sentence.textContent = s + ".";
+  formula.textContent = formulaText;
+  context.textContent = contextNote(d);
+  shifts.innerHTML = "";
+  [[3, "+3 dB"], [-3, "−3 dB"], [10, "+10 dB"], [-10, "−10 dB"]].forEach(([step, label]) => {
+    const li = document.createElement("li");
+    li.textContent = `${label} → ${fmtDbm(d + step)} dBm, ${fmtSig(mw * Math.pow(10, step / 10))} mW`;
+    shifts.appendChild(li);
+  });
+}
+
+function fromDbm() {
+  setError(dbmErr, dbmEl, "");
+  setError(mwErr, mwEl, "");
+  const raw = clean(dbmEl.value);
+  if (raw === "") { mwEl.value = ""; clearOutput(); return; }
+  const d = Number(raw);
+  if (!isFinite(d)) {
+    setError(dbmErr, dbmEl, "Enter a number, for example -30.");
+    mwEl.value = ""; clearOutput(); return;
+  }
+  const mw = Math.pow(10, d / 10);
+  if (!(mw > 0) || !isFinite(mw)) {
+    setError(dbmErr, dbmEl, "This value is outside the range the converter can display.");
+    mwEl.value = ""; clearOutput(); return;
+  }
+  currentMw = mw;
+  mwEl.value = fmtSig(mw / UNITS[unitEl.value]);
+  show(d, mw, `10^(${fmtDbm(d)} / 10) = ${fmtSig(mw)} mW`);
+}
+
+function fromMw() {
+  setError(dbmErr, dbmEl, "");
+  setError(mwErr, mwEl, "");
+  const raw = clean(mwEl.value);
+  if (raw === "") { dbmEl.value = ""; clearOutput(); return; }
+  const v = Number(raw);
+  if (!isFinite(v)) {
+    setError(mwErr, mwEl, "Enter a number, for example 0.001.");
+    dbmEl.value = ""; clearOutput(); return;
+  }
+  const mw = v * UNITS[unitEl.value];
+  if (mw <= 0) {
+    setError(mwErr, mwEl, "Power must be greater than 0 mW, because dBm is logarithmic.");
+    dbmEl.value = ""; clearOutput(); return;
+  }
+  const d = 10 * Math.log10(mw);
+  currentMw = mw;
+  dbmEl.value = fmtDbm(d);
+  show(d, mw, `10 × log10(${fmtSig(mw)}) = ${fmtDbm(d)} dBm`);
+}
+
+dbmEl.addEventListener("input", fromDbm);
+mwEl.addEventListener("input", fromMw);
+unitEl.addEventListener("change", () => {
+  if (currentMw !== null && mwErr.textContent === "") {
+    mwEl.value = fmtSig(currentMw / UNITS[unitEl.value]);
+  }
+});
+
+dbmEl.value = "0";
+fromDbm();
+</script>
+</body>
+</html>
