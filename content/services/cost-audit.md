@@ -6,9 +6,9 @@ service_summary: "Review AWS spending, investigate growth and assess possible sa
 inquiry_service: "CostLens AWS Cost Audit"
 ---
 
-<!-- Keep this page in draft until CostLens T080 approval and owner confirmation
-of branding, distribution and supported scope. T098 completed with a continue
-decision; the 0.1.0 candidate record remains NO-GO. -->
+<!-- T080 approved private CostLens 0.1.0 on 2026-11-20, including documented
+validation limits. Keep this existing page in draft pending visual/owner review
+of the public offering; CLI approval does not publish the service page. -->
 
 Understand your AWS spending and decide what to change. A roussev.dev consultant
 runs a read-only CostLens audit and delivers a ranked report with evidence,

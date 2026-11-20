@@ -82,7 +82,8 @@ ZIP and read-only CloudFormation template. They were copied from the CostLens
 Static downloads are public build assets even while the service page is draft.
 Refresh both from a reviewed CostLens package when onboarding materials change.
 
-Before setting `draft: false`, obtain the CostLens T080 release approval and
-confirm branding, distribution and supported engagement scope. The owner-supplied
+T080 approved private CostLens 0.1.0 on 2026-11-20. Before setting
+`draft: false`, visually review this draft and confirm the public offering
+(including branding, distribution and supported engagement scope). The owner-supplied
 contact is `bogomil.roussev@gmail.com`. Production deployment follows the
 existing Cloudflare Pages integration after merging the reviewed website PR.
