@@ -1,0 +1,184 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CostLens read-only cost audit role for a roussev.dev engagement (template 1.0.0). Grants only Get, Describe and List actions for Cost Explorer, Compute Optimizer, EC2 inventory, Organizations and resource tags; no write access. Only the consultant's operator role can assume it, and only with this engagement's external ID. Delete the stack to revoke access.",
+  "Metadata": {
+    "CostLens": {
+      "TemplateVersion": "1.0.0",
+      "PermissionSet": "D-02a"
+    },
+    "AWS::CloudFormation::Interface": {
+      "ParameterGroups": [
+        {
+          "Label": {
+            "default": "Provided by your consultant (do not change)"
+          },
+          "Parameters": [
+            "OperatorRoleArn",
+            "ExternalId",
+            "TemplateVersion"
+          ]
+        }
+      ],
+      "ParameterLabels": {
+        "OperatorRoleArn": {
+          "default": "Operator role ARN"
+        },
+        "ExternalId": {
+          "default": "External ID"
+        },
+        "TemplateVersion": {
+          "default": "Template version"
+        }
+      }
+    }
+  },
+  "Parameters": {
+    "OperatorRoleArn": {
+      "Type": "String",
+      "Description": "ARN of the roussev.dev operator role allowed to assume the CostLens role.",
+      "AllowedPattern": "^arn:aws(-cn|-us-gov)?:iam::[0-9]{12}:role/[\\w+=,.@/-]+$",
+      "ConstraintDescription": "must be an IAM role ARN"
+    },
+    "ExternalId": {
+      "Type": "String",
+      "Description": "External ID issued for this engagement; required on every AssumeRole call.",
+      "MinLength": 32,
+      "MaxLength": 1224,
+      "AllowedPattern": "^[A-Za-z0-9+=,.@:/_-]+$",
+      "ConstraintDescription": "must be the external ID provided by your consultant"
+    },
+    "TemplateVersion": {
+      "Type": "String",
+      "Description": "Version of this template.",
+      "Default": "1.0.0",
+      "AllowedValues": [
+        "1.0.0"
+      ]
+    }
+  },
+  "Resources": {
+    "CostLensReadOnlyRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "CostLensReadOnly",
+        "Description": "Read-only cost audit access for roussev.dev CostLens",
+        "MaxSessionDuration": 3600,
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "OperatorRoleWithExternalId",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Ref": "OperatorRoleArn"
+                }
+              },
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "sts:ExternalId": {
+                    "Ref": "ExternalId"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "CostLensReadOnly",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "CostExplorer",
+                  "Effect": "Allow",
+                  "Action": [
+                    "ce:GetCostAndUsage",
+                    "ce:GetCostAndUsageWithResources",
+                    "ce:GetDimensionValues",
+                    "ce:GetTags",
+                    "ce:GetCostForecast",
+                    "ce:GetAnomalies",
+                    "ce:GetAnomalyMonitors",
+                    "ce:GetReservationCoverage",
+                    "ce:GetReservationPurchaseRecommendation",
+                    "ce:GetSavingsPlansCoverage",
+                    "ce:GetSavingsPlansUtilization",
+                    "ce:GetSavingsPlansPurchaseRecommendation",
+                    "ce:ListCostAllocationTags"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Sid": "ComputeOptimizer",
+                  "Effect": "Allow",
+                  "Action": [
+                    "compute-optimizer:Get*",
+                    "compute-optimizer:Describe*"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Sid": "Inventory",
+                  "Effect": "Allow",
+                  "Action": [
+                    "ec2:DescribeRegions",
+                    "ec2:DescribeVolumes",
+                    "ec2:DescribeSnapshots",
+                    "ec2:DescribeImages",
+                    "ec2:DescribeAddresses"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Sid": "Organizations",
+                  "Effect": "Allow",
+                  "Action": [
+                    "organizations:DescribeOrganization",
+                    "organizations:ListAccounts"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Sid": "Tags",
+                  "Effect": "Allow",
+                  "Action": [
+                    "tag:GetResources"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "costlens:template-version",
+            "Value": {
+              "Ref": "TemplateVersion"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "RoleArn": {
+      "Description": "Send this role ARN to your consultant.",
+      "Value": {
+        "Fn::GetAtt": [
+          "CostLensReadOnlyRole",
+          "Arn"
+        ]
+      }
+    },
+    "TemplateVersion": {
+      "Description": "Version of the deployed template.",
+      "Value": {
+        "Ref": "TemplateVersion"
+      }
+    }
+  }
+}

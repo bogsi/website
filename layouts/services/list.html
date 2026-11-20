@@ -6,6 +6,16 @@
     {{ .Content }}
   </div>
 
+  {{ range .RegularPages }}
+    {{ if .Params.service_summary }}
+      <section class="post-content">
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        <p>{{ .Params.service_summary }}</p>
+        <a href="{{ .RelPermalink }}" class="button">Explore the audit</a>
+      </section>
+    {{ end }}
+  {{ end }}
+
   <div class="service-cta">
     <a href="mailto:bogomil.roussev@gmail.com" class="button" aria-label="Contact via email">
       <i class="fas fa-paper-plane" aria-hidden="true"></i> Get in Touch

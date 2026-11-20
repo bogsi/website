@@ -69,6 +69,11 @@
             <option value="Terraform Automation">Terraform Automation</option>
             <option value="CI/CD Pipeline">CI/CD Pipeline</option>
             <option value="Cloud Cost Optimisation">Cloud Cost Optimisation</option>
+            {{ range where .Site.RegularPages "Section" "services" }}
+              {{ with .Params.inquiry_service }}
+                <option value="{{ . }}">{{ . }}</option>
+              {{ end }}
+            {{ end }}
             <option value="Security &amp; Compliance">Security &amp; Compliance</option>
             <option value="Consulting / Audit">Consulting / Audit</option>
             <option value="Other">Other</option>
@@ -104,6 +109,12 @@
 </div>
 
 <script>
+const requestedService = new URLSearchParams(window.location.search).get("service");
+const serviceSelect = document.getElementById("inq-service");
+if (Array.from(serviceSelect.options).some(option => option.value === requestedService)) {
+  serviceSelect.value = requestedService;
+}
+
 document.getElementById("inquiryForm").addEventListener("submit", async function (e) {
   e.preventDefault();
   const form = e.target;
