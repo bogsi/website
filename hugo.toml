@@ -1,5 +1,5 @@
 baseURL = "https://roussev.dev"
-languageCode = "en-us"
+locale = "en-us"
 title = "Bogomil Roussev"
 theme = "terminal"
 
@@ -75,7 +75,7 @@ theme = "terminal"
 
 [languages]
   [languages.en]
-    languageName = "English"
+    label = "English"
     title = "Bogomil Roussev"
     subtitle = "AWS & Terraform Automation Consultant"
     owner = "Bogomil Roussev"
@@ -127,8 +127,11 @@ theme = "terminal"
   enableCompression = true
 
 [imaging]
-  quality = 85
   resampleFilter = "lanczos"
+  [imaging.jpeg]
+    quality = 85
+  [imaging.webp]
+    quality = 85
 
 [outputs]
   home = ["HTML", "RSS"]
