@@ -116,12 +116,18 @@
           + '<div class="medium-post-item" style="color:var(--color-secondary,#888);font-style:italic;">No published articles yet — follow the profile to be notified.</div>';
         return;
       }
+      var esc = function(s) {
+        return String(s).replace(/[&<>"']/g, function(c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      };
       var html = '<div class="post-year">Latest from Medium</div>';
       data.items.forEach(function(item) {
+        if (!/^https:\/\//.test(item.link)) return;
         var date = new Date(item.pubDate);
         var formatted = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         html += '<div class="medium-post-item">'
-          + '<a href="' + item.link + '" target="_blank" rel="noopener noreferrer">' + item.title + '</a>'
+          + '<a href="' + esc(item.link) + '" target="_blank" rel="noopener noreferrer">' + esc(item.title) + '</a>'
           + '<span class="medium-post-date">' + formatted + '</span>'
           + '</div>';
       });
