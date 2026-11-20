@@ -6,6 +6,10 @@ service_summary: "Review AWS spending, investigate growth and assess possible sa
 inquiry_service: "CostLens AWS Cost Audit"
 ---
 
+<!-- Publishable preview prepared after the signed private CostLens 0.1.0
+release. Production publication occurs only after owner review and merge of
+this website PR; the public offering exposes client materials, not the CLI. -->
+
 Understand your AWS spending and decide what to change. A roussev.dev consultant
 runs a read-only CostLens audit and delivers a ranked report with evidence,
 visible data gaps and remediation examples for your team to review.
