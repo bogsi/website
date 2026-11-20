@@ -1,0 +1,19 @@
+{{- /*
+  Service card built only from a service page's front matter.
+  Context: dict "path" (page path) "position" (caller position for errors).
+  Fails the build if the page is missing (drafts included in production
+  builds) or has no service_summary.
+*/ -}}
+{{- $path := .path -}}
+{{- $page := site.GetPage $path -}}
+{{- if not $page -}}
+  {{- errorf "service-card: page %q not found at %s" $path .position -}}
+{{- else if not $page.Params.service_summary -}}
+  {{- errorf "service-card: page %q has no service_summary at %s" $path .position -}}
+{{- else -}}
+<section class="post-content service-card">
+  <h3><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h3>
+  <p>{{ $page.Params.service_summary }}</p>
+  <a href="{{ $page.RelPermalink }}" class="button">Explore the audit</a>
+</section>
+{{- end -}}
