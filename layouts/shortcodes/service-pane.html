@@ -1,0 +1,17 @@
+{{- /*
+  A code-style service box with a service card rendered inside it.
+  Usage:
+    {{< service-pane card="services/cost-audit" >}}
+    Services:
+      - ...
+    {{< /service-pane >}}
+  The inner text is highlighted as YAML, like the page's fenced blocks.
+*/ -}}
+{{- $card := .Get "card" -}}
+{{- if not $card -}}
+  {{- errorf "service-pane: missing card=\"<page path>\" at %s" .Position -}}
+{{- end -}}
+<div class="service-pane">
+  {{ transform.Highlight (strings.Trim .Inner "\n") "yaml" }}
+  {{ partial "service-card.html" (dict "path" $card "position" .Position) }}
+</div>

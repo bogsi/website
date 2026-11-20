@@ -14,15 +14,15 @@ drwxr-xr-x  Support/
 
 ## AWS Management & Migration
 
-```yaml
+{{< service-pane card="services/cost-audit" >}}
 Services:
   - Full infrastructure audit and optimization
   - Migration planning and execution
-  - Cost analysis and optimization
+  - Cost analysis and optimization (CostLens audit)
   - Security best practices implementation
   - Performance monitoring and scaling
   - Disaster recovery planning
-```
+{{< /service-pane >}}
 
 ## Terraform Automation
 

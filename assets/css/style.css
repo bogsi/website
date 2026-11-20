@@ -1229,3 +1229,38 @@ figure figcaption {
   padding: 15px;
 }
 
+/* Service pane: one code-style box holding a service list and a service card.
+   The outer pane takes the site's pre box look; the inner pre drops its own. */
+.service-pane {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background-color: var(--background);
+  box-shadow: var(--terminal-shadow, 0 5px 15px rgba(255, 135, 0, 0.2));
+}
+
+.service-pane .highlight,
+.service-pane pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.service-pane .service-card {
+  margin: 20px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px dashed var(--accent);
+}
+
+.service-pane .service-card h3 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+}
+
+.service-pane .service-card p {
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
+}
