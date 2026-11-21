@@ -701,6 +701,17 @@ button {
   text-decoration: underline;
 }
 
+/* Inline links in body text keep a persistent underline so they are
+   distinguishable without relying on colour alone (WCAG 1.4.1). Scoped to
+   paragraphs and list items so nav, logo, buttons and post lists are untouched. */
+.post p a,
+.post li a,
+.post-content p a,
+.post-content li a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 .post-content code {
   background: rgba(255, 135, 0, 0.1);
   padding: 2px 6px;
@@ -1003,7 +1014,7 @@ figure figcaption {
 
 .post-item .post-day {
   font-size: 0.9rem;
-  color: color-mix(in srgb, var(--color) 70%, transparent);
+  color: color-mix(in srgb, var(--color) 85%, transparent);
   margin-left: 15px;
 }
 
