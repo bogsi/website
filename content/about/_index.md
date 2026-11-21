@@ -7,6 +7,11 @@ Results-driven Cloud Infrastructure Engineer with extensive experience in AWS,
 Terraform, and DevOps practices. Specializing in building and optimizing
 scalable cloud solutions that drive business efficiency and innovation.
 
+## Certifications
+
+- AWS Certified Solutions Architect
+- HashiCorp Certified: Terraform Associate
+
 ## Experience & Expertise
 
 ```bash
