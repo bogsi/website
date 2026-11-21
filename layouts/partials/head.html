@@ -114,8 +114,8 @@
 {{ template "_internal/opengraph.html" . }}
 {{ template "_internal/twitter_cards.html" . }}
 
-<!-- Google Analytics -->
-{{ template "_internal/google_analytics.html" . }}
+<!-- Google Analytics (production only, so local dev doesn't pollute GA) -->
+{{ if hugo.IsProduction }}{{ template "_internal/google_analytics.html" . }}{{ end }}
 
 <!-- Deferred CSS -->
 {{ with resources.Get "css/deferred.css" }}
