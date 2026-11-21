@@ -1,0 +1,26 @@
+# {{ site.Title }} — {{ site.Params.subtitle }}
+
+> {{ site.Params.description }}
+
+{{ site.Title }} is an AWS & Terraform automation consultant working on AWS cost optimization, Terraform/OpenTofu automation and cloud infrastructure. This site publishes practical articles on AWS billing and cost control, and offers CostLens, a consultant-led read-only AWS cost audit.
+
+## Services
+{{ with site.GetPage "/services/cost-audit" }}
+- [{{ .Title }}]({{ .Permalink }}): {{ .Description }}
+{{- end }}
+{{- with site.GetPage "/services" }}
+- [{{ .Title }}]({{ .Permalink }}): overview of AWS, Terraform and CI/CD services.
+{{- end }}
+
+## Articles
+{{ range (where site.RegularPages "Type" "posts").ByDate.Reverse }}
+- [{{ .Title }}]({{ .Permalink }}){{ with .Description }}: {{ . }}{{ end }}
+{{- end }}
+
+## More
+{{ with site.GetPage "/about" }}
+- [{{ .Title }}]({{ .Permalink }}): background, certifications and how to get in touch.
+{{- end }}
+{{- with site.GetPage "/projects/terraform-modules-guide" }}
+- [{{ .Title }}]({{ .Permalink }}): {{ .Description | default "Guide to reusable Terraform modules." }}
+{{- end }}
