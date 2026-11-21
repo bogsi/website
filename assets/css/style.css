@@ -707,7 +707,8 @@ button {
 .post p a,
 .post li a,
 .post-content p a,
-.post-content li a {
+.post-content li a,
+.copyright a {
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
