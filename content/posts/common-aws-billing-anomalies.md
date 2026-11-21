@@ -93,6 +93,8 @@ Checklist:
 
 ## 3. NAT Gateway Overuse
 
+*Deeper dive: [The NAT Gateway bill nobody budgets for](/posts/nat-gateway-costs/).*
+
 ### What it is
 
 A NAT Gateway allows private subnet resources to reach the internet. It charges on two dimensions:
@@ -222,6 +224,8 @@ Decision framework:
 ---
 
 ## 6. S3 Request and Storage Anomalies
+
+*Deeper dive: [Getting S3 to stop charging you for data you forgot about](/posts/s3-lifecycle-savings/).*
 
 ### What it is
 
@@ -420,6 +424,8 @@ In Cost Explorer, filter by **Service: S3** or **EC2-Other** and look for **Usag
 ---
 
 ## 11. Reserved Instance and Savings Plan Mismatches
+
+*Deeper dive: [Savings Plans or Reserved Instances? How I actually decide](/posts/savings-plans-vs-reserved-instances/).*
 
 ### What it is
 

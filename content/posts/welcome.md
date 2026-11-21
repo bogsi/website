@@ -42,7 +42,7 @@ My expertise spans across:
 
 ## 📚 What to Expect
 
-On this site and in my [blog](https://bogomils-organization.gitbook.io/bogomil-roussev-s-personal-book-of-it-life-and-more/), you'll find:
+On this site and on my [Medium](https://medium.com/@bogomilroussev), you'll find:
 
 - In-depth technical articles about cloud infrastructure
 - Best practices for AWS and Terraform implementations
