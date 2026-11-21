@@ -11,6 +11,10 @@ enableRobotsTXT = true
   description = "AWS & Terraform automation consultant: read-only AWS cost audits with CostLens, cloud infrastructure, Terraform modules and CI/CD pipelines."
   author = "Bogomil Roussev"
   subtitle = "AWS & Terraform Automation Consultant"
+  # Default og:image / twitter:image (1200x630) for pages without their own
+  # `images` front matter. Its presence also switches twitter:card to
+  # summary_large_image.
+  images = ["images/og-default.png"]
 
   # dir name of your main content (default is `content/posts`).
   # the list of articles will be on this page

@@ -9,10 +9,10 @@
           <span class="prompt-symbol">$</span> date
           {{ .Date.Format "2006-01-02" }}
         </span>
-        {{ if .Params.Author }}
+        {{ with .Params.author | default site.Params.author }}
           <span class="post-author">
             <span class="prompt-symbol">$</span> whoami
-            {{ .Params.Author }}
+            <a href="{{ "about/" | relLangURL }}" rel="author">{{ . }}</a>
           </span>
         {{ end }}
       </div>
@@ -22,6 +22,8 @@
   <div class="post-content">
     {{ .Content }}
   </div>
+
+  {{ partial "article-cta.html" . }}
 
   {{ if .Params.tags }}
     <div class="post-tags">

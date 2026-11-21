@@ -5,6 +5,8 @@ author = "Bogomil Roussev"
 cover = ""
 description = "A breakdown of the most frequent AWS billing anomalies — data transfer, NAT Gateways, orphaned resources, and more — with practical steps to detect and prevent unexpected charges."
 keywords = ["AWS", "Billing", "Cost Optimization", "FinOps", "NAT Gateway", "Cost Explorer", "Cloud"]
+# The conclusion already ends with a CostLens call to action.
+hide_cta = true
 +++
 
 > **The problem is rarely that AWS is wrong — it's that we didn't know what we were running.**
