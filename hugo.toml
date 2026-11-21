@@ -2,11 +2,16 @@ baseURL = "https://roussev.dev"
 locale = "en-us"
 title = "Bogomil Roussev"
 theme = "terminal"
+enableRobotsTXT = true
 
 [pagination]
   pagerSize = 5
 
 [params]
+  description = "AWS & Terraform automation consultant: read-only AWS cost audits with CostLens, cloud infrastructure, Terraform modules and CI/CD pipelines."
+  author = "Bogomil Roussev"
+  subtitle = "AWS & Terraform Automation Consultant"
+
   # dir name of your main content (default is `content/posts`).
   # the list of articles will be on this page
   contentTypeName = "posts"

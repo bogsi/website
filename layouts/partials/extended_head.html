@@ -1,5 +1,4 @@
-<!-- Custom terminal theme styles -->
-<link rel="stylesheet" href="{{ (resources.Get "css/style.css" | resources.ExecuteAsTemplate "css/style.css" . | resources.Minify | resources.Fingerprint).RelPermalink }}">
+{{/* css/style.css is bundled once in head.html. */}}
 
 <!-- Fira Code font -->
 <link rel="preload" href="https://cdn.staticdelivr.com/gfonts/css2?family=Fira+Code:wght@300..700&display=swap" as="style">

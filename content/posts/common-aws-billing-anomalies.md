@@ -555,8 +555,10 @@ The single most impactful practice is not any specific technical fix — it's **
 
 A $300 unexpected charge investigated and resolved quickly is a learning. The same issue ignored for six months is a $1,800 problem — and a harder conversation.
 
+**Want these checks run on your own account?** A [CostLens AWS cost audit](/services/cost-audit/) reviews your spending read-only and delivers a ranked report with evidence and remediation examples.
+
 ---
 
 *Last updated: June 2026*  
 *Services covered: EC2, S3, RDS, Lambda, CloudWatch, NAT Gateway, VPC, Savings Plans, Reserved Instances*  
-*Author: roussev.dev*
+*Author: [Bogomil Roussev](/about/)*

@@ -1,0 +1,87 @@
+{{- /*
+  Schema.org JSON-LD for every page.
+  - Site-wide: Person (the consultant) and ProfessionalService (the business).
+  - Posts and projects: BlogPosting, authored by the Person.
+  - Service pages (content/services/*.md with service_summary): Service.
+  - Non-home pages: BreadcrumbList.
+  Profile URLs come from params.social in hugo.toml, so update them there.
+*/ -}}
+{{- $base := site.BaseURL | strings.TrimSuffix "/" -}}
+{{- $personID := printf "%s/#person" $base -}}
+{{- $businessID := printf "%s/#business" $base -}}
+
+{{- $sameAs := slice -}}
+{{- range site.Params.social -}}
+  {{- if hasPrefix .url "https://" -}}{{- $sameAs = $sameAs | append .url -}}{{- end -}}
+{{- end -}}
+{{- $email := "" -}}
+{{- range site.Params.social -}}
+  {{- if hasPrefix .url "mailto:" -}}{{- $email = strings.TrimPrefix "mailto:" .url -}}{{- end -}}
+{{- end -}}
+
+{{- $person := dict
+  "@type" "Person"
+  "@id" $personID
+  "name" site.Params.author
+  "jobTitle" site.Params.subtitle
+  "url" (printf "%s/about/" $base)
+  "sameAs" $sameAs
+  "knowsAbout" (slice "Amazon Web Services" "Terraform" "Infrastructure as Code" "AWS cost optimization" "DevOps" "CI/CD")
+-}}
+{{- $business := dict
+  "@type" "ProfessionalService"
+  "@id" $businessID
+  "name" site.Title
+  "url" (printf "%s/" $base)
+  "description" site.Params.description
+  "founder" (dict "@id" $personID)
+  "areaServed" "Worldwide"
+  "serviceType" (slice "AWS cost audit" "AWS infrastructure consulting" "Terraform automation" "CI/CD pipeline development")
+-}}
+{{- with $email -}}{{- $business = merge $business (dict "email" .) -}}{{- end -}}
+
+{{- $graph := slice $person $business -}}
+
+{{- if and .IsPage (in (slice "posts" "projects") .Section) -}}
+  {{- $post := dict
+    "@type" "BlogPosting"
+    "headline" .Title
+    "description" (.Description | default .Summary | plainify)
+    "url" .Permalink
+    "mainEntityOfPage" .Permalink
+    "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+    "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+    "author" (dict "@id" $personID)
+    "publisher" (dict "@id" $personID)
+    "inLanguage" site.Language.Lang
+  -}}
+  {{- with .Params.keywords -}}{{- $post = merge $post (dict "keywords" (delimit . ", ")) -}}{{- end -}}
+  {{- with .Params.tags -}}{{- if not $.Params.keywords -}}{{- $post = merge $post (dict "keywords" (delimit . ", ")) -}}{{- end -}}{{- end -}}
+  {{- $graph = $graph | append $post -}}
+{{- end -}}
+
+{{- if and .IsPage (eq .Section "services") .Params.service_summary -}}
+  {{- $graph = $graph | append (dict
+    "@type" "Service"
+    "name" .Title
+    "description" (.Description | default .Params.service_summary)
+    "url" .Permalink
+    "provider" (dict "@id" $businessID)
+    "areaServed" "Worldwide"
+  ) -}}
+{{- end -}}
+
+{{- if not .IsHome -}}
+  {{- $items := slice (dict "@type" "ListItem" "position" 1 "name" "Home" "item" (printf "%s/" $base)) -}}
+  {{- $pos := 1 -}}
+  {{- range .Ancestors.Reverse -}}
+    {{- if not .IsHome -}}
+      {{- $pos = add $pos 1 -}}
+      {{- $items = $items | append (dict "@type" "ListItem" "position" $pos "name" .Title "item" .Permalink) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $items = $items | append (dict "@type" "ListItem" "position" (add $pos 1) "name" .Title "item" .Permalink) -}}
+  {{- $graph = $graph | append (dict "@type" "BreadcrumbList" "itemListElement" $items) -}}
+{{- end -}}
+
+<script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" $graph | jsonify | safeJS }}</script>

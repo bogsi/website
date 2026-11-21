@@ -1,5 +1,6 @@
 +++
 title = "Blog"
+description = "Articles on AWS cost optimization, billing anomalies, Terraform and cloud automation by Bogomil Roussev."
 type = "posts"
 +++
 

@@ -1,8 +1,7 @@
 +++
 title = "About Me"
+description = "Bogomil Roussev, cloud infrastructure engineer and AWS & Terraform consultant: experience, skills, technical background and how to get in touch."
 +++
-
-# About Me
 
 Results-driven Cloud Infrastructure Engineer with extensive experience in AWS,
 Terraform, and DevOps practices. Specializing in building and optimizing

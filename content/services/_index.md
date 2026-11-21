@@ -1,8 +1,9 @@
 +++
 title = "Services"
+description = "AWS management and migration, CostLens AWS cost audits, Terraform automation, CI/CD pipeline development and subscription support for cloud teams."
 +++
 
-# Cloud Infrastructure Services
+Cloud infrastructure services for teams running on AWS.
 
 ```bash
 $ ls -l services/

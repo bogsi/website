@@ -1,8 +1,3 @@
-<!DOCTYPE html>
-
-<!-- Preload critical font -->
-<link rel="preload" href="/fonts/FiraCode-Regular.woff2" as="font" type="font/woff2" crossorigin>
-
 <!-- Critical CSS -->
 {{ with resources.Get "css/critical.css" }}
   {{ with .Content }}
@@ -13,19 +8,17 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>{{ if .IsHome }}{{ $.Site.Title }}{{ else }}{{ .Title }} :: {{ $.Site.Title }}{{ end }}</title>
+{{/* <title> is rendered once, in layouts/_default/baseof.html. */}}
 
-{{ with .Site.Params.description }}
-  <meta name="description" content="{{ . }}">
+{{ with .Description | default site.Params.description }}
+  <meta name="description" content="{{ . | plainify }}">
 {{ end }}
 
-{{ with .Site.Params.keywords }}
-  <meta name="keywords" content="{{ . }}">
-{{ end }}
-
-{{ with .Site.Params.author }}
+{{ with .Params.author | default site.Params.author }}
   <meta name="author" content="{{ . }}">
 {{ end }}
+
+{{ partial "structured-data.html" . }}
 
 <link rel="canonical" href="{{ .Permalink }}">
 
@@ -116,12 +109,8 @@
   {{ printf `<link rel="%s" type="%s" href="%s" title="%s" />` .Rel .MediaType.Type .Permalink $.Site.Title | safeHTML }}
 {{ end -}}
 
-{{ if .Params.noindex }}
-  {{ if or (eq (.Param "noindex") true) (eq (.Param "noindex") "true") }}
-    <meta name="robots" content="noindex" />
-  {{ end }}
-{{ else }}
-  <meta name="robots" content="noodp" />
+{{ if or (eq .Params.noindex true) (eq .Params.noindex "true") (in (slice "taxonomy" "term") .Kind) }}
+  <meta name="robots" content="noindex, follow" />
 {{ end }}
 
 <!-- Social meta tags -->
@@ -157,9 +146,6 @@
 <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"></noscript>
 
-<!-- Preload Font Awesome font files -->
-<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- Icons -->
 <link rel="shortcut icon" href="{{ "favicon.png" | absURL }}">
