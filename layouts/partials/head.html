@@ -24,8 +24,8 @@
 
 <!-- Theme CSS -->
 {{ $style := resources.Get "css/style.css" | resources.ExecuteAsTemplate "css/style.css" . }}
-{{ $bundle := slice $style | resources.Concat "css/bundle.css" | minify }}
-<link rel="stylesheet" href="{{ $bundle.RelPermalink }}">
+{{ $bundle := slice $style | resources.Concat "css/bundle.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $bundle.RelPermalink }}" integrity="{{ $bundle.Data.Integrity }}">
 
 <!-- Custom styles -->
 <style>
