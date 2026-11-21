@@ -1,5 +1,5 @@
-/* Fira Code: https://github.com/tonsky/FiraCode */
-@import url('https://cdn.staticdelivr.com/gfonts/css2?family=Fira+Code:wght@300..700&display=swap');
+/* Fira Code (https://github.com/tonsky/FiraCode) is loaded by a <link> in
+   layouts/partials/extended_head.html, not @import, to avoid a blocking chain. */
 
 /* Terminal Theme */
 :root {

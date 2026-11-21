@@ -7,8 +7,6 @@ tags: ["terraform", "infrastructure-as-code", "devops", "cloud"]
 categories: ["Infrastructure"]
 ---
 
-# Building Reusable Infrastructure with Terraform Modules
-
 Terraform modules are a powerful way to create reusable, maintainable infrastructure as code. In this comprehensive guide, we'll explore how to create effective Terraform modules, understand best practices, and look at real-world examples.
 
 ## What are Terraform Modules?

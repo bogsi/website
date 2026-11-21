@@ -1,5 +1,6 @@
 +++
 title = "Bogomil Roussev"
+description = "AWS & Terraform automation consultant: read-only AWS cost audits with CostLens, cloud architecture, Terraform modules and CI/CD automation."
 framed = true
 +++
 
@@ -41,6 +42,18 @@ $ ./get_started.sh
 🚀 Let's build something amazing together!
 ```
 
-**New: [AWS Cost Audit with CostLens](/services/cost-audit/)**: a read-only,
-consultant-led review of your AWS spending with a ranked report, evidence and
-remediation examples. [Request an audit](/order/?service=CostLens%20AWS%20Cost%20Audit).
+## AWS & Terraform consulting
+
+- **[AWS Cost Audit with CostLens](/services/cost-audit/)** (new): a read-only,
+  consultant-led review of your AWS spending with a ranked report, evidence and
+  remediation examples. [Request an audit](/order/?service=CostLens%20AWS%20Cost%20Audit).
+- **[AWS management and migration](/services/)**: architecture reviews, migration
+  planning, security best practices and disaster recovery.
+- **[Terraform automation](/services/)**: reusable modules, state management and
+  multi-environment setups. See the [Terraform modules guide](/projects/terraform-modules-guide/).
+- **[CI/CD pipelines](/services/)**: Jenkins, GitHub Actions and GitLab CI with
+  testing, security scanning and deployment strategies.
+
+## Get in touch
+
+[Book a consultation](/order/) or read more [about my background](/about/).
