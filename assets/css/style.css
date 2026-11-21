@@ -260,7 +260,6 @@ code,
 kbd {
   font-family:
     "Fira Code",
-    "JetBrains Mono",
     Monaco,
     Consolas,
     Ubuntu Mono,
@@ -1263,4 +1262,11 @@ figure figcaption {
 .service-pane .service-card p {
   margin: 0 0 12px;
   overflow-wrap: anywhere;
+}
+
+/* End-of-article call to action (layouts/partials/article-cta.html) */
+.article-cta {
+  border: 1px solid var(--accent);
+  margin: 2.5em 0 1.5em;
+  padding: 0.5em 1.25em;
 }

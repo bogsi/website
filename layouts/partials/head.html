@@ -27,9 +27,6 @@
 {{ $bundle := slice $style | resources.Concat "css/bundle.css" | minify }}
 <link rel="stylesheet" href="{{ $bundle.RelPermalink }}">
 
-<!-- Custom fonts -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jetbrains-mono@1.0.6/css/jetbrains-mono.min.css">
-
 <!-- Custom styles -->
 <style>
   :root {

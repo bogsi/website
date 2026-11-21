@@ -1,0 +1,18 @@
+{{- /*
+  Contextual call to action at the end of every article (posts and projects).
+  Links readers to the CostLens audit and the inquiry form. Set
+  `hide_cta: true` in a page's front matter when the article already ends
+  with its own call to action.
+*/ -}}
+{{- if and (in (slice "posts" "projects") .Section) (not .Params.hide_cta) -}}
+<aside class="article-cta" aria-label="Work with me">
+  <p><span class="prompt-symbol">$</span> ./next-step.sh</p>
+  <p>
+    <strong>Need a hand with your AWS setup?</strong>
+    A <a href="{{ "services/cost-audit/" | relLangURL }}">CostLens AWS cost audit</a>
+    reviews your spending read-only and delivers a ranked report with evidence and
+    remediation examples. For Terraform, CI/CD or architecture work,
+    <a href="{{ "order/" | relLangURL }}">send an inquiry</a>.
+  </p>
+</aside>
+{{- end -}}
