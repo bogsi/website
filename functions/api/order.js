@@ -228,9 +228,13 @@ function hostnameAllowed(allowlist, hostname) {
 // Server-side Turnstile check. Fails closed: missing configuration, network
 // errors and timeouts all reject the submission instead of letting it through.
 async function verifyTurnstile(env, token, request) {
+  // Tolerate common paste mistakes: "https://roussev.dev/", quotes, spaces.
   const allowlist = (env.TURNSTILE_HOSTNAMES || "")
-    .split(",").map((h) => h.trim().toLowerCase()).filter(Boolean);
-  if (!env.TURNSTILE_SECRET_KEY || allowlist.length === 0) {
+    .split(/[,\s]+/)
+    .map((h) => h.trim().toLowerCase().replace(/^["']|["']$/g, "").replace(/^https?:\/\//, "").replace(/[/:].*$/, ""))
+    .filter(Boolean);
+  const secret = (env.TURNSTILE_SECRET_KEY || "").trim();
+  if (!secret || allowlist.length === 0) {
     console.error("TURNSTILE_SECRET_KEY or TURNSTILE_HOSTNAMES is not set; refusing order submissions");
     return { ok: false, status: 503, error: "The form is temporarily unavailable. Please email me directly." };
   }
@@ -239,7 +243,7 @@ async function verifyTurnstile(env, token, request) {
   }
 
   const form = new FormData();
-  form.append("secret", env.TURNSTILE_SECRET_KEY);
+  form.append("secret", secret);
   form.append("response", token);
   const ip = request.headers.get("CF-Connecting-IP");
   if (ip) form.append("remoteip", ip);
@@ -259,11 +263,18 @@ async function verifyTurnstile(env, token, request) {
 
   // The token must be for this form (action) and an approved site (hostname),
   // so a token solved elsewhere with the same site key is not accepted here.
-  if (result.success !== true || result.action !== TURNSTILE_ACTION || !hostnameAllowed(allowlist, result.hostname)) {
+  // A short reason code is returned to the browser so a misconfiguration can be
+  // diagnosed without dashboard logs. It holds no secret: only Cloudflare's
+  // error codes or which check failed.
+  let reason = null;
+  if (result.success !== true) reason = (result["error-codes"] || ["unknown"]).join(",");
+  else if (result.action !== TURNSTILE_ACTION) reason = "action-mismatch";
+  else if (!hostnameAllowed(allowlist, result.hostname)) reason = "hostname-not-allowed";
+  if (reason) {
     console.warn("Turnstile rejected:", JSON.stringify({
-      codes: result["error-codes"], action: result.action, hostname: result.hostname,
+      reason, action: result.action, hostname: result.hostname, allowlist,
     }));
-    return { ok: false, status: 403, error: "Verification failed. Please refresh the page and try again." };
+    return { ok: false, status: 403, error: `Verification failed (${reason}). Please refresh the page and try again.` };
   }
   return { ok: true };
 }
