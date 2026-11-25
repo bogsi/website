@@ -13,6 +13,7 @@ const REQUIRED = ["name", "email", "service", "description"];
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const TURNSTILE_ACTION = "order";
+const TURNSTILE_TIMEOUT_MS = 10_000;
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -41,7 +42,7 @@ export async function onRequestPost(context) {
 
   // Bot check first: without a valid Turnstile token nothing is stored and,
   // crucially, no email is sent to the address typed into the form.
-  const check = await verifyTurnstile(env, body.turnstileToken, request);
+  const check = await verifyTurnstile(env, body["cf-turnstile-response"], request);
   if (!check.ok) {
     return reply(check.status, { error: check.error });
   }
@@ -215,11 +216,22 @@ function normalize(body) {
   return { value };
 }
 
-// Server-side Turnstile check. Fails closed: if the secret is not configured,
-// the form is refused rather than left open.
+// Parses TURNSTILE_HOSTNAMES ("roussev.dev,*.my-site.pages.dev") into a matcher.
+// "*.example.com" matches any subdomain of example.com, not example.com itself.
+function hostnameAllowed(allowlist, hostname) {
+  if (typeof hostname !== "string" || hostname === "") return false;
+  return allowlist.some((entry) =>
+    entry.startsWith("*.") ? hostname.endsWith(entry.slice(1)) : hostname === entry
+  );
+}
+
+// Server-side Turnstile check. Fails closed: missing configuration, network
+// errors and timeouts all reject the submission instead of letting it through.
 async function verifyTurnstile(env, token, request) {
-  if (!env.TURNSTILE_SECRET_KEY) {
-    console.error("TURNSTILE_SECRET_KEY is not set; refusing order submissions");
+  const allowlist = (env.TURNSTILE_HOSTNAMES || "")
+    .split(",").map((h) => h.trim().toLowerCase()).filter(Boolean);
+  if (!env.TURNSTILE_SECRET_KEY || allowlist.length === 0) {
+    console.error("TURNSTILE_SECRET_KEY or TURNSTILE_HOSTNAMES is not set; refusing order submissions");
     return { ok: false, status: 503, error: "The form is temporarily unavailable. Please email me directly." };
   }
   if (typeof token !== "string" || token.length === 0 || token.length > 2048) {
@@ -234,19 +246,22 @@ async function verifyTurnstile(env, token, request) {
 
   let result;
   try {
-    const res = await fetch(TURNSTILE_VERIFY_URL, { method: "POST", body: form });
+    const res = await fetch(TURNSTILE_VERIFY_URL, {
+      method: "POST",
+      body: form,
+      signal: AbortSignal.timeout(TURNSTILE_TIMEOUT_MS),
+    });
     result = await res.json();
   } catch (err) {
     console.error("Turnstile siteverify error:", err);
     return { ok: false, status: 502, error: "Verification is unavailable right now. Please try again." };
   }
 
-  // The token must be for this form (action) and this site (hostname), so a
-  // token solved elsewhere with the same site key cannot be replayed here.
-  const expectedHost = new URL(request.url).hostname;
-  if (!result.success || result.action !== TURNSTILE_ACTION || result.hostname !== expectedHost) {
+  // The token must be for this form (action) and an approved site (hostname),
+  // so a token solved elsewhere with the same site key is not accepted here.
+  if (result.success !== true || result.action !== TURNSTILE_ACTION || !hostnameAllowed(allowlist, result.hostname)) {
     console.warn("Turnstile rejected:", JSON.stringify({
-      codes: result["error-codes"], action: result.action, hostname: result.hostname, expectedHost,
+      codes: result["error-codes"], action: result.action, hostname: result.hostname,
     }));
     return { ok: false, status: 403, error: "Verification failed. Please refresh the page and try again." };
   }

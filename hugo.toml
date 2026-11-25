@@ -13,7 +13,7 @@ googleAnalytics = "G-M9Z0JHNLVT"
   author = "Bogomil Roussev"
   # Cloudflare Turnstile site key for the inquiry form (public value).
   # The matching secret is TURNSTILE_SECRET_KEY in the Pages project settings.
-  turnstileSiteKey = ""
+  turnstileSiteKey = "0x4AAAAAAGSpFYyPNtTvd7ji"
   subtitle = "AWS & Terraform Automation Consultant"
   # Default og:image / twitter:image (1200x630) for pages without their own
   # `images` front matter. Its presence also switches twitter:card to

@@ -107,7 +107,7 @@
         {{- if not $turnstileKey -}}
           {{- errorf "params.turnstileSiteKey is missing in hugo.toml: the inquiry form needs a Cloudflare Turnstile site key" -}}
         {{- end }}
-        <div class="cf-turnstile" data-sitekey="{{ $turnstileKey }}" data-action="order" data-theme="dark" data-size="flexible"></div>
+        <div class="cf-turnstile" id="inq-turnstile" data-sitekey="{{ $turnstileKey }}"></div>
 
         <button type="submit" class="btn-send">
           <span class="btn-send__text">Send Inquiry</span>
@@ -120,7 +120,21 @@
   </div>
 </div>
 
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script>
+// Explicit render keeps the widget ID so a failed attempt can reset this widget.
+// Defined before api.js loads, which calls it via ?onload=.
+let turnstileWidgetId = null;
+window.onTurnstileLoad = function () {
+  const el = document.getElementById("inq-turnstile");
+  turnstileWidgetId = window.turnstile.render(el, {
+    sitekey: el.dataset.sitekey,
+    action: "order",
+    theme: "dark",
+    size: "flexible",
+  });
+};
+</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad" async defer></script>
 <script>
 const requestedService = new URLSearchParams(window.location.search).get("service");
 const serviceSelect = document.getElementById("inq-service");
@@ -134,8 +148,9 @@ document.getElementById("inquiryForm").addEventListener("submit", async function
   const btn  = form.querySelector(".btn-send");
   const status = document.getElementById("formStatus");
 
-  const tokenInput = form.querySelector('[name="cf-turnstile-response"]');
-  const turnstileToken = tokenInput ? tokenInput.value : "";
+  const turnstileToken = (window.turnstile && turnstileWidgetId !== null)
+    ? window.turnstile.getResponse(turnstileWidgetId) || ""
+    : "";
   if (!turnstileToken) {
     status.className = "form-status form-status--error";
     status.textContent = "✕ Please complete the verification check above the button.";
@@ -156,7 +171,7 @@ document.getElementById("inquiryForm").addEventListener("submit", async function
     budget:      form.budget.value.trim(),
     deadline:    form.deadline.value.trim(),
     website:     form.website.value,
-    turnstileToken,
+    "cf-turnstile-response": turnstileToken,
   };
 
   try {
@@ -177,7 +192,7 @@ document.getElementById("inquiryForm").addEventListener("submit", async function
     btn.disabled = false;
     btn.classList.remove("loading");
     // A Turnstile token is single-use; get a fresh one for the next attempt.
-    if (window.turnstile) window.turnstile.reset();
+    if (window.turnstile && turnstileWidgetId !== null) window.turnstile.reset(turnstileWidgetId);
   }
 });
 </script>
