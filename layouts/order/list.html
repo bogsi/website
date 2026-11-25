@@ -48,17 +48,17 @@
         <div class="field-row">
           <div class="field-group">
             <label for="inq-name">Name <span class="req">*</span></label>
-            <input type="text" id="inq-name" name="name" required autocomplete="name" placeholder="Jane Smith">
+            <input type="text" id="inq-name" name="name" required maxlength="100" autocomplete="name" placeholder="Jane Smith">
           </div>
           <div class="field-group">
             <label for="inq-email">Email <span class="req">*</span></label>
-            <input type="email" id="inq-email" name="email" required autocomplete="email" placeholder="jane@company.com">
+            <input type="email" id="inq-email" name="email" required maxlength="254" autocomplete="email" placeholder="jane@company.com">
           </div>
         </div>
 
         <div class="field-group">
           <label for="inq-company">Company</label>
-          <input type="text" id="inq-company" name="company" autocomplete="organization" placeholder="Acme Corp">
+          <input type="text" id="inq-company" name="company" maxlength="150" autocomplete="organization" placeholder="Acme Corp">
         </div>
 
         <div class="field-group">
@@ -82,20 +82,32 @@
 
         <div class="field-group">
           <label for="inq-desc">What do you need? <span class="req">*</span></label>
-          <textarea id="inq-desc" name="description" required rows="5"
+          <textarea id="inq-desc" name="description" required maxlength="5000" rows="5"
             placeholder="Describe your current setup and what you'd like to achieve…"></textarea>
         </div>
 
         <div class="field-row">
           <div class="field-group">
             <label for="inq-budget">Budget (USD)</label>
-            <input type="text" id="inq-budget" name="budget" placeholder="e.g. 2 000 – 5 000">
+            <input type="text" id="inq-budget" name="budget" maxlength="100" placeholder="e.g. 2 000 – 5 000">
           </div>
           <div class="field-group">
             <label for="inq-deadline">Deadline</label>
-            <input type="text" id="inq-deadline" name="deadline" placeholder="e.g. end of July">
+            <input type="text" id="inq-deadline" name="deadline" maxlength="100" placeholder="e.g. end of July">
           </div>
         </div>
+
+        <!-- Honeypot: hidden from people and screen readers; bots that fill it are dropped server-side. -->
+        <div class="hp-field" aria-hidden="true">
+          <label for="inq-website">Website</label>
+          <input type="text" id="inq-website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        {{- $turnstileKey := site.Params.turnstileSiteKey -}}
+        {{- if not $turnstileKey -}}
+          {{- errorf "params.turnstileSiteKey is missing in hugo.toml: the inquiry form needs a Cloudflare Turnstile site key" -}}
+        {{- end }}
+        <div class="cf-turnstile" data-sitekey="{{ $turnstileKey }}" data-action="order" data-theme="dark" data-size="flexible"></div>
 
         <button type="submit" class="btn-send">
           <span class="btn-send__text">Send Inquiry</span>
@@ -108,6 +120,7 @@
   </div>
 </div>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
 const requestedService = new URLSearchParams(window.location.search).get("service");
 const serviceSelect = document.getElementById("inq-service");
@@ -120,6 +133,14 @@ document.getElementById("inquiryForm").addEventListener("submit", async function
   const form = e.target;
   const btn  = form.querySelector(".btn-send");
   const status = document.getElementById("formStatus");
+
+  const tokenInput = form.querySelector('[name="cf-turnstile-response"]');
+  const turnstileToken = tokenInput ? tokenInput.value : "";
+  if (!turnstileToken) {
+    status.className = "form-status form-status--error";
+    status.textContent = "✕ Please complete the verification check above the button.";
+    return;
+  }
 
   btn.disabled = true;
   btn.classList.add("loading");
@@ -134,6 +155,8 @@ document.getElementById("inquiryForm").addEventListener("submit", async function
     description: form.description.value.trim(),
     budget:      form.budget.value.trim(),
     deadline:    form.deadline.value.trim(),
+    website:     form.website.value,
+    turnstileToken,
   };
 
   try {
@@ -153,6 +176,8 @@ document.getElementById("inquiryForm").addEventListener("submit", async function
     status.textContent = "✕ " + (err.message || "Request failed. Please try again.");
     btn.disabled = false;
     btn.classList.remove("loading");
+    // A Turnstile token is single-use; get a fresh one for the next attempt.
+    if (window.turnstile) window.turnstile.reset();
   }
 });
 </script>
