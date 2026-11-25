@@ -95,9 +95,9 @@ for (const r of rows) {
   if (notes) unknown++;
 
   out.push(
-    `INSERT OR IGNORE INTO orders (id, created_at, updated_at, full_name, email, company, aws_service, description, budget, deadline, status, notes, source) VALUES (${[
+    `INSERT OR IGNORE INTO orders (id, created_at, updated_at, full_name, email, company, aws_service, description, budget, deadline, status, notes, source, notify_status) VALUES (${[
       id.toUpperCase(), createdAt, createdAt, get(r, "name"), get(r, "email").toLowerCase(), get(r, "company"),
-      get(r, "service"), get(r, "description"), get(r, "budget"), get(r, "deadline"), status, notes, "import",
+      get(r, "service"), get(r, "description"), get(r, "budget"), get(r, "deadline"), status, notes, "import", "sent", // emails for imported orders went out back then
     ].map(sql).join(", ")});`,
     `INSERT INTO order_events (order_id, at, actor, type, to_status, body) SELECT ${sql(id.toUpperCase())}, ${createdAt}, 'import', 'created', ${sql(status)}, 'Imported from Google Sheets' WHERE changes() > 0;`,
   );

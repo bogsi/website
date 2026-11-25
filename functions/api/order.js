@@ -1,3 +1,5 @@
+import { deliver, enqueueStatement } from "../../lib/outbox.js";
+
 // Max length per field. Enforced here and mirrored as maxlength in the form.
 const LIMITS = {
   name: 100,
@@ -66,9 +68,11 @@ export async function onRequestPost(context) {
   // Google Sheet stays primary, so deploying this before D1 is set up is safe.
   // While both are configured the Sheet is a best-effort mirror for the
   // transition and can be dropped by removing GOOGLE_SPREADSHEET_ID.
+  const order = { orderId, now, name, email, company, service, description, budget, deadline };
+  let outboxIds = null;
   try {
     if (env.DB) {
-      await insertOrder(env.DB, { orderId, now, name, email, company, service, description, budget, deadline });
+      outboxIds = await insertOrder(env.DB, env, order);
       if (env.GOOGLE_SPREADSHEET_ID) {
         context.waitUntil(
           appendToSheet(env, sheetRow).catch((err) => console.error("Sheets mirror error:", err))
@@ -83,8 +87,10 @@ export async function onRequestPost(context) {
   }
 
   // Emails run after the response is returned; a failure never loses the order.
+  // With D1 they were queued in the outbox together with the order, so a
+  // failed send is retried by the admin Worker's hourly cron.
   context.waitUntil(
-    sendEmails(env, { orderId, name, email, company, service, description, budget, deadline })
+    (outboxIds ? deliver(env.DB, env, outboxIds) : sendEmails(env, order))
       .catch((err) => console.error("Email error:", err))
   );
 
@@ -101,9 +107,11 @@ export async function onRequestOptions() {
   });
 }
 
-// One order row plus its "created" event, written atomically.
-async function insertOrder(db, o) {
-  await db.batch([
+// The order, its "created" event and both emails, written atomically.
+// Returns the outbox ids to deliver.
+async function insertOrder(db, env, o) {
+  const mails = buildEmails(env, o);
+  const results = await db.batch([
     db.prepare(
       `INSERT INTO orders (id, created_at, updated_at, full_name, email, company,
          aws_service, description, budget, deadline, status, source)
@@ -113,7 +121,10 @@ async function insertOrder(db, o) {
       `INSERT INTO order_events (order_id, at, actor, type, to_status)
        VALUES (?1, ?2, 'form', 'created', 'new')`
     ).bind(o.orderId, o.now),
+    enqueueStatement(db, { orderId: o.orderId, kind: "order_client", now: o.now, ...mails.client }),
+    enqueueStatement(db, { orderId: o.orderId, kind: "order_admin", now: o.now, ...mails.admin }),
   ]);
+  return results.slice(2).map((r) => r.results[0].id);
 }
 
 async function appendToSheet(env, row) {
@@ -324,8 +335,9 @@ function escapeHtml(value) {
 
 const escapeMultiline = (value) => escapeHtml(value).replace(/\r?\n/g, "<br>");
 
-async function sendEmails(env, order) {
-  const { RESEND_API_KEY, FROM_EMAIL, ADMIN_EMAIL } = env;
+// Subject, HTML and addresses of both emails for one order.
+function buildEmails(env, order) {
+  const { ADMIN_EMAIL } = env;
 
   // Every value typed by the visitor is escaped before it goes into HTML.
   const e = {
@@ -363,6 +375,26 @@ async function sendEmails(env, order) {
     ${e.deadline ? `<p><strong>Deadline:</strong> ${e.deadline}</p>` : ""}
   `;
 
+  return {
+    client: {
+      to: order.email,
+      replyTo: ADMIN_EMAIL || "",
+      subject: `Order Confirmed: ${order.orderId}`,
+      html: clientHtml,
+    },
+    admin: {
+      to: ADMIN_EMAIL,
+      replyTo: order.email,
+      subject: `New Order: ${order.orderId} from ${order.name}`,
+      html: adminHtml,
+    },
+  };
+}
+
+// Without D1 (legacy Sheets path): send both emails directly, no retry.
+async function sendEmails(env, order) {
+  const { RESEND_API_KEY, FROM_EMAIL } = env;
+  const mails = buildEmails(env, order);
   const send = async (label, payload) => {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -374,19 +406,10 @@ async function sendEmails(env, order) {
     }
   };
 
+  const asPayload = (m) => ({ to: m.to, reply_to: m.replyTo, subject: m.subject, html: m.html });
   const results = await Promise.allSettled([
-    send("client", {
-      to: order.email,
-      reply_to: ADMIN_EMAIL,
-      subject: `Order Confirmed: ${order.orderId}`,
-      html: clientHtml,
-    }),
-    send("admin", {
-      to: ADMIN_EMAIL,
-      reply_to: order.email,
-      subject: `New Order: ${order.orderId} from ${order.name}`,
-      html: adminHtml,
-    }),
+    send("client", asPayload(mails.client)),
+    send("admin", asPayload(mails.admin)),
   ]);
   for (const r of results) {
     if (r.status === "rejected") console.error(r.reason);

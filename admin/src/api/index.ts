@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { processPending } from "../../../lib/outbox.js";
 import { requireAccess, sameOriginWrites } from "./access";
 import type { AppEnv } from "./env";
 import { orders } from "./orders";
@@ -27,5 +28,14 @@ export default {
     const url = new URL(request.url);
     if (url.pathname.startsWith("/api/")) return app.fetch(request, env, ctx);
     return env.ASSETS.fetch(request);
+  },
+  // Hourly (see triggers in wrangler.jsonc): retry emails that failed, for
+  // example while Resend's 100/day quota was used up (it resets 00:00 UTC).
+  async scheduled(_event, env, ctx) {
+    ctx.waitUntil(
+      processPending(env.DB, env).then((r) => {
+        if (r.sent || r.failed) console.log(`Outbox retry: ${r.sent} sent, ${r.failed} failed`);
+      }),
+    );
   },
 } satisfies ExportedHandler<AppEnv["Bindings"]>;

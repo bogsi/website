@@ -46,8 +46,34 @@ describe("intake", () => {
     expect(r.status).toBe(200);
     const row = db.raw.prepare("SELECT * FROM orders").get() as Record<string, unknown>;
     expect(row).toMatchObject({ id: r.json.orderId, full_name: "Jane Smith", email: "jane@example.com", aws_service: "Terraform Automation", status: "new", source: "form", budget: "2k" });
-    expect(db.raw.prepare("SELECT type, actor FROM order_events").all()).toEqual([{ type: "created", actor: "form" }]);
+    expect(db.raw.prepare("SELECT type, actor FROM order_events ORDER BY id").all()).toEqual([
+      { type: "created", actor: "form" },
+      { type: "email_sent", actor: "system" },
+      { type: "email_sent", actor: "system" },
+    ]);
+    const outbox = db.raw.prepare("SELECT kind, to_addr, reply_to, status FROM email_outbox ORDER BY id").all();
+    expect(outbox).toEqual([
+      { kind: "order_client", to_addr: "jane@example.com", reply_to: "a@x", status: "sent" },
+      { kind: "order_admin", to_addr: "a@x", reply_to: "jane@example.com", status: "sent" },
+    ]);
+    expect(db.raw.prepare("SELECT notify_status FROM orders").get()).toEqual({ notify_status: "sent" });
     expect(urls.some((u) => u.includes(":append"))).toBe(true);
+  });
+
+  it("keeps the order and queues emails for retry when Resend fails", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.includes("siteverify")) return Response.json({ success: true, action: "order", hostname: "roussev.dev" });
+      return new Response("rate limited", { status: 429 });
+    }));
+    const db = createD1();
+    const r = await submit({ ...baseEnv, DB: db });
+    expect(r.status).toBe(200);
+    expect(db.raw.prepare("SELECT status, attempts FROM email_outbox").all()).toEqual([
+      { status: "pending", attempts: 1 },
+      { status: "pending", attempts: 1 },
+    ]);
+    expect(db.raw.prepare("SELECT notify_status FROM orders").get()).toEqual({ notify_status: "pending" });
   });
 
   it("uses D1 only when no Sheet is configured", async () => {

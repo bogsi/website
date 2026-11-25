@@ -61,6 +61,12 @@ export function OrderDetail({ id }: { id: string }) {
         <h1 className="font-mono text-xl text-accent">{order.id}</h1>
         <StatusBadge status={order.status} />
         <span className="text-sm text-muted">received {fmtDate(order.created_at)}{order.source === "import" ? " · imported" : ""}</span>
+        <span
+          className={`text-sm ${order.notify_status === "failed" ? "text-red-300" : order.notify_status === "pending" ? "text-amber-200" : "text-muted"}`}
+          title="Delivery of this order's emails. Pending emails are retried every hour."
+        >
+          · emails {order.notify_status === "sent" ? "delivered" : order.notify_status === "pending" ? "pending retry" : "failed"}
+        </span>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">

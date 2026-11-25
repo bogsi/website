@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import { STATUSES, type Order, type OrderEvent, type Status } from "../shared/orders";
-import { sendStatusEmail } from "./email";
+import { deliver, enqueueStatement } from "../../../lib/outbox.js";
+import { statusEmail } from "./email";
 import type { AppEnv } from "./env";
 
 const PAGE_SIZE = 50;
@@ -113,35 +114,31 @@ export const orders = new Hono<AppEnv>()
       ),
     ];
     if (statusChanged) {
+      // Every status change emails the client. The email is queued in the
+      // outbox in the same batch, so it is retried if the first send fails.
+      const mail = statusEmail(next, next.status);
       stmts.push(
         db
           .prepare(
             "INSERT INTO order_events (order_id, at, actor, type, from_status, to_status) VALUES (?, ?, ?, 'status_change', ?, ?)",
           )
           .bind(id, now, actor, current.status, next.status),
+        enqueueStatement(db, {
+          orderId: id,
+          kind: "status_change",
+          to: next.email,
+          replyTo: c.env.ADMIN_EMAIL ?? "",
+          subject: mail.subject,
+          html: mail.html,
+          now,
+        }),
       );
     }
-    await db.batch(stmts);
+    const results = await db.batch<{ id: number }>(stmts);
 
-    // Every status change emails the client. Sent after the response; the
-    // outcome is recorded in the timeline either way.
     if (statusChanged) {
-      const notify = async () => {
-        let type: "email_sent" | "email_failed" = "email_sent";
-        let body = `Status email "${next.status}" sent to ${next.email}`;
-        try {
-          await sendStatusEmail(c.env, next, next.status as Status);
-        } catch (err) {
-          type = "email_failed";
-          body = `Status email "${next.status}" failed: ${(err as Error).message}`;
-          console.error(body);
-        }
-        await db
-          .prepare("INSERT INTO order_events (order_id, at, actor, type, to_status, body) VALUES (?, ?, 'system', ?, ?, ?)")
-          .bind(id, Date.now(), type, next.status, body)
-          .run();
-      };
-      c.executionCtx.waitUntil(notify());
+      const outboxId = results[results.length - 1]!.results[0]!.id;
+      c.executionCtx.waitUntil(deliver(db, c.env, [outboxId]));
     }
 
     return c.json({ order: next, emailQueued: statusChanged });

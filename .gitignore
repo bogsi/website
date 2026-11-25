@@ -25,3 +25,6 @@ admin/node_modules/
 admin/dist/
 admin/.wrangler/
 admin/.dev.vars
+admin/wrangler.ci.jsonc
+admin/*.csv
+admin/import.sql

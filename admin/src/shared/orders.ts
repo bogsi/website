@@ -27,6 +27,7 @@ export type Order = {
   status: Status;
   notes: string;
   source: "form" | "import";
+  notify_status: "pending" | "sent" | "failed";
 };
 
 export type OrderEvent = {

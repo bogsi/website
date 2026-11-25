@@ -1,5 +1,4 @@
 import type { Order, Status } from "../shared/orders";
-import type { Bindings } from "./env";
 
 export function escapeHtml(value: unknown): string {
   return String(value ?? "").replace(/[&<>"']/g, (c) =>
@@ -68,24 +67,4 @@ export function statusEmail(order: Order, status: Status): { subject: string; ht
     <p>Best regards,<br>Bogomil Roussev<br>AWS &amp; Terraform Automation Consultant</p>
   `;
   return { subject: t.subject, html };
-}
-
-/** Sends the status email to the client; throws with Resend's answer on failure. */
-export async function sendStatusEmail(env: Bindings, order: Order, status: Status): Promise<void> {
-  if (!env.RESEND_API_KEY || !env.FROM_EMAIL) {
-    throw new Error("RESEND_API_KEY or FROM_EMAIL is not set");
-  }
-  const { subject, html } = statusEmail(order, status);
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      from: env.FROM_EMAIL,
-      to: order.email,
-      ...(env.ADMIN_EMAIL ? { reply_to: env.ADMIN_EMAIL } : {}),
-      subject,
-      html,
-    }),
-  });
-  if (!res.ok) throw new Error(`Resend ${res.status}: ${(await res.text()).slice(0, 300)}`);
 }

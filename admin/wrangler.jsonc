@@ -23,19 +23,25 @@
     {
       "binding": "DB",
       "database_name": "roussev-orders",
-      // Fill in after `wrangler d1 create roussev-orders` (see admin/README.md).
+      // Filled in by scripts/provision.ts in CI (written to wrangler.ci.jsonc).
       "database_id": "REPLACE_WITH_D1_DATABASE_ID",
       "migrations_dir": "migrations"
     }
   ],
 
-  // Non-secret settings. Secrets (RESEND_API_KEY) go in with `wrangler secret put`.
+  // Non-secret settings. The placeholder values are filled in by
+  // scripts/provision.ts from the Cloudflare account during CI; locally,
+  // override them in .dev.vars. RESEND_API_KEY is a secret, set by the script.
   "vars": {
     "ACCESS_TEAM_DOMAIN": "https://REPLACE_TEAM.cloudflareaccess.com",
     "ACCESS_AUD": "REPLACE_WITH_ACCESS_APPLICATION_AUD",
     "FROM_EMAIL": "REPLACE_WITH_FROM_EMAIL",
-    "ADMIN_EMAIL": "bogomil.roussev@gmail.com"
+    "ADMIN_EMAIL": "REPLACE_WITH_ADMIN_EMAIL"
   },
+
+  // Retries queued emails that failed (Resend outage or daily quota).
+  // The Free plan allows 5 cron triggers per account; this uses one.
+  "triggers": { "crons": ["7 * * * *"] },
 
   "observability": { "enabled": true },
 

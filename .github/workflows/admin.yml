@@ -2,11 +2,17 @@ name: Admin dashboard
 
 on:
   pull_request:
-    paths: ["admin/**", "functions/**", ".github/workflows/admin.yml"]
+    paths: ["admin/**", "functions/**", "lib/**", ".github/workflows/admin.yml"]
   push:
     branches: [main]
-    paths: ["admin/**", ".github/workflows/admin.yml"]
+    paths: ["admin/**", "lib/**", ".github/workflows/admin.yml"]
   workflow_dispatch:
+    inputs:
+      mode:
+        description: "check = read-only report (prints the GitHub OAuth callback URL); deploy = provision and deploy"
+        type: choice
+        options: [check, deploy]
+        default: check
 
 permissions:
   contents: read
@@ -27,7 +33,7 @@ jobs:
       - run: npm test
       - run: npm run build
 
-  deploy:
+  provision:
     needs: test
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -36,21 +42,28 @@ jobs:
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      ACCESS_GITHUB_CLIENT_ID: ${{ secrets.ACCESS_GITHUB_CLIENT_ID }}
+      ACCESS_GITHUB_CLIENT_SECRET: ${{ secrets.ACCESS_GITHUB_CLIENT_SECRET }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      ADMIN_ALLOWED_EMAILS: ${{ vars.ADMIN_ALLOWED_EMAILS }}
+      MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'deploy' }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm, cache-dependency-path: admin/package-lock.json }
-      - name: Check configuration
+      - name: Skip until Cloudflare credentials exist
+        id: gate
         run: |
-          if grep -q 'REPLACE_' wrangler.jsonc; then
-            echo "::error::admin/wrangler.jsonc still has REPLACE_ placeholders. See admin/README.md, Setup."
-            exit 1
-          fi
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
-            echo "::error::Add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID as repository secrets."
-            exit 1
+            echo "::notice::Admin not provisioned: add CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID secrets (admin/README.md)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
-      - run: npm ci
-      - run: npm run build
-      - run: npx wrangler d1 migrations apply roussev-orders --remote
-      - run: npx wrangler deploy
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.ready == 'true'
+        with: { node-version: 22, cache: npm, cache-dependency-path: admin/package-lock.json }
+      - if: steps.gate.outputs.ready == 'true'
+        run: npm ci
+      - if: steps.gate.outputs.ready == 'true' && env.MODE == 'deploy'
+        run: npm run build
+      - if: steps.gate.outputs.ready == 'true'
+        run: node --experimental-strip-types scripts/provision.ts "$MODE"
