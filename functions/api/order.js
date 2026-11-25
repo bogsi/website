@@ -17,6 +17,13 @@ const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/sit
 const TURNSTILE_ACTION = "order";
 const TURNSTILE_TIMEOUT_MS = 10_000;
 
+// Anti-relay: the confirmation goes to whatever address the visitor typed in,
+// so the form could be used to send mail from roussev.dev to strangers. At
+// most this many confirmations go to one address in a rolling 24 hours; the
+// order itself and the admin email are always kept.
+const CLIENT_CONFIRMATIONS_PER_DAY = 2;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 export async function onRequestPost(context) {
   const { request, env } = context;
 
@@ -108,9 +115,14 @@ export async function onRequestOptions() {
 }
 
 // The order, its "created" event and both emails, written atomically.
+// The customer confirmation is queued only while its address is under the
+// daily cap; otherwise a note on the order says why it was skipped. Both
+// checks run inside the same batch (one transaction), so two simultaneous
+// submissions cannot both slip under the cap.
 // Returns the outbox ids to deliver.
 async function insertOrder(db, env, o) {
   const mails = buildEmails(env, o);
+  const since = o.now - DAY_MS;
   const results = await db.batch([
     db.prepare(
       `INSERT INTO orders (id, created_at, updated_at, full_name, email, company,
@@ -121,10 +133,28 @@ async function insertOrder(db, env, o) {
       `INSERT INTO order_events (order_id, at, actor, type, to_status)
        VALUES (?1, ?2, 'form', 'created', 'new')`
     ).bind(o.orderId, o.now),
-    enqueueStatement(db, { orderId: o.orderId, kind: "order_client", now: o.now, ...mails.client }),
+    db.prepare(
+      `INSERT INTO email_outbox (order_id, kind, to_addr, reply_to, subject, html, created_at)
+       SELECT ?1, 'order_client', ?2, ?3, ?4, ?5, ?6
+       WHERE (SELECT COUNT(*) FROM email_outbox
+              WHERE kind = 'order_client' AND to_addr = ?2 AND created_at > ?7) < ?8
+       RETURNING id`
+    ).bind(
+      o.orderId, mails.client.to, mails.client.replyTo, mails.client.subject, mails.client.html,
+      o.now, since, CLIENT_CONFIRMATIONS_PER_DAY,
+    ),
+    db.prepare(
+      `INSERT INTO order_events (order_id, at, actor, type, body)
+       SELECT ?1, ?2, 'system', 'note', ?3
+       WHERE NOT EXISTS (SELECT 1 FROM email_outbox WHERE order_id = ?1 AND kind = 'order_client')`
+    ).bind(
+      o.orderId, o.now,
+      `Customer confirmation not sent: this address already got ${CLIENT_CONFIRMATIONS_PER_DAY} in the last 24 hours (anti-relay limit). Reply manually if the order is genuine.`,
+    ),
     enqueueStatement(db, { orderId: o.orderId, kind: "order_admin", now: o.now, ...mails.admin }),
   ]);
-  return results.slice(2).map((r) => r.results[0].id);
+  // Statements 2 (customer, maybe skipped) and 4 (admin) return outbox ids.
+  return [results[2], results[4]].flatMap((r) => r.results.map((row) => row.id));
 }
 
 async function appendToSheet(env, row) {
@@ -351,15 +381,15 @@ function buildEmails(env, order) {
     deadline: escapeHtml(order.deadline),
   };
 
+  // The confirmation repeats nothing the visitor typed: anyone can put any
+  // address into the form, so free text here would let strangers use it to
+  // deliver their own message from roussev.dev. The order id is generated
+  // by us; the details stay in the admin email and the dashboard.
   const clientHtml = `
-    <h2>Thank you for your inquiry, ${e.name}!</h2>
+    <h2>Thank you for your inquiry</h2>
     <p>I have received your request and will get back to you within 24 hours.</p>
-    <hr>
     <p><strong>Order ID:</strong> ${e.orderId}</p>
-    <p><strong>Service:</strong> ${e.service}</p>
-    <p><strong>Description:</strong><br>${e.description}</p>
-    ${e.budget ? `<p><strong>Budget:</strong> ${e.budget}</p>` : ""}
-    ${e.deadline ? `<p><strong>Deadline:</strong> ${e.deadline}</p>` : ""}
+    <p>If you did not send this request, you can ignore this email.</p>
     <hr>
     <p>Best regards,<br>Bogomil Roussev<br>AWS & Terraform Automation Consultant</p>
   `;

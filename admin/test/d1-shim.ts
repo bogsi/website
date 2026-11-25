@@ -1,7 +1,7 @@
 // Minimal D1Database stand-in backed by better-sqlite3, for tests only.
 // Covers what the app uses: prepare/bind/all/first/run and batch.
 import Database from "better-sqlite3";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 
 type Row = Record<string, unknown>;
 
@@ -39,7 +39,11 @@ const numbered = (p: unknown) => !Array.isArray(p);
 export function createD1(): D1Database & { raw: Database.Database } {
   const db = new Database(":memory:");
   db.pragma("foreign_keys = ON");
-  db.exec(readFileSync(new URL("../migrations/0001_init.sql", import.meta.url), "utf8"));
+  // Apply every migration in order, as wrangler d1 migrations apply does.
+  const dir = new URL("../migrations/", import.meta.url);
+  for (const file of readdirSync(dir).filter((f) => f.endsWith(".sql")).sort()) {
+    db.exec(readFileSync(new URL(file, dir), "utf8"));
+  }
   const d1 = {
     raw: db,
     prepare: (sql: string) => new Stmt(db, sql),

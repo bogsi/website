@@ -88,6 +88,46 @@ describe("intake", () => {
     expect(urls.some((u) => u.includes(":append"))).toBe(true);
   });
 
+  it("caps customer confirmations per address and keeps the order and admin email", async () => {
+    const db = createD1();
+    const ids: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      const r = await submit({ ...baseEnv, DB: db });
+      expect(r.status).toBe(200);
+      ids.push(r.json.orderId);
+    }
+    expect(db.raw.prepare("SELECT COUNT(*) AS n FROM orders").get()).toEqual({ n: 3 });
+    const kinds = db.raw.prepare("SELECT order_id, kind FROM email_outbox ORDER BY id").all() as { order_id: string; kind: string }[];
+    expect(kinds.filter((k) => k.kind === "order_client").map((k) => k.order_id)).toEqual([ids[0], ids[1]]);
+    expect(kinds.filter((k) => k.kind === "order_admin").map((k) => k.order_id)).toEqual(ids);
+    const notes = db.raw.prepare("SELECT order_id, body FROM order_events WHERE type = 'note'").all() as { order_id: string; body: string }[];
+    expect(notes).toHaveLength(1);
+    expect(notes[0]!.order_id).toBe(ids[2]);
+    expect(notes[0]!.body).toContain("anti-relay");
+    expect(db.raw.prepare("SELECT notify_status FROM orders WHERE id = ?").get(ids[2])).toEqual({ notify_status: "sent" });
+  });
+
+  it("sends the confirmation again once the 24-hour window has passed", async () => {
+    const db = createD1();
+    await submit({ ...baseEnv, DB: db });
+    await submit({ ...baseEnv, DB: db });
+    db.raw.prepare("UPDATE email_outbox SET created_at = created_at - ?").run(25 * 60 * 60 * 1000);
+    await submit({ ...baseEnv, DB: db });
+    expect(db.raw.prepare("SELECT COUNT(*) AS n FROM email_outbox WHERE kind = 'order_client'").get()).toEqual({ n: 3 });
+  });
+
+  it("does not echo visitor text in the customer confirmation", async () => {
+    const db = createD1();
+    const r = await submit({ ...baseEnv, DB: db });
+    const { html } = db.raw.prepare("SELECT html FROM email_outbox WHERE kind = 'order_client'").get() as { html: string };
+    expect(html).toContain(r.json.orderId);
+    for (const typed of ["Jane Smith", "Acme", "Need help", "2k", "July", "Service:"]) {
+      expect(html).not.toContain(typed);
+    }
+    const admin = db.raw.prepare("SELECT html FROM email_outbox WHERE kind = 'order_admin'").get() as { html: string };
+    expect(admin.html).toContain("Need help");
+  });
+
   it("returns 500 and sends no email when D1 fails", async () => {
     const db = createD1();
     db.raw.exec("DROP TABLE order_events");
