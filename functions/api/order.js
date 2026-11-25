@@ -54,17 +54,31 @@ export async function onRequestPost(context) {
   const { name, email, company, service, description, budget, deadline } = parsed.value;
 
   const orderId = generateOrderId();
-  const date = new Date().toISOString().split("T")[0];
+  const now = Date.now();
+  const date = new Date(now).toISOString().split("T")[0];
+  const sheetRow = [
+    orderId, date, name, email,
+    company, service, description,
+    budget, deadline, "New",
+  ];
 
-  // Write to Google Sheets
+  // D1 is the system of record once the DB binding exists. Until then the
+  // Google Sheet stays primary, so deploying this before D1 is set up is safe.
+  // While both are configured the Sheet is a best-effort mirror for the
+  // transition and can be dropped by removing GOOGLE_SPREADSHEET_ID.
   try {
-    await appendToSheet(env, [
-      orderId, date, name, email,
-      company, service, description,
-      budget, deadline, "New",
-    ]);
+    if (env.DB) {
+      await insertOrder(env.DB, { orderId, now, name, email, company, service, description, budget, deadline });
+      if (env.GOOGLE_SPREADSHEET_ID) {
+        context.waitUntil(
+          appendToSheet(env, sheetRow).catch((err) => console.error("Sheets mirror error:", err))
+        );
+      }
+    } else {
+      await appendToSheet(env, sheetRow);
+    }
   } catch (err) {
-    console.error("Sheets error:", err);
+    console.error("Order storage error:", err);
     return reply(500, { error: "Failed to save order" });
   }
 
@@ -85,6 +99,21 @@ export async function onRequestOptions() {
       "Access-Control-Allow-Headers": "Content-Type",
     },
   });
+}
+
+// One order row plus its "created" event, written atomically.
+async function insertOrder(db, o) {
+  await db.batch([
+    db.prepare(
+      `INSERT INTO orders (id, created_at, updated_at, full_name, email, company,
+         aws_service, description, budget, deadline, status, source)
+       VALUES (?1, ?2, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, 'new', 'form')`
+    ).bind(o.orderId, o.now, o.name, o.email, o.company, o.service, o.description, o.budget, o.deadline),
+    db.prepare(
+      `INSERT INTO order_events (order_id, at, actor, type, to_status)
+       VALUES (?1, ?2, 'form', 'created', 'new')`
+    ).bind(o.orderId, o.now),
+  ]);
 }
 
 async function appendToSheet(env, row) {

@@ -19,3 +19,9 @@ Thumbs.db
 
 # Claude Code local settings and worktrees (CLAUDE.md stays tracked)
 .claude/
+
+# admin dashboard
+admin/node_modules/
+admin/dist/
+admin/.wrangler/
+admin/.dev.vars

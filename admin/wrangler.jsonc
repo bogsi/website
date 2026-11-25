@@ -1,0 +1,45 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "roussev-admin",
+  "main": "src/api/index.ts",
+  "compatibility_date": "2026-11-01",
+
+  // Only reachable through admin.roussev.dev, which Cloudflare Access guards.
+  // A workers.dev or preview URL would bypass Access, so both are off.
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "admin.roussev.dev", "custom_domain": true }],
+
+  // The SPA is served as static assets: free, and does not count as a Worker
+  // request. Only /api/* invokes the Worker.
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "roussev-orders",
+      // Fill in after `wrangler d1 create roussev-orders` (see admin/README.md).
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  // Non-secret settings. Secrets (RESEND_API_KEY) go in with `wrangler secret put`.
+  "vars": {
+    "ACCESS_TEAM_DOMAIN": "https://REPLACE_TEAM.cloudflareaccess.com",
+    "ACCESS_AUD": "REPLACE_WITH_ACCESS_APPLICATION_AUD",
+    "FROM_EMAIL": "REPLACE_WITH_FROM_EMAIL",
+    "ADMIN_EMAIL": "bogomil.roussev@gmail.com"
+  },
+
+  "observability": { "enabled": true },
+
+  // `wrangler dev` would otherwise rewrite requests to the custom domain's
+  // host; keeping localhost lets ACCESS_DEV_EMAIL (.dev.vars) apply locally.
+  "dev": { "host": "localhost", "port": 8787 }
+}
