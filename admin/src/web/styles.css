@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+/* Matches roussev.dev: dark terminal look with the orange accent. */
+@theme {
+  --color-bg: #1f2125;
+  --color-panel: #26282d;
+  --color-line: #3a3d44;
+  --color-ink: #e6e6e6;
+  --color-muted: #9aa0a6;
+  --color-accent: #f0912f;
+  --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html, body { background: var(--color-bg); color: var(--color-ink); }
+body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }

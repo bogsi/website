@@ -1,0 +1,37 @@
+{
+  "name": "roussev-admin",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "deploy": "npm run build && wrangler d1 migrations apply roussev-orders --remote && wrangler deploy",
+    "import:sheet": "node scripts/import-sheet.mjs"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.108.4",
+    "@tanstack/react-router": "^1.170.46",
+    "hono": "^4.13.22",
+    "jose": "^6.2.18",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261125.1",
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^22.20.7",
+    "@types/react": "^19.3.3",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "better-sqlite3": "^13.2.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.2",
+    "wrangler": "^4.168.0"
+  }
+}

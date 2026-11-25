@@ -1,3 +1,5 @@
+import { deliver, enqueueStatement } from "../../lib/outbox.js";
+
 // Max length per field. Enforced here and mirrored as maxlength in the form.
 const LIMITS = {
   name: 100,
@@ -14,6 +16,13 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 const TURNSTILE_ACTION = "order";
 const TURNSTILE_TIMEOUT_MS = 10_000;
+
+// Anti-relay: the confirmation goes to whatever address the visitor typed in,
+// so the form could be used to send mail from roussev.dev to strangers. At
+// most this many confirmations go to one address in a rolling 24 hours; the
+// order itself and the admin email are always kept.
+const CLIENT_CONFIRMATIONS_PER_DAY = 2;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -54,23 +63,41 @@ export async function onRequestPost(context) {
   const { name, email, company, service, description, budget, deadline } = parsed.value;
 
   const orderId = generateOrderId();
-  const date = new Date().toISOString().split("T")[0];
+  const now = Date.now();
+  const date = new Date(now).toISOString().split("T")[0];
+  const sheetRow = [
+    orderId, date, name, email,
+    company, service, description,
+    budget, deadline, "New",
+  ];
 
-  // Write to Google Sheets
+  // D1 is the system of record once the DB binding exists. Until then the
+  // Google Sheet stays primary, so deploying this before D1 is set up is safe.
+  // While both are configured the Sheet is a best-effort mirror for the
+  // transition and can be dropped by removing GOOGLE_SPREADSHEET_ID.
+  const order = { orderId, now, name, email, company, service, description, budget, deadline };
+  let outboxIds = null;
   try {
-    await appendToSheet(env, [
-      orderId, date, name, email,
-      company, service, description,
-      budget, deadline, "New",
-    ]);
+    if (env.DB) {
+      outboxIds = await insertOrder(env.DB, env, order);
+      if (env.GOOGLE_SPREADSHEET_ID) {
+        context.waitUntil(
+          appendToSheet(env, sheetRow).catch((err) => console.error("Sheets mirror error:", err))
+        );
+      }
+    } else {
+      await appendToSheet(env, sheetRow);
+    }
   } catch (err) {
-    console.error("Sheets error:", err);
+    console.error("Order storage error:", err);
     return reply(500, { error: "Failed to save order" });
   }
 
   // Emails run after the response is returned; a failure never loses the order.
+  // With D1 they were queued in the outbox together with the order, so a
+  // failed send is retried by the admin Worker's hourly cron.
   context.waitUntil(
-    sendEmails(env, { orderId, name, email, company, service, description, budget, deadline })
+    (outboxIds ? deliver(env.DB, env, outboxIds) : sendEmails(env, order))
       .catch((err) => console.error("Email error:", err))
   );
 
@@ -85,6 +112,49 @@ export async function onRequestOptions() {
       "Access-Control-Allow-Headers": "Content-Type",
     },
   });
+}
+
+// The order, its "created" event and both emails, written atomically.
+// The customer confirmation is queued only while its address is under the
+// daily cap; otherwise a note on the order says why it was skipped. Both
+// checks run inside the same batch (one transaction), so two simultaneous
+// submissions cannot both slip under the cap.
+// Returns the outbox ids to deliver.
+async function insertOrder(db, env, o) {
+  const mails = buildEmails(env, o);
+  const since = o.now - DAY_MS;
+  const results = await db.batch([
+    db.prepare(
+      `INSERT INTO orders (id, created_at, updated_at, full_name, email, company,
+         aws_service, description, budget, deadline, status, source)
+       VALUES (?1, ?2, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, 'new', 'form')`
+    ).bind(o.orderId, o.now, o.name, o.email, o.company, o.service, o.description, o.budget, o.deadline),
+    db.prepare(
+      `INSERT INTO order_events (order_id, at, actor, type, to_status)
+       VALUES (?1, ?2, 'form', 'created', 'new')`
+    ).bind(o.orderId, o.now),
+    db.prepare(
+      `INSERT INTO email_outbox (order_id, kind, to_addr, reply_to, subject, html, created_at)
+       SELECT ?1, 'order_client', ?2, ?3, ?4, ?5, ?6
+       WHERE (SELECT COUNT(*) FROM email_outbox
+              WHERE kind = 'order_client' AND to_addr = ?2 AND created_at > ?7) < ?8
+       RETURNING id`
+    ).bind(
+      o.orderId, mails.client.to, mails.client.replyTo, mails.client.subject, mails.client.html,
+      o.now, since, CLIENT_CONFIRMATIONS_PER_DAY,
+    ),
+    db.prepare(
+      `INSERT INTO order_events (order_id, at, actor, type, body)
+       SELECT ?1, ?2, 'system', 'note', ?3
+       WHERE NOT EXISTS (SELECT 1 FROM email_outbox WHERE order_id = ?1 AND kind = 'order_client')`
+    ).bind(
+      o.orderId, o.now,
+      `Customer confirmation not sent: this address already got ${CLIENT_CONFIRMATIONS_PER_DAY} in the last 24 hours (anti-relay limit). Reply manually if the order is genuine.`,
+    ),
+    enqueueStatement(db, { orderId: o.orderId, kind: "order_admin", now: o.now, ...mails.admin }),
+  ]);
+  // Statements 2 (customer, maybe skipped) and 4 (admin) return outbox ids.
+  return [results[2], results[4]].flatMap((r) => r.results.map((row) => row.id));
 }
 
 async function appendToSheet(env, row) {
@@ -295,8 +365,9 @@ function escapeHtml(value) {
 
 const escapeMultiline = (value) => escapeHtml(value).replace(/\r?\n/g, "<br>");
 
-async function sendEmails(env, order) {
-  const { RESEND_API_KEY, FROM_EMAIL, ADMIN_EMAIL } = env;
+// Subject, HTML and addresses of both emails for one order.
+function buildEmails(env, order) {
+  const { ADMIN_EMAIL } = env;
 
   // Every value typed by the visitor is escaped before it goes into HTML.
   const e = {
@@ -310,15 +381,15 @@ async function sendEmails(env, order) {
     deadline: escapeHtml(order.deadline),
   };
 
+  // The confirmation repeats nothing the visitor typed: anyone can put any
+  // address into the form, so free text here would let strangers use it to
+  // deliver their own message from roussev.dev. The order id is generated
+  // by us; the details stay in the admin email and the dashboard.
   const clientHtml = `
-    <h2>Thank you for your inquiry, ${e.name}!</h2>
+    <h2>Thank you for your inquiry</h2>
     <p>I have received your request and will get back to you within 24 hours.</p>
-    <hr>
     <p><strong>Order ID:</strong> ${e.orderId}</p>
-    <p><strong>Service:</strong> ${e.service}</p>
-    <p><strong>Description:</strong><br>${e.description}</p>
-    ${e.budget ? `<p><strong>Budget:</strong> ${e.budget}</p>` : ""}
-    ${e.deadline ? `<p><strong>Deadline:</strong> ${e.deadline}</p>` : ""}
+    <p>If you did not send this request, you can ignore this email.</p>
     <hr>
     <p>Best regards,<br>Bogomil Roussev<br>AWS & Terraform Automation Consultant</p>
   `;
@@ -334,6 +405,26 @@ async function sendEmails(env, order) {
     ${e.deadline ? `<p><strong>Deadline:</strong> ${e.deadline}</p>` : ""}
   `;
 
+  return {
+    client: {
+      to: order.email,
+      replyTo: ADMIN_EMAIL || "",
+      subject: `Order Confirmed: ${order.orderId}`,
+      html: clientHtml,
+    },
+    admin: {
+      to: ADMIN_EMAIL,
+      replyTo: order.email,
+      subject: `New Order: ${order.orderId} from ${order.name}`,
+      html: adminHtml,
+    },
+  };
+}
+
+// Without D1 (legacy Sheets path): send both emails directly, no retry.
+async function sendEmails(env, order) {
+  const { RESEND_API_KEY, FROM_EMAIL } = env;
+  const mails = buildEmails(env, order);
   const send = async (label, payload) => {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -345,19 +436,10 @@ async function sendEmails(env, order) {
     }
   };
 
+  const asPayload = (m) => ({ to: m.to, reply_to: m.replyTo, subject: m.subject, html: m.html });
   const results = await Promise.allSettled([
-    send("client", {
-      to: order.email,
-      reply_to: ADMIN_EMAIL,
-      subject: `Order Confirmed: ${order.orderId}`,
-      html: clientHtml,
-    }),
-    send("admin", {
-      to: ADMIN_EMAIL,
-      reply_to: order.email,
-      subject: `New Order: ${order.orderId} from ${order.name}`,
-      html: adminHtml,
-    }),
+    send("client", asPayload(mails.client)),
+    send("admin", asPayload(mails.admin)),
   ]);
   for (const r of results) {
     if (r.status === "rejected") console.error(r.reason);

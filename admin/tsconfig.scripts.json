@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "tsBuildInfoFile": "./node_modules/.tmp/scripts.tsbuildinfo",
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["scripts/*.ts"]
+}
