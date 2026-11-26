@@ -250,3 +250,15 @@ describe("account", () => {
     expect((await call("/api/outbox/retry", { method: "POST", origin: "https://evil.example" })).status).toBe(403);
   });
 });
+
+describe("security headers", () => {
+  it("are set on success, auth failures and 404s", async () => {
+    for (const res of [await call("/api/me"), await call("/api/me", { auth: null }), await call("/api/nope")]) {
+      expect(res.headers.get("Cache-Control")).toBe("no-store");
+      expect(res.headers.get("X-Frame-Options")).toBe("DENY");
+      expect(res.headers.get("X-Content-Type-Options")).toBe("nosniff");
+      expect(res.headers.get("X-Robots-Tag")).toBe("noindex, nofollow");
+      expect(res.headers.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
+    }
+  });
+});

@@ -26,7 +26,14 @@ function fakeCloudflare(opts: { org?: boolean } = {}) {
   const state = {
     org: (opts.org === false
       ? null
-      : { auth_domain: "roussev.cloudflareaccess.com", name: "quiet-grass-cb24.cloudflareaccess.com", session_duration: "24h", login_design: {} }) as Record<string, unknown> | null,
+      : {
+          auth_domain: "roussev.cloudflareaccess.com",
+          name: "quiet-grass-cb24.cloudflareaccess.com",
+          session_duration: "24h",
+          login_design: {},
+          warp_auth_session_duration: "",
+          user_seat_expiration_inactive_time: null,
+        }) as Record<string, unknown> | null,
     d1: [] as { uuid: string; name: string }[],
     idps: [] as { id: string; type: string; name: string; config: unknown }[],
     policies: [] as { id: string; name: string; include: unknown }[],
@@ -63,6 +70,8 @@ function fakeCloudflare(opts: { org?: boolean } = {}) {
     if (path === `${a}/access/organizations`) {
       if (!state.org) return fail(404, 12130);
       if (method === "PUT") {
+        // Like the real API: empty durations or nulls are rejected (12062).
+        if (Object.values(body).some((v) => v === "" || v === null)) return fail(400, 12062);
         state.org = body;
         return ok(state.org);
       }
@@ -212,6 +221,7 @@ describe("login page branding", () => {
       login_design: ORG_BRANDING.login_design,
     });
     expect(state.org).not.toHaveProperty("created_at");
+    expect(state.org).not.toHaveProperty("warp_auth_session_duration");
     expect(log[0]).toContain('was "quiet-grass-cb24');
 
     state.calls.length = 0;

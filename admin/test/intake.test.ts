@@ -33,7 +33,7 @@ const baseEnv = { TURNSTILE_SECRET_KEY: "s", TURNSTILE_HOSTNAMES: "roussev.dev",
 const sheetsEnv = { GOOGLE_SERVICE_ACCOUNT_EMAIL: "g", GOOGLE_SPREADSHEET_ID: "id", GOOGLE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nQUJD\n-----END PRIVATE KEY-----" };
 
 async function submit(env: Record<string, unknown>) {
-  const request = new Request("https://roussev.dev/api/order", { method: "POST", body: JSON.stringify(body) });
+  const request = new Request("https://roussev.dev/api/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
   const res = await onRequestPost({ request, env, waitUntil: (p: Promise<unknown>) => pending.push(p) });
   await Promise.all(pending);
   return { status: res.status, json: await res.json() };
@@ -135,5 +135,27 @@ describe("intake", () => {
     expect(r.status).toBe(500);
     expect(db.raw.prepare("SELECT COUNT(*) AS n FROM orders").get()).toEqual({ n: 0 });
     expect(urls.some((u) => u.includes("resend"))).toBe(false);
+  });
+});
+
+describe("intake request limits", () => {
+  it("rejects a non-JSON content type with 415 before any work", async () => {
+    const request = new Request("https://roussev.dev/api/order", { method: "POST", headers: { "Content-Type": "text/plain" }, body: "{}" });
+    const res = await onRequestPost({ request, env: baseEnv, waitUntil: () => undefined });
+    expect(res.status).toBe(415);
+  });
+
+  it("rejects a body over 16 KB with 413 before any work", async () => {
+    const big = JSON.stringify({ ...body, description: "x".repeat(20 * 1024) });
+    const request = new Request("https://roussev.dev/api/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: big });
+    const res = await onRequestPost({ request, env: baseEnv, waitUntil: () => undefined });
+    expect(res.status).toBe(413);
+  });
+});
+
+describe("redact", () => {
+  it("masks email addresses and flattens whitespace", async () => {
+    const { redact } = await import("../../lib/redact.js");
+    expect(redact(new Error("Invalid `to` field: jane.doe@example.com\nretry"))).toBe("Invalid `to` field: [email] retry");
   });
 });
