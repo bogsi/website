@@ -6,6 +6,8 @@ import {
   ensureAccessApp,
   ensureD1,
   ensureGithubIdp,
+  ensureOrgBranding,
+  ORG_BRANDING,
   ensurePagesBinding,
   ensurePagesExclude,
   ensurePolicy,
@@ -22,7 +24,9 @@ const ACC = "acc1";
 /** In-memory Cloudflare API covering the endpoints the script uses. */
 function fakeCloudflare(opts: { org?: boolean } = {}) {
   const state = {
-    org: opts.org === false ? null : { auth_domain: "roussev.cloudflareaccess.com" },
+    org: (opts.org === false
+      ? null
+      : { auth_domain: "roussev.cloudflareaccess.com", name: "quiet-grass-cb24.cloudflareaccess.com", session_duration: "24h", login_design: {} }) as Record<string, unknown> | null,
     d1: [] as { uuid: string; name: string }[],
     idps: [] as { id: string; type: string; name: string; config: unknown }[],
     policies: [] as { id: string; name: string; include: unknown }[],
@@ -56,7 +60,14 @@ function fakeCloudflare(opts: { org?: boolean } = {}) {
     state.calls.push({ method, path: path + url.search, body });
     const a = `/accounts/${ACC}`;
 
-    if (path === `${a}/access/organizations`) return state.org ? ok(state.org) : fail(404, 12130);
+    if (path === `${a}/access/organizations`) {
+      if (!state.org) return fail(404, 12130);
+      if (method === "PUT") {
+        state.org = body;
+        return ok(state.org);
+      }
+      return ok({ ...state.org, created_at: "2026-11-01", updated_at: "2026-11-02" });
+    }
     if (path === `${a}/d1/database`) {
       if (method === "GET") return ok(state.d1.filter((d) => d.name === url.searchParams.get("name")));
       const db = { uuid: `db-${++seq}`, name: body.name };
@@ -186,5 +197,32 @@ describe("provisioning", () => {
     expect(() => renderWranglerConfig(`${template}\n// REPLACE_SOMETHING_NEW`, {
       databaseId: "x", teamDomain: "x", aud: "x", fromEmail: "x", adminEmail: "x",
     })).toThrow(/REPLACE_SOMETHING_NEW/);
+  });
+});
+
+describe("login page branding", () => {
+  it("renames the organization once and keeps its other settings", async () => {
+    const { state, cf } = fakeCloudflare();
+    const log: string[] = [];
+    await ensureOrgBranding(cf, ACC, (l) => log.push(l));
+    expect(state.org).toMatchObject({
+      name: ORG_BRANDING.name,
+      auth_domain: "roussev.cloudflareaccess.com",
+      session_duration: "24h",
+      login_design: ORG_BRANDING.login_design,
+    });
+    expect(state.org).not.toHaveProperty("created_at");
+    expect(log[0]).toContain('was "quiet-grass-cb24');
+
+    state.calls.length = 0;
+    await ensureOrgBranding(cf, ACC, (l) => log.push(l));
+    expect(state.calls.filter((c) => c.method === "PUT")).toHaveLength(0);
+  });
+
+  it("never fails the deploy", async () => {
+    const { cf } = fakeCloudflare({ org: false });
+    const log: string[] = [];
+    await expect(ensureOrgBranding(cf, ACC, (l) => log.push(l))).resolves.toBeUndefined();
+    expect(log[0]).toContain("could not set login page branding");
   });
 });

@@ -28,6 +28,7 @@ export const requireAccess = createMiddleware<AppEnv>(async (c, next) => {
   const host = new URL(c.req.url).hostname;
   if (c.env.ACCESS_DEV_EMAIL && LOCAL_HOSTS.has(host)) {
     c.set("userEmail", c.env.ACCESS_DEV_EMAIL);
+    c.set("sessionExpiresAt", null);
     return next();
   }
 
@@ -51,6 +52,7 @@ export const requireAccess = createMiddleware<AppEnv>(async (c, next) => {
     const email = typeof payload.email === "string" ? payload.email : "";
     if (!email) return c.json({ error: "Unauthorized" }, 401);
     c.set("userEmail", email);
+    c.set("sessionExpiresAt", typeof payload.exp === "number" ? payload.exp * 1000 : null);
   } catch (err) {
     console.warn("Access JWT rejected:", (err as Error).message);
     return c.json({ error: "Unauthorized" }, 401);

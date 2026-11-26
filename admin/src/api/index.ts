@@ -2,12 +2,14 @@ import { Hono } from "hono";
 import { processPending } from "../../../lib/outbox.js";
 import { requireAccess, sameOriginWrites } from "./access";
 import type { AppEnv } from "./env";
+import { account } from "./account";
 import { orders } from "./orders";
 
 const api = new Hono<AppEnv>()
   .use("*", requireAccess)
   .use("*", sameOriginWrites)
   .get("/me", (c) => c.json({ email: c.get("userEmail") }))
+  .route("/", account)
   .route("/", orders);
 
 export const app = new Hono<AppEnv>()

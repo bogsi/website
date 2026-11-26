@@ -26,8 +26,20 @@ export type Stats = {
   newLast7Days: number;
 };
 
+export type Account = {
+  email: string;
+  sessionExpiresAt: number | null;
+  notifications: { adminEmail: string | null; fromEmail: string | null };
+  outbox: { pending: number; failed: number };
+};
+
+/** Cloudflare Access ends the session here and shows its signed-out page. */
+export const LOGOUT_URL = "/cdn-cgi/access/logout";
+
 export const api = {
   me: () => request<{ email: string }>("/me"),
+  account: () => request<Account>("/account"),
+  retryEmails: () => request<{ sent: number; failed: number }>("/outbox/retry", { method: "POST" }),
   stats: () => request<Stats>("/stats"),
   orders: (p: { status?: Status; q?: string; cursor?: string | null }) => {
     const qs = new URLSearchParams();

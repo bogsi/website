@@ -217,3 +217,36 @@ describe("stats", () => {
     expect(s.byMonth.length).toBe(2);
   });
 });
+
+describe("account", () => {
+  it("shows the signed-in user, session expiry, notification addresses and outbox health", async () => {
+    seed(1);
+    db.raw.prepare(
+      `INSERT INTO email_outbox (order_id, kind, to_addr, subject, html, status, created_at) VALUES
+       ('ORD-0000000','status_change','a@x','s','h','pending',1), ('ORD-0000000','status_change','a@x','s','h','failed',2)`,
+    ).run();
+    const a = (await (await call("/api/account")).json()) as Record<string, unknown>;
+    expect(a).toMatchObject({
+      email: "bogomil@example.com",
+      notifications: { adminEmail: "admin@roussev.dev", fromEmail: "orders@roussev.dev" },
+      outbox: { pending: 1, failed: 1 },
+    });
+    expect(a.sessionExpiresAt).toBeGreaterThan(Date.now());
+  });
+
+  it("retries pending and given-up emails on demand", async () => {
+    seed(1);
+    db.raw.prepare(
+      `INSERT INTO email_outbox (order_id, kind, to_addr, subject, html, status, attempts, created_at)
+       VALUES ('ORD-0000000','status_change','a@x','s','h','failed',5,1)`,
+    ).run();
+    const res = await call("/api/outbox/retry", { method: "POST" });
+    expect(await res.json()).toEqual({ sent: 1, failed: 0 });
+    expect(db.raw.prepare("SELECT status, attempts FROM email_outbox").get()).toEqual({ status: "sent", attempts: 1 });
+  });
+
+  it("refuses the retry without Access or from another origin", async () => {
+    expect((await call("/api/outbox/retry", { method: "POST", auth: null })).status).toBe(401);
+    expect((await call("/api/outbox/retry", { method: "POST", origin: "https://evil.example" })).status).toBe(403);
+  });
+});

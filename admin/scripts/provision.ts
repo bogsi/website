@@ -19,6 +19,7 @@ import {
   ensureAccessApp,
   ensureD1,
   ensureGithubIdp,
+  ensureOrgBranding,
   ensurePagesBinding,
   ensurePagesExclude,
   ensurePolicy,
@@ -86,6 +87,7 @@ async function main() {
   );
   const policyId = await ensurePolicy(cf, accountId, allowed, log);
   const aud = await ensureAccessApp(cf, accountId, idpId, policyId, log);
+  await ensureOrgBranding(cf, accountId, log);
 
   // Access is in place before the Worker gets its public hostname.
   const config = renderWranglerConfig(readFileSync(`${adminDir}/wrangler.jsonc`, "utf8"), {

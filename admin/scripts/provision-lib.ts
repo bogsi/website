@@ -64,6 +64,47 @@ export async function getTeamDomain(cf: Cf, accountId: string): Promise<string> 
   );
 }
 
+export const ORG_BRANDING = {
+  name: "roussev.dev",
+  login_design: {
+    background_color: "#1f2125",
+    text_color: "#e6e6e6",
+    header_text: "roussev.dev · Control Room",
+    footer_text: "Private admin area",
+  },
+} as const;
+
+type Org = Record<string, unknown> & { name?: string; login_design?: Record<string, unknown> };
+
+/**
+ * Sets the name and colours shown on the Access login page (by default the
+ * name is the random team name Cloudflare picked at signup). The organization
+ * is sent back whole, with only these fields changed, so no other Zero Trust
+ * setting is touched. Best effort: a failure is logged, not fatal.
+ */
+export async function ensureOrgBranding(cf: Cf, accountId: string, log: Log) {
+  const path = `/accounts/${accountId}/access/organizations`;
+  try {
+    const org = await cf<Org>("GET", path);
+    const same =
+      org.name === ORG_BRANDING.name &&
+      Object.entries(ORG_BRANDING.login_design).every(([k, v]) => org.login_design?.[k] === v);
+    if (same) {
+      log("Access: login page branding already set");
+      return;
+    }
+    const { created_at: _c, updated_at: _u, ...rest } = org;
+    await cf("PUT", path, {
+      ...rest,
+      name: ORG_BRANDING.name,
+      login_design: { ...(org.login_design ?? {}), ...ORG_BRANDING.login_design },
+    });
+    log(`Access: login page now titled "${ORG_BRANDING.name}" (was "${org.name ?? ""}")`);
+  } catch (err) {
+    log(`Access: could not set login page branding (${(err as Error).message}); set it under Zero Trust → Settings → Custom pages`);
+  }
+}
+
 // ── D1 ─────────────────────────────────────────────────────────────────────
 
 type D1Db = { uuid: string; name: string };
