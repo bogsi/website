@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import { processPending } from "../../../lib/outbox.js";
+import { redact } from "../../../lib/redact.js";
 import { requireAccess, sameOriginWrites } from "./access";
 import type { AppEnv } from "./env";
 import { account } from "./account";
+import { securityHeaders } from "./headers";
 import { orders } from "./orders";
 
 const api = new Hono<AppEnv>()
@@ -13,10 +15,11 @@ const api = new Hono<AppEnv>()
   .route("/", orders);
 
 export const app = new Hono<AppEnv>()
+  .use("*", securityHeaders)
   .route("/api", api)
   .notFound((c) => c.json({ error: "Not found" }, 404))
   .onError((err, c) => {
-    console.error(err);
+    console.error(`${c.req.method} ${new URL(c.req.url).pathname}: ${redact(err)}`);
     return c.json({ error: "Internal error" }, 500);
   });
 

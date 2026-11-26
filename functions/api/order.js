@@ -1,4 +1,5 @@
 import { deliver, enqueueStatement } from "../../lib/outbox.js";
+import { redact } from "../../lib/redact.js";
 
 // Max length per field. Enforced here and mirrored as maxlength in the form.
 const LIMITS = {
@@ -23,6 +24,8 @@ const TURNSTILE_TIMEOUT_MS = 10_000;
 // order itself and the admin email are always kept.
 const CLIENT_CONFIRMATIONS_PER_DAY = 2;
 const DAY_MS = 24 * 60 * 60 * 1000;
+// The largest valid order (all fields at their limits) is about 6 KB.
+const MAX_BODY_BYTES = 16 * 1024;
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -33,9 +36,23 @@ export async function onRequestPost(context) {
   };
   const reply = (status, payload) => new Response(JSON.stringify(payload), { status, headers });
 
+  // Cheap checks before any work: the form only ever sends small JSON.
+  const contentType = (request.headers.get("Content-Type") || "").split(";")[0].trim().toLowerCase();
+  if (contentType !== "application/json") {
+    return reply(415, { error: "Unsupported content type" });
+  }
+  const declared = Number(request.headers.get("Content-Length"));
+  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
+    return reply(413, { error: "Request too large" });
+  }
+  const raw = await request.text();
+  if (new TextEncoder().encode(raw).length > MAX_BODY_BYTES) {
+    return reply(413, { error: "Request too large" });
+  }
+
   let body;
   try {
-    body = await request.json();
+    body = JSON.parse(raw);
   } catch {
     return reply(400, { error: "Invalid JSON" });
   }
@@ -82,14 +99,14 @@ export async function onRequestPost(context) {
       outboxIds = await insertOrder(env.DB, env, order);
       if (env.GOOGLE_SPREADSHEET_ID) {
         context.waitUntil(
-          appendToSheet(env, sheetRow).catch((err) => console.error("Sheets mirror error:", err))
+          appendToSheet(env, sheetRow).catch((err) => console.error(`Sheets mirror error for ${orderId}: ${redact(err)}`))
         );
       }
     } else {
       await appendToSheet(env, sheetRow);
     }
   } catch (err) {
-    console.error("Order storage error:", err);
+    console.error(`Order storage error for ${orderId}: ${redact(err)}`);
     return reply(500, { error: "Failed to save order" });
   }
 
@@ -98,7 +115,7 @@ export async function onRequestPost(context) {
   // failed send is retried by the admin Worker's hourly cron.
   context.waitUntil(
     (outboxIds ? deliver(env.DB, env, outboxIds) : sendEmails(env, order))
-      .catch((err) => console.error("Email error:", err))
+      .catch((err) => console.error(`Email error for ${orderId}: ${redact(err)}`))
   );
 
   return reply(200, { success: true, orderId });
@@ -327,7 +344,7 @@ async function verifyTurnstile(env, token, request) {
     });
     result = await res.json();
   } catch (err) {
-    console.error("Turnstile siteverify error:", err);
+    console.error(`Turnstile siteverify error: ${redact(err)}`);
     return { ok: false, status: 502, error: "Verification is unavailable right now. Please try again." };
   }
 
@@ -442,6 +459,6 @@ async function sendEmails(env, order) {
     send("admin", asPayload(mails.admin)),
   ]);
   for (const r of results) {
-    if (r.status === "rejected") console.error(r.reason);
+    if (r.status === "rejected") console.error(`${order.orderId}: ${redact(r.reason)}`);
   }
 }

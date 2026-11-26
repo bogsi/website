@@ -93,9 +93,12 @@ export async function ensureOrgBranding(cf: Cf, accountId: string, log: Log) {
       log("Access: login page branding already set");
       return;
     }
+    // Read-only timestamps and empty values (e.g. "" durations) make the PUT
+    // fail with 12062 invalid_org_config, so only real settings go back.
     const { created_at: _c, updated_at: _u, ...rest } = org;
+    const kept = Object.fromEntries(Object.entries(rest).filter(([, v]) => v !== null && v !== ""));
     await cf("PUT", path, {
-      ...rest,
+      ...kept,
       name: ORG_BRANDING.name,
       login_design: { ...(org.login_design ?? {}), ...ORG_BRANDING.login_design },
     });
