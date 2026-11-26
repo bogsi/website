@@ -26,6 +26,8 @@ admin/
 - **Every status change emails the client** (one template per status, `src/api/email.ts`).
 - **No lost emails**: every email is written to `email_outbox` in the same D1 batch as the order or status change, then sent. A failed send (Resend outage, or the 100/day quota that resets at 00:00 UTC) is retried by an hourly cron, up to 5 attempts. `orders.notify_status` shows pending, sent or failed.
 - **Overview**: new orders in the last 7 days, open inquiries, win rate, orders per month.
+- **Account**: who is signed in and until when, where notifications go, email delivery health with a "Retry now" button, and Sign out (Access logout).
+- **Login page**: the provisioning script titles the Access login page "roussev.dev" (Cloudflare's default is the random team name) and applies the site's colours.
 
 ## Setup: four manual steps, the rest is automatic
 

@@ -10,7 +10,8 @@ import {
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { STATUSES, type Status } from "../shared/orders";
-import { ApiError, api } from "./lib/api";
+import { ApiError, LOGOUT_URL, api } from "./lib/api";
+import { AccountPage } from "./routes/account";
 import { OrderDetail } from "./routes/order-detail";
 import { Orders, type OrdersSearch } from "./routes/orders";
 import { Overview } from "./routes/overview";
@@ -41,7 +42,14 @@ function Shell() {
             <Link to="/" className={nav} activeOptions={{ exact: true }}>Overview</Link>
             <Link to="/orders" className={nav}>Orders</Link>
           </nav>
-          <span className="ml-auto font-mono text-xs text-muted">{me.data?.email}</span>
+          <div className="ml-auto flex items-center gap-3">
+            <Link to="/account" className="font-mono text-xs text-muted hover:text-ink [&.active]:text-ink" title="Account settings">
+              {me.data?.email ?? "account"}
+            </Link>
+            <a href={LOGOUT_URL} className="rounded border border-line px-2 py-1 text-xs text-muted hover:border-accent hover:text-ink">
+              Sign out
+            </a>
+          </div>
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-6">
@@ -76,8 +84,10 @@ const orderRoute = createRoute({
   },
 });
 
+const accountRoute = createRoute({ getParentRoute: () => rootRoute, path: "/account", component: AccountPage });
+
 const router = createRouter({
-  routeTree: rootRoute.addChildren([overviewRoute, ordersRoute, orderRoute]),
+  routeTree: rootRoute.addChildren([overviewRoute, ordersRoute, orderRoute, accountRoute]),
   defaultPreload: "intent",
 });
 

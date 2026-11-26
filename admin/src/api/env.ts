@@ -14,5 +14,5 @@ export type Bindings = {
 
 export type AppEnv = {
   Bindings: Bindings;
-  Variables: { userEmail: string };
+  Variables: { userEmail: string; sessionExpiresAt: number | null };
 };
