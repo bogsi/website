@@ -40,7 +40,8 @@ a redeploy of the site) and the `admin/*` build-watch exclusion.
    Your team domain is `https://<team>.cloudflareaccess.com`.
 
 2. **GitHub OAuth App** (GitHub → Settings → Developer settings → OAuth Apps → New):
-   - Homepage URL: `https://admin.roussev.dev`
+   - Homepage URL: `https://<team>.cloudflareaccess.com`
+   - Create an **OAuth App**, not a GitHub App: Cloudflare Access documents and supports OAuth Apps for its GitHub login. Ignore GitHub's "consider a GitHub App" hint.
    - Authorization callback URL: `https://<team>.cloudflareaccess.com/cdn-cgi/access/callback`
    - Generate a client secret.
 
