@@ -1,8 +1,8 @@
 ---
 title: "AWS Cost Audit with CostLens"
-description: "A read-only AWS cost audit with a ranked report, evidence, data gaps and remediation examples."
+description: "Read-only AWS cost audit with a ranked savings report and remediation examples. Fixed-price tiers from €900, delivered in 1 to 10 working days."
 draft: false
-service_summary: "Review AWS spending, investigate growth and assess possible savings with a consultant-led, read-only audit."
+service_summary: "Review AWS spending, investigate growth and assess possible savings with a consultant-led, read-only audit. From €900, fixed price per engagement."
 inquiry_service: "CostLens AWS Cost Audit"
 ---
 
@@ -26,6 +26,20 @@ or email [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com).
   available, with preconditions and caveats.
 - **Visible limitations:** missing permissions, history and prices remain
   explicit. Savings are estimates, not guaranteed reductions in your bill.
+
+## Pricing
+
+| Tier | Typical account | Delivery | Price |
+| --- | --- | --- | --- |
+| **Quick Scan** | About $2k–5k/month AWS spend, 1 account | 1–2 working days | €900–1,500 |
+| **Standard Audit** | $5k–30k/month, up to about 5 accounts | 3–5 working days | €2,000–3,500 |
+| **Deep Audit** | $30k+/month, AWS Organizations, multi-account | 6–10 working days | from €4,500 |
+
+Below about $2k/month, an audit rarely pays for itself; AWS's own free cost
+tools are usually enough, and we will say so on the call. The scoping call is free. After it you get a **fixed price** for your scope in
+writing, before any access is set up. AWS Cost Explorer API requests made during
+the audit are billed by AWS to your account; the exact
+estimate is part of the agreed scope.
 
 ## How an engagement works
 
