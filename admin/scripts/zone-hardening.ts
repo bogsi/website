@@ -11,7 +11,7 @@
 //   CLOUDFLARE_ACCOUNT_ID     optional; needed for the Access review
 //   GOOGLE_SITE_VERIFICATION  optional; "google-site-verification=..." from Search Console
 
-import { CfError, cfClient } from "./provision-lib.ts";
+import { CfError, cfClient, type Cf } from "./provision-lib.ts";
 import {
   ensureCustomRules,
   ensureDnssec,
@@ -32,18 +32,41 @@ if (arg !== "check" && arg !== "apply") {
 const mode: Mode = arg;
 const log = (line: string) => console.log(`• ${line}`);
 
+type TokenStatus = { status: string; not_before?: string; expires_on?: string };
+
+async function verifyToken(cf: Cf, accountId: string | undefined): Promise<string> {
+  try {
+    // User tokens (My Profile → API Tokens) verify here; account-owned tokens
+    // (Manage Account → API Tokens) only under the account.
+    const r = await cf<TokenStatus>("GET", "/user/tokens/verify").catch((err: unknown) => {
+      if (err instanceof CfError && accountId) return cf<TokenStatus>("GET", `/accounts/${accountId}/tokens/verify`);
+      throw err;
+    });
+    if (r.status !== "active") {
+      throw new Error(`CLOUDFLARE_ZONE_TOKEN is ${r.status} (valid from ${r.not_before ?? "?"} to ${r.expires_on ?? "?"}, UTC)`);
+    }
+    return `active${r.expires_on ? ` until ${r.expires_on} UTC` : ""}`;
+  } catch (err) {
+    if (err instanceof CfError) {
+      throw new Error(
+        `Cloudflare rejected CLOUDFLARE_ZONE_TOKEN (${err.message}). Check: the secret holds the token value shown once after creation; ` +
+          "the TTL start is not in the future (UTC); no Client IP filter (GitHub runners have changing IPs); " +
+          "no secret with the same name in the production environment overriding the repository secret.",
+      );
+    }
+    throw err;
+  }
+}
+
 async function main(): Promise<void> {
   const zoneToken = process.env.CLOUDFLARE_ZONE_TOKEN;
   if (!zoneToken) throw new Error("CLOUDFLARE_ZONE_TOKEN is not set");
   const cf = cfClient(zoneToken);
-  const zone = await getZone(cf).catch((err: unknown) => {
-    if (err instanceof CfError && err.codes.includes(9109)) {
-      throw new Error(
-        "CLOUDFLARE_ZONE_TOKEN is not a valid token: paste the token value shown once after creating it (not its name or ID), or create a new one",
-      );
-    }
-    throw err;
-  });
+  // Says why a token is rejected (not active yet, expired, IP filter, typo)
+  // before any zone call; the token value itself is never printed.
+  const status = await verifyToken(cf, process.env.CLOUDFLARE_ACCOUNT_ID);
+  log(`Zone token: ${status}`);
+  const zone = await getZone(cf);
   log(`Zone ${zone.name} (${zone.status}) · mode ${mode}`);
 
   // Each step is independent: one missing permission must not hide the rest.
