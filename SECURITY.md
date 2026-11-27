@@ -1,21 +1,31 @@
-# Security Policy
+# Security policy
 
-## Supported Versions
+This repository is the source of [roussev.dev](https://roussev.dev): a Hugo
+site with an order form (Cloudflare Pages Function) and a private admin
+dashboard (`admin/`, a Cloudflare Worker behind Cloudflare Access). Only the
+current `main` branch, which is what runs in production, receives fixes.
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+## Reporting a vulnerability
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+Please report it privately, not in a public issue:
 
-## Reporting a Vulnerability
+- GitHub: **Security → Report a vulnerability** on this repository
+  (private vulnerability reporting), or
+- email `bogomil.roussev@gmail.com` (also listed in
+  [`/.well-known/security.txt`](https://roussev.dev/.well-known/security.txt)).
 
-Use this section to tell people how to report a vulnerability.
+Include what you found, how to reproduce it and the impact you expect. You
+will get a reply within 5 working days. Please give a reasonable time to fix
+the issue before you disclose it.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+## Scope
+
+In scope: `roussev.dev`, `admin.roussev.dev` and the code in this repository.
+
+Out of scope: denial-of-service and volume testing, social engineering,
+findings in third-party services (Cloudflare, Resend, GitHub) themselves, and
+missing best-practice headers without a demonstrable impact.
+
+Do not access, change or delete other people's data, and stop as soon as you
+can show the issue. Test orders through the public form are fine; please mark
+them clearly as a security test.
