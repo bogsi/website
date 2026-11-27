@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # GitHub Actions used by the Claude workflows
+  # GitHub Actions used by all workflows
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -19,3 +19,16 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "chore(deps)"
+
+  # Admin dashboard (Vite/React SPA + Hono Worker); one grouped PR a week,
+  # security updates still arrive on their own as soon as they are published.
+  - package-ecosystem: "npm"
+    directory: "/admin"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      admin-minor-and-patch:
+        update-types: ["minor", "patch"]
