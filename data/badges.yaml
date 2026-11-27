@@ -1,0 +1,29 @@
+# Credly badges shown on /about/ (shortcode badges.html). Images are
+# 128 px WebP copies in static/images/badges/, so the page loads nothing
+# from Credly; each badge links to its public Credly page for verification.
+certifications:
+  - name: "AWS Certified Solutions Architect – Associate"
+    image: aws-saa.webp
+    url: https://www.credly.com/badges/bb2ac6fb-075a-423c-b993-4a844f22ca62
+    note: "Valid until October 2029"
+  - name: "AWS Certified Cloud Practitioner"
+    image: aws-ccp.webp
+    url: https://www.credly.com/badges/8cdf7d4e-64bf-44ce-a85f-8f779a915c0e
+    note: "Valid until January 2028"
+  - name: "KCNA: Kubernetes and Cloud Native Associate"
+    image: kcna.webp
+    url: https://www.credly.com/badges/c88f8385-67d6-4a78-8776-bf4a519f6227
+    note: "The Linux Foundation, expired July 2026"
+training:
+  - name: "AWS Well-Architected Proficient"
+    image: aws-well-architected.webp
+    url: https://www.credly.com/badges/0d98c40d-cc4d-492b-98af-f9af6e99b40a
+  - name: "AWS Cloud Quest: Cloud Practitioner"
+    image: aws-cloud-quest-cp.webp
+    url: https://www.credly.com/badges/0e562a1d-853a-4474-9622-ace956118c1e
+  - name: "AWS Knowledge: Cloud Essentials"
+    image: aws-cloud-essentials.webp
+    url: https://www.credly.com/badges/899ec71d-05b5-4635-984e-d24e228735a9
+  - name: "AWS Knowledge: Networking Core"
+    image: aws-networking-core.webp
+    url: https://www.credly.com/badges/429143bb-9637-41a3-a544-5e8736a0f911
