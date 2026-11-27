@@ -1,6 +1,6 @@
 +++
 title = "Services"
-description = "AWS cost audits with CostLens, production MCP servers for internal APIs, Terraform automation, CI/CD pipelines and AWS support for cloud teams."
+description = "AWS cost audits and production MCP servers at fixed prices, plus Terraform, CI/CD and ongoing help for teams on AWS, priced after a free call."
 faq = [
   { q = "What happens on the first call?", a = "You tell me what you are dealing with, and I ask questions. It is free. If I am not the right person for it, I will say so." },
   { q = "How do you price work?", a = "A fixed price for a written scope, agreed before any work or access. Published prices are on the [cost audit](/services/cost-audit/) and [MCP server](/services/mcp-server/) pages; other work is priced after the first call." },
@@ -9,33 +9,32 @@ faq = [
 ]
 +++
 
-Cloud infrastructure services for teams running on AWS.
+I work with teams on AWS. Two offers have a fixed, published price; the rest
+I price after a free call, once I know what you run.
 
 ```bash
 $ ls -l services/
-drwxr-xr-x  AWS-Management/
-drwxr-xr-x  MCP-Servers/
-drwxr-xr-x  Terraform-Automation/
-drwxr-xr-x  CI-CD-Pipeline/
-drwxr-xr-x  Support/
+-rw-r--r--  cost-audit        # fixed price, from €900
+-rw-r--r--  mcp-server        # fixed price, €4,500
+-rw-r--r--  terraform         # priced after a call
+-rw-r--r--  ci-cd             # priced after a call
+-rw-r--r--  ongoing-help      # monthly, agreed per team
 ```
 
-## AWS Management & Migration
+## AWS cost audit
 
 {{< service-pane card="services/cost-audit" >}}
-Services:
-  - Full infrastructure audit and optimization
-  - Migration planning and execution
-  - Cost analysis and optimization (CostLens audit)
-  - Security best practices implementation
-  - Performance monitoring and scaling
-  - Disaster recovery planning
+You get:
+  - Ranked findings with estimated savings and confidence
+  - Evidence and data gaps for every finding
+  - Terraform or AWS CLI examples where they help
+  - Read-only access, removed at the end
 {{< /service-pane >}}
 
-## MCP Servers for Internal APIs
+## MCP servers for internal APIs
 
 {{< service-pane card="services/mcp-server" >}}
-Delivers:
+You get:
   - MCP server for one internal system (5-10 tools)
   - Sign-in through your identity provider (OAuth 2.1)
   - Terraform deployment in your AWS account
@@ -43,54 +42,28 @@ Delivers:
   - Security review and handover docs
 {{< /service-pane >}}
 
-## Terraform Automation
+## Terraform and OpenTofu
 
-```yaml
-Expertise:
-  - Custom module development
-  - State management and optimization
-  - Multi-environment setup
-  - Version control integration
-  - Documentation and knowledge transfer
-  - Best practices implementation
-  - Automated testing and validation
-```
+Infrastructure that was clicked together in the console, or Terraform that
+nobody wants to touch. I bring it under modules your team can read and change:
+state split by environment, CI that runs `plan` on every pull request, tests
+for the modules, and a README for each one. Existing resources are imported,
+not rebuilt. You can see how I write modules in my
+[Terraform modules guide](/projects/terraform-modules-guide/).
 
-## CI/CD Pipeline Development
+## CI/CD pipelines
 
-```yaml
-Features:
-  - Custom pipeline design
-  - Integration with popular tools
-    - Jenkins
-    - GitHub Actions
-    - GitLab CI
-  - Automated testing integration
-  - Deployment strategy implementation
-  - Security scanning integration
-  - Monitoring and alerting setup
-  - Performance optimization
-```
+Mostly GitHub Actions, and GitLab CI or Jenkins when that is what you already
+use. Builds, tests, security scans and deployments to AWS, with short-lived
+credentials (OIDC) instead of stored keys, and actions pinned to exact
+versions.
 
-## Subscription Support
+## Ongoing help
 
-```yaml
-Support Tiers:
-  24/7 Monitoring:
-    - Infrastructure monitoring
-    - Performance tracking
-    - Alert management
-  
-  Regular Maintenance:
-    - Security audits
-    - Performance optimization
-    - Cost optimization reviews
-    
-  Consulting:
-    - Monthly reporting
-    - Technical consultation
-    - Strategic planning
-```
+After a project, I can stay on for a few hours a month: reviewing pull
+requests, checking costs, answering questions. Business hours, Sofia time
+(EET), with an agreed response time. I do not offer 24/7 on-call; for that
+you need a team, not one person.
 
 {{< how-i-work >}}
 
