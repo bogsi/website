@@ -75,7 +75,9 @@ export async function ensureTlsSettings(cf: Cf, zoneId: string, mode: Mode, log:
   log(`SSL mode: ${String(ssl.value)} (reported only; "strict" is best if every proxied origin has a valid certificate)`);
   for (const [id, wanted] of Object.entries(TLS_SETTINGS)) {
     const current = await cf<Setting>("GET", `/zones/${zoneId}/settings/${id}`);
-    if (current.value === wanted) {
+    // "zrt" = TLS 1.3 on with 0-RTT. Cloudflare reports it while 0-RTT is on
+    // (a separate setting, limited to safe GET requests), so it counts as on.
+    if (current.value === wanted || (id === "tls_1_3" && current.value === "zrt")) {
       log(`${id}: ${wanted}`);
       continue;
     }

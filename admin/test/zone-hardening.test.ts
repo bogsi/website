@@ -24,7 +24,7 @@ function fakeZone(init: {
 }) {
   const state = {
     dnssec: init.dnssec ?? "disabled",
-    settings: { ssl: "full", min_tls_version: "1.0", tls_1_3: "on", always_use_https: "off", automatic_https_rewrites: "off", ...init.settings },
+    settings: { ssl: "full", min_tls_version: "1.0", tls_1_3: "zrt", always_use_https: "off", automatic_https_rewrites: "off", ...init.settings },
     rules: init.rules === undefined ? null : init.rules,
     txt: init.txt ?? [],
   };
@@ -79,7 +79,11 @@ describe("zone hardening", () => {
     await ensureDnssec(z.cf, "z", "apply", quiet);
     await ensureTlsSettings(z.cf, "z", "apply", quiet);
     expect(z.state.dnssec).toBe("pending");
-    for (const [id, value] of Object.entries(TLS_SETTINGS)) expect(z.state.settings[id as keyof typeof z.state.settings]).toBe(value);
+    for (const [id, value] of Object.entries(TLS_SETTINGS)) {
+      if (id !== "tls_1_3") expect(z.state.settings[id as keyof typeof z.state.settings]).toBe(value);
+    }
+    // TLS 1.3 with 0-RTT ("zrt") is accepted as on and never rewritten.
+    expect(z.writes().some((c) => c.path.endsWith("/settings/tls_1_3"))).toBe(false);
     expect(z.state.settings.ssl).toBe("full");
     expect(z.writes().some((c) => c.path.endsWith("/settings/ssl"))).toBe(false);
   });
