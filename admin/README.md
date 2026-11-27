@@ -92,6 +92,22 @@ After a week without problems, remove `GOOGLE_SERVICE_ACCOUNT_EMAIL`,
 `GOOGLE_PRIVATE_KEY` and `GOOGLE_SPREADSHEET_ID` from the Pages project. While
 they exist, new orders are also mirrored to the Sheet.
 
+## Zone hardening (one-shot)
+
+`.github/workflows/zone-hardening.yml` (run by hand) enables DNSSEC, sets safe
+edge TLS settings (TLS 1.2 minimum, TLS 1.3, Always Use HTTPS, automatic HTTPS
+rewrites), adds a Free-plan rate limit on `/api/order` (5 requests per 10 s per
+IP), optionally adds the Search Console TXT record, and prints a read-only
+review of Access apps and policies. It does not change the SSL/TLS encryption
+mode or zone-level HSTS.
+
+1. Create a temporary API token (My Profile → API Tokens → Custom token),
+   TTL 1 day, zone `roussev.dev` only: **Zone Read**, **Zone Settings Edit**,
+   **DNS Edit**, **Zone WAF Edit**.
+2. Add it as the GitHub secret `CLOUDFLARE_ZONE_TOKEN`.
+3. Run the workflow with `check`, read the report, then run it with `apply`.
+4. Delete the token in Cloudflare and the secret in GitHub.
+
 ## Local development
 
 ```bash
