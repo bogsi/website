@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
-        with: { node-version: 22, cache: npm, cache-dependency-path: admin/package-lock.json }
+        with: { node-version: 24, cache: npm, cache-dependency-path: admin/package-lock.json }
       - run: npm ci
       - run: npm test
       - run: npm run build
@@ -61,7 +61,7 @@ jobs:
           fi
       - uses: actions/setup-node@v7
         if: steps.gate.outputs.ready == 'true'
-        with: { node-version: 22, cache: npm, cache-dependency-path: admin/package-lock.json }
+        with: { node-version: 24, cache: npm, cache-dependency-path: admin/package-lock.json }
       - if: steps.gate.outputs.ready == 'true'
         run: npm ci
       - if: steps.gate.outputs.ready == 'true' && env.MODE == 'deploy'
