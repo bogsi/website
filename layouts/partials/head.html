@@ -114,8 +114,23 @@
 {{ template "_internal/opengraph.html" . }}
 {{ template "_internal/twitter_cards.html" . }}
 
-<!-- Google Analytics (production only, so local dev doesn't pollute GA) -->
-{{ if hugo.IsProduction }}{{ template "_internal/google_analytics.html" . }}{{ end }}
+<!-- Google Analytics (production only, so local dev doesn't pollute GA).
+     There is no consent banner yet (planned: Zaraz Consent Management), so
+     Consent Mode v2 starts denied: GA4 sets no cookies and sends only
+     cookieless pings. Removed when GA4 moves to Zaraz (tasks T21/T22). -->
+{{ if and hugo.IsProduction site.Config.Services.GoogleAnalytics.ID }}
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag("consent", "default", {
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    analytics_storage: "denied"
+  });
+</script>
+{{ template "_internal/google_analytics.html" . }}
+{{ end }}
 
 <!-- Deferred CSS -->
 {{ with resources.Get "css/deferred.css" }}
