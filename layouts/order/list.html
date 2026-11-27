@@ -30,6 +30,15 @@
       </div>
 
       <div class="inquiry-block inquiry-contact">
+        <p class="inquiry-block__label">// rather talk first?</p>
+        {{- with site.Params.bookingURL }}
+        <a href="{{ . }}" target="_blank" rel="noopener noreferrer" class="inquiry-link" data-cta-id="order-book-call">
+          {{ partial "icon.html" "calendar" }} Book a free intro call
+        </a>
+        {{- else }}{{ errorf "order page: params.bookingURL is empty" }}{{ end }}
+      </div>
+
+      <div class="inquiry-block inquiry-contact">
         <p class="inquiry-block__label">// contact</p>
         <a href="mailto:bogomil.roussev@gmail.com" class="inquiry-link">
           {{ partial "icon.html" "email" }} bogomil.roussev@gmail.com

@@ -43,3 +43,4 @@ Tell me what you are dealing with. The first call is free, and you get a fixed
 price in writing before any work starts.
 
 {{< cta href="/order/" id="home-footer-inquiry" >}}Discuss your project{{< /cta >}}
+{{< book-call id="home-book-call" >}}
