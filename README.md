@@ -1,15 +1,25 @@
-# Personal Website
+# roussev.dev
 
-My personal website, built with Hugo, showcasing my work as an AWS & Terraform Automation Consultant.
+The website of **Bogomil Roussev**, AWS & Terraform automation consultant.
 
-🌐 Live: [https://roussev.dev](https://roussev.dev)
+🌐 **[roussev.dev](https://roussev.dev)**
 
-## Prerequisites
+## What you'll find
 
-- Hugo v0.128.0 or later
-- Git
+- **Services**: AWS management and migration, Terraform automation, CI/CD pipelines and subscription support for cloud teams.
+- **CostLens AWS Cost Audit**: a read-only audit that delivers a ranked report with evidence, data gaps and remediation examples. [Learn more](https://roussev.dev/services/cost-audit/)
+- **Projects**: practical guides and small tools, including a Terraform modules guide and a dBm/mW converter.
+- **Writing**: articles on cloud infrastructure, published on [Medium](https://medium.com/@bogomilroussev).
+- **Inquiries**: a short [order form](https://roussev.dev/order/) for new engagements.
 
-## Local Development
+## Built with
+
+- [Hugo](https://gohugo.io) with a customised [Terminal](https://github.com/panr/hugo-theme-terminal) theme
+- Cloudflare Pages, Pages Functions and D1 for the inquiry flow
+- Cloudflare Turnstile and Access for bot protection and admin authentication
+- Resend for transactional email
+
+## Run locally
 
 ```bash
 git clone --recurse-submodules https://github.com/bogsi/website.git
@@ -17,46 +27,13 @@ cd website
 hugo server -D
 ```
 
-The site will be available at http://localhost:1313/. If you cloned without
-`--recurse-submodules`, run `git submodule update --init` to fetch the theme.
+Open http://localhost:1313/.
 
-## Building for Production
+## Contact
 
-```bash
-hugo --minify
-```
-
-The built site is written to `public/`.
-
-## Deployment
-
-The site is deployed with Cloudflare Pages. Every push to `main` triggers an
-automatic production deployment, and branches get preview deployments.
-
-## Structure
-
-- `hugo.toml`: site configuration
-- `content/`: site content (about, services, projects, posts, inquiry pages)
-- `layouts/`: template overrides for the theme
-- `themes/terminal/`: the [Terminal](https://github.com/panr/hugo-theme-terminal) theme (git submodule)
-- `assets/css/`: stylesheets processed by Hugo Pipes
-- `static/`: files copied verbatim (security headers, downloads, standalone tools)
-- `functions/api/order.js`: Cloudflare Pages Function behind the inquiry form
-
-## CostLens cost audit service
-
-`content/services/cost-audit.md` provides `/services/cost-audit/`, which is
-listed on the Services page and offered as an option in the inquiry form. The
-page's inquiry link preselects CostLens without submitting the form.
-
-Reviewed public client downloads live in `static/downloads/costlens/`: the kit
-ZIP and read-only CloudFormation template. Their bytes were verified against
-the signed private CostLens v0.1.0 release; the ZIP includes only client guide,
-authorization template, optional MCP guide and onboarding template. No private
-CLI wheel, workspace or signing key is exported. Refresh both downloads from
-a verified release when onboarding materials change.
-
-Contact: `bogomil.roussev@gmail.com`.
+- Email: [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com)
+- LinkedIn: [bogomilroussev](https://linkedin.com/in/bogomilroussev)
+- GitHub: [bogsi](https://github.com/bogsi)
 
 ## License
 
