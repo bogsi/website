@@ -1381,8 +1381,8 @@ a.button.outline:hover {
 /* Credly badges on /about/ (shortcode badges.html) */
 .badges {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 0.75rem;
   margin: 1em 0 1.5em;
   padding: 0;
   list-style: none;
@@ -1414,14 +1414,14 @@ a.button.outline:hover {
 }
 
 .badges img {
-  width: 96px;
-  height: 96px;
+  width: 80px;
+  height: 80px;
   border-radius: 6px;
 }
 
 .badges--training img {
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
 }
 
 .badges__name {
