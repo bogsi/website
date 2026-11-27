@@ -1,17 +1,17 @@
 <div class="footer-social">
   {{ with .Site.Params.linkedin }}
     <a href="{{ . }}" target="_blank" rel="noopener" aria-label="Visit LinkedIn Profile">
-      <i class="fab fa-linkedin" aria-hidden="true"></i>
+      {{ partial "icon.html" "linkedin" }}
     </a>
   {{ end }}
   {{ with .Site.Params.github }}
     <a href="{{ . }}" target="_blank" rel="noopener" aria-label="Visit GitHub Profile">
-      <i class="fab fa-github" aria-hidden="true"></i>
+      {{ partial "icon.html" "github" }}
     </a>
   {{ end }}
   {{ with .Site.Params.email }}
     <a href="mailto:{{ . }}" target="_blank" rel="noopener" aria-label="Send Email">
-      <i class="fas fa-envelope" aria-hidden="true"></i>
+      {{ partial "icon.html" "email" }}
     </a>
   {{ end }}
 </div>
