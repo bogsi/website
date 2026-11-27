@@ -26,8 +26,9 @@ your accounts with read-only access, using CostLens, my own audit tool, and
 give you a ranked list of what to change, how much each change could save and
 how sure I am about it.
 
-[Discuss your AWS account](/order/?service=CostLens%20AWS%20Cost%20Audit)
-or email me at [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com).
+{{< cta id="cost-audit-top" service="CostLens AWS Cost Audit" />}}
+
+Or email me at [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com).
 
 ## What you get
 
@@ -92,8 +93,8 @@ first. My access stays read-only for the whole audit.
 
 ## Next step
 
-[Tell me about your AWS account](/order/?service=CostLens%20AWS%20Cost%20Audit).
-We agree the scope and access before you deploy anything. If you would rather
-talk first, book a free intro call.
+Tell me about your AWS account. We agree the scope and access before you
+deploy anything. If you would rather talk first, the inquiry page has a link
+to book a free call.
 
-{{< book-call id="cost-audit-book-call" >}}
+{{< cta id="cost-audit-bottom" service="CostLens AWS Cost Audit" />}}

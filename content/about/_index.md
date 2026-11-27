@@ -53,5 +53,4 @@ call +359 878 880 112, or find me on
 [LinkedIn](https://linkedin.com/in/bogomilroussev) and
 [GitHub](https://github.com/bogsi).
 
-{{< cta href="/order/" id="about-inquiry" >}}Discuss your project{{< /cta >}}
-{{< book-call id="about-book-call" >}}
+{{< cta id="about-inquiry" />}}

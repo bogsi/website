@@ -8,8 +8,7 @@ I help teams on AWS spend less, automate their infrastructure and connect AI
 agents to their internal systems without opening a security hole. You work with me directly,
 from the first call to the handover, for a fixed price. The first call is free.
 
-{{< cta href="/order/" id="home-hero-inquiry" >}}Discuss your project{{< /cta >}}
-{{< book-call id="home-book-call" >}}
+{{< cta id="home-hero-inquiry" />}}
 
 ## Sound familiar?
 

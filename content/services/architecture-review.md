@@ -27,8 +27,9 @@ one, with read-only access. You get a written review: what is there, what is
 risky, what to fix first and what to leave alone. One price, agreed before I
 get any access.
 
-[Discuss your AWS setup](/order/?service=AWS%20Architecture%20Review)
-or email me at [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com).
+{{< cta id="architecture-review-top" service="AWS Architecture Review" />}}
+
+Or email me at [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com).
 
 ## What you get
 
@@ -100,8 +101,8 @@ provider without your written approval.
 
 ## Next step
 
-[Tell me about your AWS setup](/order/?service=AWS%20Architecture%20Review).
-We agree the scope before you give me any access. If you would rather talk
-first, book a free intro call.
+Tell me about your AWS setup. We agree the scope before you give me any
+access. If you would rather talk first, the inquiry page has a link to book a
+free call.
 
-{{< book-call id="architecture-review-book-call" >}}
+{{< cta id="architecture-review-bottom" service="AWS Architecture Review" />}}

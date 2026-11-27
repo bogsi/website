@@ -24,8 +24,9 @@ I leave.
 
 I build one of those for one system, in about two weeks, for a fixed price.
 
-[Discuss your system](/order/?service=Production%20MCP%20Server)
-or email me at [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com).
+{{< cta id="mcp-top" service="Production MCP Server" />}}
+
+Or email me at [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com).
 
 ## What you get
 
@@ -84,8 +85,8 @@ the damage. The security review says plainly what is still possible.
 
 ## Next step
 
-[Tell me about your system](/order/?service=Production%20MCP%20Server).
-We agree the scope before you give me any access. If you would rather talk
-first, book a free intro call.
+Tell me about your system. We agree the scope before you give me any access.
+If you would rather talk first, the inquiry page has a link to book a free
+call.
 
-{{< book-call id="mcp-book-call" >}}
+{{< cta id="mcp-bottom" service="Production MCP Server" />}}

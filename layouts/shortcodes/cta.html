@@ -1,9 +1,28 @@
 {{- /*
-  A link styled as a button.
-  Usage: {{< cta href="/order/" id="home-hero" >}}Discuss your project{{< /cta >}}
-  Optional: outline="true" for the secondary style.
+  The site's one call to action: a button to the inquiry form.
+  Label and target come from params.cta in hugo.toml, so every page says
+  the same thing and points to the same place.
+
+  Usage:
+    {{< cta id="home-hero" />}}
+    {{< cta id="cost-audit-top" service="CostLens AWS Cost Audit" />}}
+
+  Optional:
+    service="..."  preselects that option in the inquiry form. It must match
+                   a service page's inquiry_service exactly.
+    href="..."     another target, only for the rare link that is not the
+                   inquiry form.
+    outline="true" the secondary button style.
+  Inner text, if given, replaces the label. Prefer the default.
   id becomes data-cta-id, which the click tracking in footer.html reports.
 */ -}}
-{{- $href := .Get "href" -}}
-{{- if not $href -}}{{- errorf "cta: missing href at %s" .Position -}}{{- end -}}
-<a class="button{{ if eq (.Get "outline") "true" }} outline{{ end }}" href="{{ $href }}"{{ with .Get "id" }} data-cta-id="{{ . }}"{{ end }}>{{ .Inner | plainify }}</a>
+{{- $cta := site.Params.cta -}}
+{{- if not (and $cta $cta.label $cta.href) -}}
+  {{- errorf "cta: params.cta.label and params.cta.href must be set in hugo.toml (%s)" .Position -}}
+{{- end -}}
+{{- $href := .Get "href" | default $cta.href -}}
+{{- with .Get "service" -}}
+  {{- $href = printf "%s?service=%s" $href (. | urlquery) -}}
+{{- end -}}
+{{- $label := .Inner | plainify | strings.TrimSpace | default $cta.label -}}
+<a class="button{{ if eq (.Get "outline") "true" }} outline{{ end }}" href="{{ $href }}"{{ with .Get "id" }} data-cta-id="{{ . }}"{{ end }}>{{ $label }}</a>
