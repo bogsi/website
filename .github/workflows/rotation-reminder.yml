@@ -1,0 +1,44 @@
+name: Rotation reminder
+
+# Every quarter, opens an issue with the key rotation checklist (task T36).
+# Names only: where each secret lives is public anyway (see the workflows);
+# values never appear here.
+
+on:
+  schedule:
+    - cron: "13 7 1 1,4,7,10 *" # 1 Jan/Apr/Jul/Oct, 07:13 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - name: Open the checklist unless one is still open
+        run: |
+          set -euo pipefail
+          title="Quarterly key rotation ($(date -u +%Y-Q$(( ($(date -u +%-m) - 1) / 3 + 1 ))))"
+          if gh issue list --state open --search "\"Quarterly key rotation\" in:title" --json number --jq 'length' | grep -qv '^0$'; then
+            echo "An earlier rotation issue is still open; not opening another."
+            exit 0
+          fi
+          gh issue create --title "$title" --body "$(cat <<'BODY'
+          Rotate, update where it is used, check, then delete the old one. Steps: `admin/README.md`.
+
+          - [ ] **Cloudflare deploy token** (`CLOUDFLARE_API_TOKEN`, GitHub secret): roll it, update the secret, run "Admin dashboard" with `deploy`.
+          - [ ] **Resend key** (`RESEND_API_KEY`: Pages secret + GitHub secret): new sending-only key for roussev.dev, update both, run `deploy` (it validates the key), delete the old key.
+          - [ ] **Turnstile secret** (`TURNSTILE_SECRET_KEY`, Pages secret): rotate, update, send a test order.
+          - [ ] **GitHub OAuth App secret** (`ACCESS_GITHUB_CLIENT_SECRET`): new client secret, update, run `deploy`, log in to admin.roussev.dev.
+          - [ ] No leftover `CLOUDFLARE_ZONE_TOKEN` secret and no unused API tokens in Cloudflare.
+          - [ ] Passkeys/recovery codes still in place on GitHub, Cloudflare, Google, Resend.
+          - [ ] `static/.well-known/security.txt` expires more than 3 months from now.
+          - [ ] Run "D1 backup" and do a restore test.
+          BODY
+          )"
