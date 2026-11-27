@@ -1,0 +1,9 @@
+{{- /*
+  A link styled as a button.
+  Usage: {{< cta href="/order/" id="home-hero" >}}Discuss your project{{< /cta >}}
+  Optional: outline="true" for the secondary style.
+  id becomes data-cta-id, which the click tracking in footer.html reports.
+*/ -}}
+{{- $href := .Get "href" -}}
+{{- if not $href -}}{{- errorf "cta: missing href at %s" .Position -}}{{- end -}}
+<a class="button{{ if eq (.Get "outline") "true" }} outline{{ end }}" href="{{ $href }}"{{ with .Get "id" }} data-cta-id="{{ . }}"{{ end }}>{{ .Inner | plainify }}</a>

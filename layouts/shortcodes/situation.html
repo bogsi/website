@@ -1,0 +1,17 @@
+{{- /*
+  A "common situation" card on the home page: the problem, the offer, a price
+  and one link.
+  Usage:
+    {{< situation title="..." price="From €900" href="/services/cost-audit/" link="See the audit" id="home-cost-audit" >}}
+    One or two sentences of Markdown.
+    {{< /situation >}}
+*/ -}}
+{{- range slice "title" "href" "link" "id" -}}
+  {{- if not ($.Get .) -}}{{- errorf "situation: missing %s at %s" . $.Position -}}{{- end -}}
+{{- end -}}
+<section class="situation">
+  <h3>{{ .Get "title" }}</h3>
+  {{ .Inner | strings.TrimSpace | markdownify }}
+  {{ with .Get "price" }}<p class="situation-price">{{ . }}</p>{{ end }}
+  <a class="button outline" href="{{ .Get "href" }}" data-cta-id="{{ .Get "id" }}">{{ .Get "link" }}</a>
+</section>
