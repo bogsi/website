@@ -1,0 +1,31 @@
+name: Smoke test
+
+# Daily read-only checks against production (task T48): pages and security
+# headers, order form widget, sitemap/robots, security.txt expiry, the order
+# endpoint's early rejections and WAF rules, admin behind Access, DNSSEC.
+# A failed scheduled run emails the repository owner.
+
+on:
+  schedule:
+    - cron: "41 5 * * *" # daily 05:41 UTC
+  workflow_dispatch:
+  pull_request:
+    paths: [".github/scripts/smoke-test.sh", ".github/workflows/smoke-test.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smoke-test
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - run: .github/scripts/smoke-test.sh
