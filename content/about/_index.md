@@ -35,16 +35,13 @@ Languages:    Python, TypeScript, Bash, HCL
 
 ## Certifications
 
-- **AWS Certified Solutions Architect – Associate** (valid until October 2029)
-- **AWS Certified Cloud Practitioner** (valid until January 2028)
-- **KCNA: Kubernetes and Cloud Native Associate**, The Linux Foundation
-  (expired July 2026)
+{{< badges group="certifications" >}}
 
-AWS training badges: Well-Architected Proficient, Cloud Quest: Cloud
-Practitioner, Knowledge: Cloud Essentials and Knowledge: Networking Core.
+AWS training badges:
 
-All of them can be checked on
-[Credly](https://www.credly.com/users/bogomil-roussev).
+{{< badges group="training" >}}
+
+Click a badge to check it on [Credly](https://www.credly.com/users/bogomil-roussev).
 
 ## Get in touch
 

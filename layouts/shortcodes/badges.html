@@ -1,0 +1,21 @@
+{{- /*
+  A grid of Credly badges from data/badges.yaml.
+  Usage: {{< badges group="certifications" >}} or group="training".
+  Images are local copies; each badge links to its Credly page.
+*/ -}}
+{{- $group := .Get "group" -}}
+{{- $items := index site.Data.badges $group -}}
+{{- if not $items -}}{{- errorf "badges: no group %q in data/badges.yaml (%s)" $group .Position -}}{{- end -}}
+<ul class="badges badges--{{ $group }}">
+  {{- range $items }}
+  {{- $src := printf "images/badges/%s" .image -}}
+  {{- if not (fileExists (printf "static/%s" $src)) -}}{{- errorf "badges: missing static/%s" $src -}}{{- end }}
+  <li>
+    <a href="{{ .url }}" target="_blank" rel="noopener noreferrer" title="Verify on Credly">
+      <img src="{{ $src | absURL }}" alt="{{ .name }} badge" width="96" height="96" loading="lazy" decoding="async">
+      <span class="badges__name">{{ .name }}</span>
+      {{- with .note }}<span class="badges__note">{{ . }}</span>{{ end }}
+    </a>
+  </li>
+  {{- end }}
+</ul>
