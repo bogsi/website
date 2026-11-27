@@ -3,6 +3,7 @@
   - Site-wide: Person (the consultant) and ProfessionalService (the business).
   - Posts and projects: BlogPosting, authored by the Person.
   - Service pages (content/services/*.md with service_summary): Service.
+  - Any page with front matter "faq" (rendered by the faq shortcode): FAQPage.
   - Non-home pages: BreadcrumbList.
   Profile URLs come from params.social in hugo.toml, so update them there.
 */ -}}
@@ -36,7 +37,7 @@
   "description" site.Params.description
   "founder" (dict "@id" $personID)
   "areaServed" "Worldwide"
-  "serviceType" (slice "AWS cost audit" "AWS infrastructure consulting" "Terraform automation" "CI/CD pipeline development")
+  "serviceType" (slice "AWS cost audit" "MCP server development" "AWS infrastructure consulting" "Terraform automation" "CI/CD pipeline development")
 -}}
 {{- with $email -}}{{- $business = merge $business (dict "email" .) -}}{{- end -}}
 
@@ -69,6 +70,18 @@
     "provider" (dict "@id" $businessID)
     "areaServed" "Worldwide"
   ) -}}
+{{- end -}}
+
+{{- with .Params.faq -}}
+  {{- $questions := slice -}}
+  {{- range . -}}
+    {{- $questions = $questions | append (dict
+      "@type" "Question"
+      "name" .q
+      "acceptedAnswer" (dict "@type" "Answer" "text" (.a | markdownify | plainify))
+    ) -}}
+  {{- end -}}
+  {{- $graph = $graph | append (dict "@type" "FAQPage" "url" $.Permalink "mainEntity" $questions) -}}
 {{- end -}}
 
 {{- if not .IsHome -}}

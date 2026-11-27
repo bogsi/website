@@ -1,6 +1,12 @@
 +++
 title = "Services"
 description = "AWS cost audits with CostLens, production MCP servers for internal APIs, Terraform automation, CI/CD pipelines and AWS support for cloud teams."
+faq = [
+  { q = "What happens on the first call?", a = "You tell me what you are dealing with, and I ask questions. It is free. If I am not the right person for it, I will say so." },
+  { q = "How do you price work?", a = "A fixed price for a written scope, agreed before any work or access. Published prices are on the [cost audit](/services/cost-audit/) and [MCP server](/services/mcp-server/) pages; other work is priced after the first call." },
+  { q = "We already have infrastructure. Do you start from scratch?", a = "No. Almost every project starts from what you already run, and I change it step by step." },
+  { q = "What happens after delivery?", a = "The code, infrastructure and documentation are yours. Follow-up work is quoted separately." },
+]
 +++
 
 Cloud infrastructure services for teams running on AWS.
@@ -86,13 +92,14 @@ Support Tiers:
     - Strategic planning
 ```
 
-## Get in Touch
+{{< how-i-work >}}
 
-```bash
-$ cat contact_info.txt
-📧 Email: bogomil.roussev@gmail.com
-📱 Phone: +359 878 880 112
-💼 LinkedIn: linkedin.com/in/bogomilroussev
+{{< faq >}}
 
-$ echo "Ready to optimize your cloud infrastructure?"
-> 🚀 Let's transform your infrastructure into a well-oiled machine!
+## Get in touch
+
+Email me at [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com),
+call +359 878 880 112, or find me on
+[LinkedIn](https://linkedin.com/in/bogomilroussev).
+
+{{< cta href="/order/" id="services-footer-inquiry" >}}Discuss your project{{< /cta >}}
