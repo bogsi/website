@@ -1,0 +1,4 @@
+# Cloudflare Pages redirects (https://developers.cloudflare.com/pages/configuration/redirects/).
+# The 2024 "Welcome" post was retired; /about/ says the same thing, current.
+/posts/welcome/  /about/  301
+/posts/welcome   /about/  301
