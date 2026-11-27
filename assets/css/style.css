@@ -1294,7 +1294,9 @@ figure figcaption {
 
 /* Links styled as buttons (shortcodes cta.html and situation.html, service
    cards). Prefixed with .post so they beat the body-link rules above
-   (".post-content a" colour, ".post p a" underline). */
+   (".post-content a" colour, ".post p a" underline). The primary button's
+   text colour needs !important because head.html sets
+   "a { color: var(--accent) !important }" for every link. */
 .post a.button,
 a.button {
   display: inline-block;
@@ -1303,7 +1305,7 @@ a.button {
   border: 2px solid var(--accent);
   border-radius: var(--radius);
   background: var(--accent);
-  color: var(--background);
+  color: var(--background) !important;
   font-weight: bold;
   text-decoration: none;
   transition: background 0.15s linear, color 0.15s linear;
@@ -1312,14 +1314,14 @@ a.button {
 .post a.button:hover,
 a.button:hover {
   background: transparent;
-  color: var(--accent);
+  color: var(--accent) !important;
   text-decoration: none;
 }
 
 .post a.button.outline,
 a.button.outline {
   background: transparent;
-  color: var(--accent);
+  color: var(--accent) !important;
 }
 
 .post a.button.outline:hover,
