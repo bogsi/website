@@ -1,4 +1,4 @@
-// One-shot hardening of the roussev.dev zone. Safe to re-run.
+// Hardening of the roussev.dev zone (T02, T03, T07, T11, T13, T18, T28 report). Safe to re-run.
 //
 //   node --experimental-strip-types scripts/zone-hardening.ts check   # read-only report
 //   node --experimental-strip-types scripts/zone-hardening.ts apply   # change what differs
@@ -13,11 +13,13 @@
 
 import { cfClient } from "./provision-lib.ts";
 import {
+  ensureCustomRules,
   ensureDnssec,
   ensureRateLimit,
   ensureSiteVerification,
   ensureTlsSettings,
   getZone,
+  reportEmailDns,
   reviewAccess,
   type Mode,
 } from "./zone-hardening-lib.ts";
@@ -42,6 +44,8 @@ async function main(): Promise<void> {
     ["DNSSEC", () => ensureDnssec(cf, zone.id, mode, log)],
     ["TLS", () => ensureTlsSettings(cf, zone.id, mode, log)],
     ["Rate limit", () => ensureRateLimit(cf, zone.id, mode, log)],
+    ["WAF custom rules", () => ensureCustomRules(cf, zone.id, mode, log)],
+    ["Email DNS", () => reportEmailDns(cf, zone.id, log)],
     ["Search Console", () => ensureSiteVerification(cf, zone.id, process.env.GOOGLE_SITE_VERIFICATION, mode, log)],
   ];
   const deployToken = process.env.CLOUDFLARE_API_TOKEN;

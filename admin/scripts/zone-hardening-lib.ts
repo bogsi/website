@@ -136,6 +136,99 @@ export async function ensureRateLimit(cf: Cf, zoneId: string, mode: Mode, log: L
   log(`Rate limit: /api/order rule ${ours ? "updated" : "created"}`);
 }
 
+// ── T11 WAF custom rules ───────────────────────────────────────────────────
+
+// Free plan: 5 custom rules, no regex. The site is static Hugo plus one
+// JSON endpoint, so PHP, WordPress and dotfile probes are never legitimate.
+// /.well-known/ (security.txt) is not matched.
+export const CUSTOM_RULES = [
+  {
+    ref: "block_scanner_paths",
+    description: "Block scanner probes (PHP, WordPress, dotfiles)",
+    expression:
+      '(ends_with(http.request.uri.path, ".php") or http.request.uri.path contains "/wp-" or starts_with(http.request.uri.path, "/.env") or starts_with(http.request.uri.path, "/.git"))',
+    action: "block",
+  },
+  {
+    ref: "order_form_post_only",
+    description: "Order form accepts POST only",
+    expression: '(http.request.uri.path eq "/api/order" and http.request.method ne "POST")',
+    action: "block",
+  },
+] as const;
+const FREE_CUSTOM_RULE_LIMIT = 5;
+
+type CustomRule = Rule & { action?: string };
+
+export async function ensureCustomRules(cf: Cf, zoneId: string, mode: Mode, log: Log): Promise<void> {
+  const path = `/zones/${zoneId}/rulesets/phases/http_request_firewall_custom/entrypoint`;
+  let rules: CustomRule[] = [];
+  try {
+    rules = (await cf<Ruleset>("GET", path)).rules ?? [];
+  } catch (err) {
+    if (!(err instanceof CfError) || err.status !== 404) throw err;
+  }
+  const ourRefs = new Set<string>(CUSTOM_RULES.map((r) => r.ref));
+  const others = rules.filter((r) => !ourRefs.has(r.ref ?? ""));
+  const pending = CUSTOM_RULES.filter((want) => {
+    const have = rules.find((r) => r.ref === want.ref);
+    return !have || have.expression !== want.expression || have.action !== want.action || have.description !== want.description;
+  });
+  if (pending.length === 0) {
+    log(`WAF custom rules: ${CUSTOM_RULES.length} in place`);
+    return;
+  }
+  if (others.length + CUSTOM_RULES.length > FREE_CUSTOM_RULE_LIMIT) {
+    log(`WAF custom rules: skipped, ${others.length} other rules + ${CUSTOM_RULES.length} ours exceed the Free limit of ${FREE_CUSTOM_RULE_LIMIT}`);
+    return;
+  }
+  if (mode === "check") {
+    log(`WAF custom rules: would set ${pending.map((r) => r.ref).join(", ")} (keeping ${others.length} other rule(s))`);
+    return;
+  }
+  // Rules made by hand are kept by id and stay first; ours follow.
+  await cf("PUT", path, { rules: [...others.filter((r) => r.id).map((r) => ({ id: r.id })), ...CUSTOM_RULES] });
+  log(`WAF custom rules: set ${pending.map((r) => r.ref).join(", ")}`);
+}
+
+// ── T28 Email DNS (read-only) ──────────────────────────────────────────────
+
+/**
+ * Reports what DMARC alignment needs: one SPF record on the apex, Resend's
+ * DKIM key and its bounce subdomain, and a DMARC policy. Prints which
+ * records exist (and the DMARC policy tag), never full record values.
+ */
+export async function reportEmailDns(cf: Cf, zoneId: string, log: Log): Promise<string[]> {
+  const findings: string[] = [];
+  const get = (name: string, type: string) =>
+    cf<DnsRecord[]>("GET", `/zones/${zoneId}/dns_records?type=${type}&name=${encodeURIComponent(name)}`);
+  const strip = (v: string) => v.replace(/^"|"$/g, "");
+
+  const spf = (await get(ZONE_NAME, "TXT")).filter((r) => strip(r.content).startsWith("v=spf1"));
+  if (spf.length !== 1) findings.push(`SPF: ${spf.length} records on ${ZONE_NAME} (exactly one is allowed)`);
+  else log(`SPF on ${ZONE_NAME}: one record`);
+
+  const dkim = await get(`resend._domainkey.${ZONE_NAME}`, "TXT");
+  if (dkim.length === 0) findings.push("DKIM: resend._domainkey is missing (Resend → Domains shows the record)");
+  else log("DKIM (Resend): present");
+
+  const bounce = await get(`send.${ZONE_NAME}`, "MX");
+  if (bounce.length === 0) findings.push("Resend bounce domain: MX on send. is missing");
+  else log("Resend bounce domain (send.): MX present");
+
+  const dmarc = (await get(`_dmarc.${ZONE_NAME}`, "TXT")).map((r) => strip(r.content)).filter((v) => v.startsWith("v=DMARC1"));
+  if (dmarc.length === 0) {
+    findings.push("DMARC: missing; enable Email → DMARC Management in the dashboard (it adds the record and receives reports)");
+  } else {
+    const policy = /\bp=(none|quarantine|reject)/.exec(dmarc[0] ?? "")?.[1] ?? "?";
+    const reports = /\brua=/.test(dmarc[0] ?? "") ? "with reports" : "without reports (no rua)";
+    log(`DMARC: p=${policy}, ${reports}`);
+    if (dmarc.length > 1) findings.push(`DMARC: ${dmarc.length} records (exactly one is allowed)`);
+  }
+  for (const f of findings) log(`⚠ ${f}`);
+  return findings;
+}
+
 // ── T18 Search Console verification ───────────────────────────────────────
 
 const VERIFICATION_RE = /^google-site-verification=[A-Za-z0-9_-]{20,100}$/;

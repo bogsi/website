@@ -140,8 +140,10 @@ logged or shown after they are saved.
 `.github/workflows/zone-hardening.yml` (run by hand) enables DNSSEC, sets safe
 edge TLS settings (TLS 1.2 minimum, TLS 1.3, Always Use HTTPS, automatic HTTPS
 rewrites), adds a Free-plan rate limit on `/api/order` (5 requests per 10 s per
-IP), optionally adds the Search Console TXT record, and prints a read-only
-review of Access apps and policies. It does not change the SSL/TLS encryption
+IP) and two WAF custom rules (block PHP/WordPress/dotfile probes; `/api/order`
+accepts POST only), optionally adds the Search Console TXT record, and prints
+read-only reports of Access apps/policies and the email DNS records (SPF,
+Resend DKIM and bounce MX, DMARC). It does not change the SSL/TLS encryption
 mode or zone-level HSTS.
 
 1. Create a temporary API token (My Profile → API Tokens → Custom token),

@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { CfError, type Cf } from "../scripts/provision-lib.ts";
 import {
+  CUSTOM_RULES,
   RATE_LIMIT_RULE,
+  ensureCustomRules,
+  reportEmailDns,
   TLS_SETTINGS,
   ensureDnssec,
   ensureRateLimit,
@@ -127,5 +130,75 @@ describe("zone hardening", () => {
     expect(findings).toHaveLength(2);
     expect(findings.join()).toContain("Open");
     expect(findings.join()).toContain("Skip");
+  });
+});
+
+describe("WAF custom rules", () => {
+  function fakeRules(initial: Record<string, unknown>[] | null) {
+    let rules = initial;
+    const puts: unknown[] = [];
+    const cf: Cf = async <T>(method: string, path: string, body?: unknown): Promise<T> => {
+      if (!path.endsWith("/http_request_firewall_custom/entrypoint")) throw new Error(`unexpected ${path}`);
+      if (method === "PUT") {
+        puts.push(body);
+        rules = (body as { rules: Record<string, unknown>[] }).rules.map((r, i) =>
+          r.ref ? { ...r, id: `n${i}` } : { ...(initial ?? []).find((x) => x.id === r.id) },
+        );
+      }
+      if (rules === null) throw new CfError(404, [], "not found");
+      return { id: "rs", rules } as T;
+    };
+    return { cf, puts, get: () => rules };
+  }
+
+  it("adds both rules once, keeps hand-made rules first, then is idempotent", async () => {
+    const manual = { id: "m1", ref: "manual", description: "Block a country", expression: "true", action: "block" };
+    const f = fakeRules([manual]);
+    await ensureCustomRules(f.cf, "z", "apply", quiet);
+    expect(f.get()?.map((r) => r.ref)).toEqual(["manual", ...CUSTOM_RULES.map((r) => r.ref)]);
+    await ensureCustomRules(f.cf, "z", "apply", quiet);
+    expect(f.puts).toHaveLength(1);
+  });
+
+  it("never blocks security.txt and needs no regex", () => {
+    const all = CUSTOM_RULES.map((r) => r.expression).join(" ");
+    expect(all).not.toContain("well-known");
+    expect(all).not.toContain("matches");
+  });
+
+  it("skips instead of exceeding the Free limit of 5 rules", async () => {
+    const f = fakeRules([1, 2, 3, 4].map((i) => ({ id: `m${i}`, ref: `m${i}`, expression: "true", action: "block" })));
+    const lines: string[] = [];
+    await ensureCustomRules(f.cf, "z", "apply", (l) => lines.push(l));
+    expect(f.puts).toHaveLength(0);
+    expect(lines.join()).toContain("Free limit");
+  });
+});
+
+describe("email DNS report", () => {
+  const records = (map: Record<string, string[]>): Cf =>
+    (async <T>(_m: string, path: string): Promise<T> => {
+      const q = new URL(`https://x${path}`).searchParams;
+      return (map[`${q.get("type")} ${q.get("name")}`] ?? []).map((content, i) => ({ id: `${i}`, type: q.get("type"), name: q.get("name"), content })) as T;
+    }) as Cf;
+
+  it("is clean when SPF, DKIM, bounce MX and DMARC exist", async () => {
+    const cf = records({
+      "TXT roussev.dev": ['"v=spf1 include:_spf.mx.cloudflare.net ~all"', '"google-site-verification=x"'],
+      "TXT resend._domainkey.roussev.dev": ['"p=MIGf"'],
+      "MX send.roussev.dev": ["feedback-smtp.eu-west-1.amazonses.com"],
+      "TXT _dmarc.roussev.dev": ['"v=DMARC1; p=none; rua=mailto:x@dmarc-reports.cloudflare.net"'],
+    });
+    const lines: string[] = [];
+    expect(await reportEmailDns(cf, "z", (l) => lines.push(l))).toEqual([]);
+    expect(lines.join()).toContain("p=none, with reports");
+  });
+
+  it("flags a missing DMARC record and duplicate SPF", async () => {
+    const cf = records({ "TXT roussev.dev": ['"v=spf1 a ~all"', '"v=spf1 mx ~all"'] });
+    const findings = await reportEmailDns(cf, "z", quiet);
+    expect(findings.join()).toContain("SPF: 2 records");
+    expect(findings.join()).toContain("DMARC: missing");
+    expect(findings.join()).toContain("DKIM");
   });
 });
