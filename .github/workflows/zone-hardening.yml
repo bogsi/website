@@ -1,7 +1,8 @@
 name: Zone hardening
 
-# Manual, one-shot: DNSSEC, edge TLS settings, the /api/order rate limit,
-# the Search Console TXT record and a read-only Access review.
+# Manual: DNSSEC, edge TLS settings, the /api/order rate limit, WAF custom
+# rules, the Search Console TXT record, and read-only Access and email DNS
+# reports.
 # Uses a short-lived CLOUDFLARE_ZONE_TOKEN secret; delete the token and the
 # secret after a successful "apply" run.
 
