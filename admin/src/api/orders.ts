@@ -42,25 +42,67 @@ function decodeCursor(cursor: string): { createdAt: number; id: string } | null 
 
 const likeEscape = (s: string) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
 
+/** WHERE clause and arguments for the status filter and search box. */
+function filterClause(status?: string, q?: string): { where: string[]; args: unknown[] } {
+  const where: string[] = [];
+  const args: unknown[] = [];
+  if (status) {
+    where.push("status = ?");
+    args.push(status);
+  }
+  if (q) {
+    const like = `%${likeEscape(q.toLowerCase())}%`;
+    where.push(
+      "(lower(full_name) LIKE ? ESCAPE '\\' OR lower(email) LIKE ? ESCAPE '\\' OR lower(company) LIKE ? ESCAPE '\\' OR lower(id) LIKE ? ESCAPE '\\')",
+    );
+    args.push(like, like, like, like);
+  }
+  return { where, args };
+}
+
+/** Most rows one export returns; far above the expected volume. */
+export const CSV_MAX_ROWS = 10_000;
+
+const CSV_COLUMNS: { header: string; value: (o: Order) => unknown }[] = [
+  { header: "id", value: (o) => o.id },
+  { header: "created_at", value: (o) => new Date(o.created_at).toISOString() },
+  { header: "updated_at", value: (o) => new Date(o.updated_at).toISOString() },
+  { header: "status", value: (o) => o.status },
+  { header: "name", value: (o) => o.full_name },
+  { header: "email", value: (o) => o.email },
+  { header: "company", value: (o) => o.company },
+  { header: "service", value: (o) => o.aws_service },
+  { header: "budget", value: (o) => o.budget },
+  { header: "deadline", value: (o) => o.deadline },
+  { header: "description", value: (o) => o.description },
+  { header: "source", value: (o) => o.source },
+  { header: "email_delivery", value: (o) => o.notify_status },
+];
+
+/**
+ * One CSV cell. A value that a spreadsheet would read as a formula (it starts
+ * with =, +, -, @, tab or CR) gets a leading apostrophe, so it is shown as text.
+ */
+export function csvCell(value: unknown): string {
+  let s = String(value ?? "");
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+  return /[",\r\n]/.test(s) || s !== s.trim() ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+export function ordersCsv(rows: Order[]): string {
+  const lines = [CSV_COLUMNS.map((c) => c.header).join(",")];
+  for (const o of rows) lines.push(CSV_COLUMNS.map((c) => csvCell(c.value(o))).join(","));
+  // BOM so Excel opens UTF-8 names correctly; CRLF as RFC 4180 asks.
+  return `\uFEFF${lines.join("\r\n")}\r\n`;
+}
+
 export const orders = new Hono<AppEnv>()
   .get("/orders", async (c) => {
     const parsed = listQuery.safeParse(c.req.query());
     if (!parsed.success) return c.json({ error: "Invalid query" }, 400);
     const { status, q, cursor } = parsed.data;
 
-    const where: string[] = [];
-    const args: unknown[] = [];
-    if (status) {
-      where.push("status = ?");
-      args.push(status);
-    }
-    if (q) {
-      const like = `%${likeEscape(q.toLowerCase())}%`;
-      where.push(
-        "(lower(full_name) LIKE ? ESCAPE '\\' OR lower(email) LIKE ? ESCAPE '\\' OR lower(company) LIKE ? ESCAPE '\\' OR lower(id) LIKE ? ESCAPE '\\')",
-      );
-      args.push(like, like, like, like);
-    }
+    const { where, args } = filterClause(status, q);
     if (cursor) {
       const k = decodeCursor(cursor);
       if (!k) return c.json({ error: "Invalid cursor" }, 400);
@@ -74,6 +116,22 @@ export const orders = new Hono<AppEnv>()
     const hasMore = results.length > PAGE_SIZE;
     const items = hasMore ? results.slice(0, PAGE_SIZE) : results;
     return c.json({ items, nextCursor: hasMore ? encodeCursor(items[items.length - 1]!) : null });
+  })
+
+  // CSV of every order matching the current filter (no paging). Same Access
+  // check as the rest of the API; never cached (securityHeaders).
+  .get("/orders.csv", async (c) => {
+    const parsed = listQuery.omit({ cursor: true }).safeParse(c.req.query());
+    if (!parsed.success) return c.json({ error: "Invalid query" }, 400);
+    const { where, args } = filterClause(parsed.data.status, parsed.data.q);
+    const sql = `SELECT * FROM orders ${where.length ? `WHERE ${where.join(" AND ")}` : ""}
+                 ORDER BY created_at DESC, id DESC LIMIT ${CSV_MAX_ROWS}`;
+    const { results } = await c.env.DB.prepare(sql).bind(...args).all<Order>();
+    const date = new Date().toISOString().slice(0, 10);
+    return c.body(ordersCsv(results), 200, {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": `attachment; filename="orders-${date}.csv"`,
+    });
   })
 
   .get("/orders/:id", async (c) => {

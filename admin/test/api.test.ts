@@ -289,3 +289,41 @@ describe("order deletion", () => {
     expect((await call("/api/orders/ORD-NOPE000", { method: "DELETE", body: JSON.stringify({ confirm: "ORD-NOPE000" }) })).status).toBe(404);
   });
 });
+
+describe("CSV export", () => {
+  it("exports the current filter as CSV with safe cells and no caching", async () => {
+    seed(4);
+    db.raw.prepare("UPDATE orders SET description = ?, full_name = ? WHERE id = 'ORD-0000001'").run(
+      '=HYPERLINK("http://evil.example","click")',
+      'Doe, "Jane"',
+    );
+    const res = await call("/api/orders.csv?status=new");
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toBe("text/csv; charset=utf-8");
+    expect(res.headers.get("Content-Disposition")).toMatch(/^attachment; filename="orders-\d{4}-\d{2}-\d{2}\.csv"$/);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]); // UTF-8 BOM for Excel
+    const text = new TextDecoder().decode(bytes);
+    expect(text.startsWith("id,created_at,")).toBe(true);
+    const lines = text.trim().split("\r\n");
+    // seed(4): ids 0..3, status "quoted" when i % 3 === 0, so 1 and 2 are "new".
+    expect(lines).toHaveLength(3);
+    expect(lines[1]).toMatch(/^ORD-0000002,/);
+    expect(text).toContain(`"'=HYPERLINK(""http://evil.example"",""click"")"`);
+    expect(text).toContain(`"Doe, ""Jane"""`);
+  });
+
+  it("neutralises every formula prefix", async () => {
+    const { csvCell } = await import("../src/api/orders");
+    for (const v of ["=1+1", "+1", "-1", "@SUM(A1)", "\tx", "\rx"]) {
+      expect(csvCell(v).replace(/^"/, "").startsWith("'")).toBe(true);
+    }
+    expect(csvCell("plain")).toBe("plain");
+  });
+
+  it("needs Access and rejects a bad filter", async () => {
+    expect((await call("/api/orders.csv", { auth: null })).status).toBe(401);
+    expect((await call("/api/orders.csv?status=nope")).status).toBe(400);
+  });
+});

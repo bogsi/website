@@ -49,6 +49,14 @@ export const api = {
     const s = qs.toString();
     return request<OrderPage>(`/orders${s ? `?${s}` : ""}`);
   },
+  /** Link target for the CSV export of the current filter (a plain download). */
+  ordersCsvUrl: (p: { status?: Status; q?: string }) => {
+    const qs = new URLSearchParams();
+    if (p.status) qs.set("status", p.status);
+    if (p.q) qs.set("q", p.q);
+    const s = qs.toString();
+    return `/api/orders.csv${s ? `?${s}` : ""}`;
+  },
   order: (id: string) => request<{ order: Order; events: OrderEvent[] }>(`/orders/${encodeURIComponent(id)}`),
   updateOrder: (id: string, body: { status?: Status; notes?: string }) =>
     request<{ order: Order; emailQueued: boolean }>(`/orders/${encodeURIComponent(id)}`, {
