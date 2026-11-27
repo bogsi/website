@@ -186,6 +186,16 @@ document.getElementById("inquiryForm").addEventListener("submit", async function
     });
     const json = await res.json();
     if (res.ok && json.success) {
+      // GA4 key event through Zaraz (sent only with analytics consent). The
+      // service category only: never names, emails or descriptions.
+      if (window.zaraz && typeof zaraz.track === "function") {
+        try {
+          await Promise.race([
+            zaraz.track("generate_lead", { aws_service: data.service, form_location: "order_page" }),
+            new Promise((resolve) => setTimeout(resolve, 800)),
+          ]);
+        } catch (_) { /* analytics must never block the redirect */ }
+      }
       window.location.href = "/order/success/?id=" + json.orderId;
     } else {
       throw new Error(json.error || "Something went wrong");
