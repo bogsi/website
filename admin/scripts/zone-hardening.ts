@@ -11,7 +11,7 @@
 //   CLOUDFLARE_ACCOUNT_ID     optional; needed for the Access review
 //   GOOGLE_SITE_VERIFICATION  optional; "google-site-verification=..." from Search Console
 
-import { cfClient } from "./provision-lib.ts";
+import { CfError, cfClient } from "./provision-lib.ts";
 import {
   ensureCustomRules,
   ensureDnssec,
@@ -36,7 +36,14 @@ async function main(): Promise<void> {
   const zoneToken = process.env.CLOUDFLARE_ZONE_TOKEN;
   if (!zoneToken) throw new Error("CLOUDFLARE_ZONE_TOKEN is not set");
   const cf = cfClient(zoneToken);
-  const zone = await getZone(cf);
+  const zone = await getZone(cf).catch((err: unknown) => {
+    if (err instanceof CfError && err.codes.includes(9109)) {
+      throw new Error(
+        "CLOUDFLARE_ZONE_TOKEN is not a valid token: paste the token value shown once after creating it (not its name or ID), or create a new one",
+      );
+    }
+    throw err;
+  });
   log(`Zone ${zone.name} (${zone.status}) · mode ${mode}`);
 
   // Each step is independent: one missing permission must not hide the rest.

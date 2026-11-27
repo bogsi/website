@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { STATUSES, STATUS_LABEL, type Status } from "../../shared/orders";
@@ -62,6 +62,7 @@ export function Orders({ search }: { search: OrdersSearch }) {
                 <th className="px-4 py-2 font-normal">Service</th>
                 <th className="px-4 py-2 font-normal">Budget</th>
                 <th className="px-4 py-2 font-normal">Status</th>
+                <th className="px-4 py-2 font-normal"><span className="sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +79,7 @@ export function Orders({ search }: { search: OrdersSearch }) {
                   <td className="px-4 py-2">{o.aws_service}</td>
                   <td className="px-4 py-2 text-muted">{o.budget || "—"}</td>
                   <td className="px-4 py-2"><StatusBadge status={o.status} /></td>
+                  <td className="px-4 py-2 text-right"><DeleteOrderButton id={o.id} /></td>
                 </tr>
               ))}
             </tbody>
@@ -102,5 +104,42 @@ function Tab({ active, to, children }: { active: boolean; to: Status | undefined
     >
       {children}
     </Link>
+  );
+}
+
+/**
+ * Two-step delete: the first click arms the button for 4 seconds, the second
+ * deletes the order, its timeline and its emails for good.
+ */
+function DeleteOrderButton({ id }: { id: string }) {
+  const qc = useQueryClient();
+  const [armed, setArmed] = useState(false);
+  useEffect(() => {
+    if (!armed) return;
+    const t = setTimeout(() => setArmed(false), 4000);
+    return () => clearTimeout(t);
+  }, [armed]);
+  const remove = useMutation({
+    mutationFn: () => api.deleteOrder(id),
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: ["order", id] });
+      qc.invalidateQueries({ queryKey: ["orders"] });
+      qc.invalidateQueries({ queryKey: ["stats"] });
+    },
+  });
+  if (remove.isError) return <span className="text-xs text-red-400" title={String(remove.error)}>failed</span>;
+  return (
+    <button
+      type="button"
+      disabled={remove.isPending}
+      onClick={() => (armed ? remove.mutate() : setArmed(true))}
+      aria-label={armed ? `Confirm deleting ${id}` : `Delete ${id}`}
+      title={armed ? "Click again to delete permanently" : "Delete order"}
+      className={`rounded px-2 py-1 text-xs transition disabled:opacity-50 ${
+        armed ? "border border-red-500/60 text-red-400" : "text-muted hover:text-red-400"
+      }`}
+    >
+      {remove.isPending ? "…" : armed ? "Confirm" : "Delete"}
+    </button>
   );
 }

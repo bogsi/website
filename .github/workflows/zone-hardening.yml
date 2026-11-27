@@ -45,5 +45,5 @@ jobs:
             exit 1
           fi
       - uses: actions/setup-node@v7
-        with: { node-version: 22 }
+        with: { node-version: 24 }
       - run: node --experimental-strip-types scripts/zone-hardening.ts "${{ inputs.mode }}"

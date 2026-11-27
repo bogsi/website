@@ -29,10 +29,12 @@ export type Cf = <T>(method: string, path: string, body?: unknown) => Promise<T>
 
 /** Minimal Cloudflare API client: unwraps `result`, throws CfError otherwise. */
 export function cfClient(token: string, fetchImpl: typeof fetch = fetch): Cf {
+  // Secrets pasted into GitHub often carry a trailing newline or space.
+  const bearer = token.trim();
   return async <T>(method: string, path: string, body?: unknown): Promise<T> => {
     const res = await fetchImpl(`https://api.cloudflare.com/client/v4${path}`, {
       method,
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${bearer}`, "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
     const json = (await res.json().catch(() => null)) as CfEnvelope<T> | null;
