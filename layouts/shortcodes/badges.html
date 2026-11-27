@@ -12,7 +12,7 @@
   {{- if not (fileExists (printf "static/%s" $src)) -}}{{- errorf "badges: missing static/%s" $src -}}{{- end }}
   <li>
     <a href="{{ .url }}" target="_blank" rel="noopener noreferrer" title="Verify on Credly">
-      <img src="{{ $src | absURL }}" alt="{{ .name }} badge" width="96" height="96" loading="lazy" decoding="async">
+      <img src="{{ $src | relURL }}" alt="{{ .name }} badge" width="96" height="96" loading="lazy" decoding="async">
       <span class="badges__name">{{ .name }}</span>
       {{- with .note }}<span class="badges__note">{{ . }}</span>{{ end }}
     </a>
