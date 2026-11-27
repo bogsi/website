@@ -31,11 +31,12 @@ or email [bogomil.roussev@gmail.com](mailto:bogomil.roussev@gmail.com).
 
 | Tier | Typical account | Delivery | Price |
 | --- | --- | --- | --- |
-| **Quick Scan** | Up to about $5k/month AWS spend, 1 account | 1–2 working days | €900–1,500 |
+| **Quick Scan** | About $2k–5k/month AWS spend, 1 account | 1–2 working days | €900–1,500 |
 | **Standard Audit** | $5k–30k/month, up to about 5 accounts | 3–5 working days | €2,000–3,500 |
 | **Deep Audit** | $30k+/month, AWS Organizations, multi-account | 6–10 working days | from €4,500 |
 
-The scoping call is free. After it you get a **fixed price** for your scope in
+Below about $2k/month, an audit rarely pays for itself; AWS's own free cost
+tools are usually enough, and we will say so on the call. The scoping call is free. After it you get a **fixed price** for your scope in
 writing, before any access is set up. AWS Cost Explorer API requests made during
 the audit are billed by AWS to your account; the exact
 estimate is part of the agreed scope.
