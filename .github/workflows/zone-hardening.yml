@@ -36,13 +36,13 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       GOOGLE_SITE_VERIFICATION: ${{ inputs.google_site_verification }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Require the zone token
         run: |
           if [ -z "$CLOUDFLARE_ZONE_TOKEN" ]; then
             echo "::error::Add the CLOUDFLARE_ZONE_TOKEN secret first (see the comment in scripts/zone-hardening.ts)."
             exit 1
           fi
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with: { node-version: 22 }
       - run: node --experimental-strip-types scripts/zone-hardening.ts "${{ inputs.mode }}"
