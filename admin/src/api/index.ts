@@ -5,6 +5,7 @@ import { requireAccess, sameOriginWrites } from "./access";
 import type { AppEnv } from "./env";
 import { account } from "./account";
 import { securityHeaders } from "./headers";
+import { CLEANUP_HOUR_UTC, purgeExpiredOrders } from "./retention";
 import { orders } from "./orders";
 
 const api = new Hono<AppEnv>()
@@ -36,11 +37,19 @@ export default {
   },
   // Hourly (see triggers in wrangler.jsonc): retry emails that failed, for
   // example while Resend's 100/day quota was used up (it resets 00:00 UTC).
-  async scheduled(_event, env, ctx) {
+  // Once a day it also deletes closed orders past the retention period.
+  async scheduled(event, env, ctx) {
     ctx.waitUntil(
       processPending(env.DB, env).then((r) => {
         if (r.sent || r.failed) console.log(`Outbox retry: ${r.sent} sent, ${r.failed} failed`);
       }),
     );
+    if (new Date(event.scheduledTime).getUTCHours() === CLEANUP_HOUR_UTC) {
+      ctx.waitUntil(
+        purgeExpiredOrders(env.DB).then((n) => {
+          if (n) console.log(`Retention: ${n} closed order(s) deleted`);
+        }),
+      );
+    }
   },
 } satisfies ExportedHandler<AppEnv["Bindings"]>;

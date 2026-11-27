@@ -37,7 +37,9 @@ function Shell() {
     <div className="min-h-screen">
       <header className="border-b border-line bg-panel">
         <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
-          <span className="font-mono text-sm text-accent">root@roussev.dev:/admin&gt;</span>
+          <Link to="/" className="font-mono text-sm text-accent hover:underline" title="Overview">
+            root@roussev.dev:/admin&gt;
+          </Link>
           <nav className="flex gap-1">
             <Link to="/" className={nav} activeOptions={{ exact: true }}>Overview</Link>
             <Link to="/orders" className={nav}>Orders</Link>
