@@ -16,11 +16,11 @@ hugo server -D                   # dev server at http://localhost:1313 (includes
 hugo --minify                    # production build into public/ (gitignored)
 ```
 
-The repo has no tests, linter or JS build. `package.json` is an npm stub. To verify a change, run `hugo --minify` and confirm it finishes with no errors, because template `errorf` calls are used as build-time assertions (see below).
+The Hugo site has no tests, linter or JS build (`package.json` at the root is an npm stub). To verify a site change, run `hugo --minify` and confirm it finishes with no errors, because template `errorf` calls are used as build-time assertions (see below). Code under `admin/`, `functions/` and `lib/` is tested from `admin/` (`npm test`, `npx tsc -b`, `npm run build`).
 
 ## Architecture
 
-- **Layouts override the theme.** Files in `layouts/` take precedence over `themes/terminal/layouts/`. `layouts/_default/baseof.html` and `layouts/partials/head.html` replace the theme's shell entirely. `head.html` inlines `assets/css/critical.css`, bundles `assets/css/style.css` through Hugo Pipes, and defines the orange accent CSS variables. Each section (`about`, `services`, `projects`, `posts`, `order`) has its own `list.html`.
+- **Layouts override the theme.** Files in `layouts/` take precedence over `themes/terminal/layouts/`. `layouts/_default/baseof.html` and `layouts/partials/head.html` replace the theme's shell entirely. `head.html` bundles `assets/css/style.css` through Hugo Pipes, defines the orange accent CSS variables inline, and loads GA4 with Consent Mode v2 defaulting to denied (until Zaraz with a consent banner replaces it). `resources.Get` reads `assets/` (project and theme), never `static/`. Each section (`about`, `services`, `projects`, `posts`, `order`) has its own `list.html`.
 - **Service pages drive several places through front matter.** A page in `content/services/` can set:
   - `service_summary`: rendered by `layouts/partials/service-card.html`. The `service-pane` shortcode (`layouts/shortcodes/service-pane.html`) embeds that card in a YAML-highlighted box on `content/services/_index.md`. Both **fail the build** (`errorf`) if the referenced page is missing (for example, still `draft: true` in a production build) or has no `service_summary`.
   - `inquiry_service`: automatically added as an `<option>` in the inquiry form (`layouts/order/list.html`). The form also preselects a service from `?service=<value>`, so links like `/order/?service=CostLens%20AWS%20Cost%20Audit` must match that value exactly.
@@ -34,4 +34,13 @@ The repo has no tests, linter or JS build. `package.json` is an npm stub. To ver
 
 ## CI
 
-`.github/workflows/` runs Claude Code: an automatic review on PRs (`claude-code-review.yml`) and `@claude` mentions (`claude.yml`). Neither workflow builds the site. Cloudflare Pages does the build.
+Cloudflare Pages builds and deploys the site; no workflow builds Hugo. Every action is pinned to a commit SHA (Dependabot updates the pins), and workflows default to `permissions: contents: read`.
+
+- `admin.yml`: on PRs touching `admin/`, `functions/` or `lib/`: `npm audit --audit-level=high`, vitest, tsc, build. On `main`: `provision.ts deploy` (see Architecture).
+- `d1-backup.yml`: Sundays and on demand, `age`-encrypted D1 export as a 30-day artifact (recipient in `admin/backup/recipients.txt`).
+- `zone-hardening.yml`: manual, with a short-lived `CLOUDFLARE_ZONE_TOKEN`: DNSSEC, TLS, the `/api/order` rate limit, WAF custom rules, and read-only Access and email DNS reports.
+- `smoke-test.yml`: daily read-only checks of production (headers, form, WAF rules, admin behind Access, security.txt expiry).
+- `rotation-reminder.yml`: quarterly issue with the key rotation checklist.
+- `claude-code-review.yml` / `claude.yml`: Claude review on PRs and `@claude` mentions, for the owner and collaborators only (skipped for Dependabot, which gets no secrets).
+
+Each change goes on its own branch and pull request; the owner merges. Security reports: `SECURITY.md`.
