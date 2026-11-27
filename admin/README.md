@@ -153,6 +153,44 @@ mode or zone-level HSTS.
 3. Run the workflow with `check`, read the report, then run it with `apply`.
 4. Delete the token in Cloudflare and the secret in GitHub.
 
+## Incident runbook
+
+For a suspected leak of a key, an admin account takeover, form abuse or
+data loss. Work top to bottom; write down what was done and when (UTC).
+
+1. **Revoke keys** that may be exposed, then put new ones in place:
+   - Cloudflare deploy token: My Profile → API Tokens → Roll; update the
+     GitHub secret `CLOUDFLARE_API_TOKEN`.
+   - Resend key: create a new sending-only key, update it in Pages and in
+     GitHub, run "Admin dashboard" with `deploy`, delete the old key
+     ("Rotating the Resend key" above).
+   - Turnstile secret: Turnstile → widget → Rotate secret; update the
+     Pages secret `TURNSTILE_SECRET_KEY`.
+   - GitHub OAuth App secret (Access login): generate a new client secret,
+     update `ACCESS_GITHUB_CLIENT_SECRET`, run `deploy`.
+   - Delete any leftover `CLOUDFLARE_ZONE_TOKEN` (it should never exist
+     outside a hardening run).
+2. **Kill sessions:** Zero Trust → Access → Applications → Control Room →
+   revoke existing tokens. If the GitHub account is suspect: change its
+   password, review its sessions, passkeys and OAuth apps first.
+3. **Contain:**
+   - Form abuse: lower the rate limit in `scripts/zone-hardening-lib.ts`
+     and run "Zone hardening", or add a custom rule that blocks
+     `/api/order` until it is over.
+   - Bad deploy: Pages → Deployments → roll back; for the admin Worker,
+     `npx wrangler rollback` in `admin/`.
+4. **Check and restore data:** compare the dashboard with the latest
+   backup. Recent changes: D1 Time Travel (`npx wrangler d1 time-travel
+   restore roussev-orders --timestamp=<ISO time>`; 7 days on Free).
+   Older: decrypt the latest "D1 backup" artifact ("Backups" above).
+5. **Personal data:** if order data may have been read by someone else,
+   assess it as a GDPR personal data breach. If it is likely to put people
+   at risk, notify the Bulgarian Commission for Personal Data Protection
+   (КЗЛД) within 72 hours of becoming aware, and the affected people
+   without undue delay if the risk is high. Record the breach either way.
+6. **Afterwards:** run the "Smoke test" and "Zone hardening" (`check`)
+   workflows, and note what to change so it does not happen again.
+
 ## Local development
 
 ```bash
