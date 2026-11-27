@@ -93,4 +93,7 @@ first. My access stays read-only for the whole audit.
 ## Next step
 
 [Tell me about your AWS account](/order/?service=CostLens%20AWS%20Cost%20Audit).
-We agree the scope and access before you deploy anything.
+We agree the scope and access before you deploy anything. If you would rather
+talk first, book a free intro call.
+
+{{< book-call id="cost-audit-book-call" >}}

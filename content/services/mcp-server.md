@@ -85,4 +85,7 @@ the damage. The security review says plainly what is still possible.
 ## Next step
 
 [Tell me about your system](/order/?service=Production%20MCP%20Server).
-We agree the scope before you give me any access.
+We agree the scope before you give me any access. If you would rather talk
+first, book a free intro call.
+
+{{< book-call id="mcp-book-call" >}}

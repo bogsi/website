@@ -1,0 +1,8 @@
+{{- /*
+  Secondary button to the free intro call booking page (params.bookingURL).
+  Usage: {{< book-call id="home-book-call" >}}
+  The id becomes data-cta-id, which the click tracking in footer.html reports.
+*/ -}}
+{{- $url := site.Params.bookingURL -}}
+{{- if not $url -}}{{- errorf "book-call: params.bookingURL is empty (%s)" .Position -}}{{- end -}}
+<a class="button outline" href="{{ $url }}" target="_blank" rel="noopener noreferrer"{{ with .Get "id" }} data-cta-id="{{ . }}"{{ end }}>Book a free intro call</a>
