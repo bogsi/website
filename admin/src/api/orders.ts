@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import { STATUSES, type Order, type OrderEvent, type Status } from "../shared/orders";
+import { STATUSES, type Order, type OrderEmail, type OrderEvent, type Status } from "../shared/orders";
 import { deliver, enqueueStatement } from "../../../lib/outbox.js";
 import { statusEmail } from "./email";
 import type { AppEnv } from "./env";
@@ -19,6 +19,9 @@ const patchBody = z
     notes: z.string().max(10_000).optional(),
   })
   .refine((b) => b.status !== undefined || b.notes !== undefined, "Nothing to update");
+
+const previewQuery = z.object({ status: z.enum(STATUSES) });
+const EMAIL_COLUMNS = "id, kind, to_addr, subject, status, attempts, last_error, created_at, sent_at";
 
 const noteBody = z.object({ body: z.string().trim().min(1).max(5_000) });
 // Deleting is irreversible, so the client must repeat the order id.
@@ -136,13 +139,44 @@ export const orders = new Hono<AppEnv>()
 
   .get("/orders/:id", async (c) => {
     const id = c.req.param("id");
-    const [order, events] = await c.env.DB.batch([
+    const [order, events, emails] = await c.env.DB.batch([
       c.env.DB.prepare("SELECT * FROM orders WHERE id = ?").bind(id),
       c.env.DB.prepare("SELECT * FROM order_events WHERE order_id = ? ORDER BY at DESC, id DESC").bind(id),
+      c.env.DB.prepare(`SELECT ${EMAIL_COLUMNS} FROM email_outbox WHERE order_id = ? ORDER BY created_at DESC, id DESC`).bind(id),
     ]);
     const row = order!.results[0] as Order | undefined;
     if (!row) return c.json({ error: "Not found" }, 404);
-    return c.json({ order: row, events: events!.results as OrderEvent[] });
+    return c.json({ order: row, events: events!.results as OrderEvent[], emails: emails!.results as OrderEmail[] });
+  })
+
+  // The email a status change would send, without changing anything, so the
+  // dashboard can show it before saving.
+  .get("/orders/:id/status-email", async (c) => {
+    const parsed = previewQuery.safeParse(c.req.query());
+    if (!parsed.success) return c.json({ error: "Invalid status" }, 400);
+    const order = await c.env.DB.prepare("SELECT * FROM orders WHERE id = ?").bind(c.req.param("id")).first<Order>();
+    if (!order) return c.json({ error: "Not found" }, 404);
+    const mail = statusEmail({ ...order, status: parsed.data.status }, parsed.data.status);
+    return c.json({ to: order.email, subject: mail.subject, html: mail.html });
+  })
+
+  // Sends one email of this order again, only if it gave up ("failed"): the
+  // row gets a fresh set of attempts and one is made right away.
+  .post("/orders/:id/emails/:emailId/resend", async (c) => {
+    const id = c.req.param("id");
+    const emailId = Number(c.req.param("emailId"));
+    if (!Number.isInteger(emailId) || emailId <= 0) return c.json({ error: "Not found" }, 404);
+    const db = c.env.DB;
+    const row = await db
+      .prepare("SELECT status FROM email_outbox WHERE id = ? AND order_id = ?")
+      .bind(emailId, id)
+      .first<{ status: OrderEmail["status"] }>();
+    if (!row) return c.json({ error: "Not found" }, 404);
+    if (row.status !== "failed") return c.json({ error: "Only failed emails can be resent" }, 409);
+    await db.prepare("UPDATE email_outbox SET status = 'pending', attempts = 0 WHERE id = ?").bind(emailId).run();
+    const result = await deliver(db, c.env, [emailId]);
+    const email = await db.prepare(`SELECT ${EMAIL_COLUMNS} FROM email_outbox WHERE id = ?`).bind(emailId).first<OrderEmail>();
+    return c.json({ ...result, email });
   })
 
   .patch("/orders/:id", async (c) => {

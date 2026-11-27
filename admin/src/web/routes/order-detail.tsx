@@ -1,7 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { STATUSES, STATUS_LABEL, retentionDeleteAt, type OrderEvent, type Status } from "../../shared/orders";
+import {
+  RESEND_DAILY_LIMIT,
+  STATUSES,
+  STATUS_LABEL,
+  retentionDeleteAt,
+  type OrderEmail,
+  type OrderEvent,
+  type Status,
+} from "../../shared/orders";
 import { api, fmtDate, fmtDateTime } from "../lib/api";
 import { Button, ErrorNote, Panel, Spinner, StatusBadge } from "../ui";
 
@@ -54,16 +62,25 @@ export function OrderDetail({ id }: { id: string }) {
     },
   });
 
+  const statusChoice = status !== "" && order && status !== order.status ? (status as Status) : null;
+  const preview = useQuery({
+    queryKey: ["status-email", id, statusChoice],
+    queryFn: () => api.statusEmailPreview(id, statusChoice!),
+    enabled: statusChoice !== null,
+  });
+  const resend = useMutation({
+    mutationFn: (emailId: number) => api.resendEmail(id, emailId),
+    onSuccess: refresh,
+  });
+
   if (detail.isPending) return <Spinner />;
   if (detail.error || !order) return <ErrorNote error={detail.error ?? new Error("Not found")} />;
 
-  const statusDirty = status !== "" && status !== order.status;
+  const statusDirty = statusChoice !== null;
+  // The preview below is the confirmation: saving is only possible once the
+  // client's email for the chosen status is on screen.
   const saveStatus = () => {
-    if (!statusDirty) return;
-    const ok = window.confirm(
-      `Change status to "${STATUS_LABEL[status as Status]}"?\n\nThis emails ${order.email} automatically.`,
-    );
-    if (ok) update.mutate({ status: status as Status });
+    if (statusChoice && preview.data) update.mutate({ status: statusChoice });
   };
 
   return (
@@ -144,12 +161,51 @@ export function OrderDetail({ id }: { id: string }) {
                   <option key={s} value={s}>{STATUS_LABEL[s]}</option>
                 ))}
               </select>
-              <Button variant="primary" className="w-full" disabled={!statusDirty || update.isPending} onClick={saveStatus}>
-                {update.isPending ? "Saving…" : "Save status & email client"}
+              {statusDirty && (
+                <div className="space-y-2 rounded border border-line p-3">
+                  <p className="font-mono text-xs text-muted">The client will get this email</p>
+                  {preview.isPending ? (
+                    <Spinner />
+                  ) : preview.data ? (
+                    <>
+                      <p className="text-xs">
+                        <span className="text-muted">To:</span> {preview.data.to}
+                        <br />
+                        <span className="text-muted">Subject:</span> {preview.data.subject}
+                      </p>
+                      {/* sandbox with no permissions: no scripts, no forms, no navigation. */}
+                      <iframe
+                        title="Status email preview"
+                        sandbox=""
+                        srcDoc={preview.data.html}
+                        className="h-56 w-full rounded border border-line bg-white"
+                      />
+                    </>
+                  ) : (
+                    <ErrorNote error={preview.error} />
+                  )}
+                </div>
+              )}
+              <Button
+                variant="primary"
+                className="w-full"
+                disabled={!statusDirty || !preview.data || update.isPending}
+                onClick={saveStatus}
+              >
+                {update.isPending ? "Saving…" : "Save status & send this email"}
               </Button>
               <p className="text-xs text-muted">Every status change sends the client an email.</p>
               <ErrorNote error={update.error} />
             </div>
+          </Panel>
+
+          <Panel title="emails">
+            <EmailList emails={detail.data.emails} onResend={(emailId) => resend.mutate(emailId)} busy={resend.isPending} />
+            <ErrorNote error={resend.error} />
+            <p className="mt-3 text-xs text-muted">
+              Resend's free plan sends at most {RESEND_DAILY_LIMIT} emails a day (resets 00:00 UTC). Failed emails are retried
+              hourly, up to 5 times; "Resend" starts over for one email.
+            </p>
           </Panel>
 
           <Panel title="internal notes">
@@ -222,5 +278,45 @@ function TimelineItem({ ev }: { ev: OrderEvent }) {
         )}
       </span>
     </li>
+  );
+}
+
+const EMAIL_KIND: Record<OrderEmail["kind"], string> = {
+  order_client: "Confirmation to client",
+  order_admin: "New order to you",
+  status_change: "Status update to client",
+};
+
+function EmailList({ emails, onResend, busy }: { emails: OrderEmail[]; onResend: (id: number) => void; busy: boolean }) {
+  if (emails.length === 0) return <p className="text-sm text-muted">No emails for this order.</p>;
+  return (
+    <ul className="space-y-3">
+      {emails.map((e) => (
+        <li key={e.id} className="text-sm">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p className="truncate" title={e.subject}>{e.subject}</p>
+              <p className="text-xs text-muted">
+                {EMAIL_KIND[e.kind]} · {fmtDateTime(e.created_at)}
+              </p>
+            </div>
+            {e.status === "failed" ? (
+              <Button className="shrink-0" disabled={busy} onClick={() => onResend(e.id)}>
+                Resend
+              </Button>
+            ) : (
+              <span className={`shrink-0 font-mono text-xs ${e.status === "sent" ? "text-muted" : "text-amber-200"}`}>
+                {e.status === "sent" ? "sent" : `retrying (${e.attempts}/5)`}
+              </span>
+            )}
+          </div>
+          {e.status === "failed" && (
+            <p className="mt-1 break-words text-xs text-red-300">
+              Gave up after {e.attempts} attempts{e.last_error ? `: ${e.last_error}` : ""}
+            </p>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }

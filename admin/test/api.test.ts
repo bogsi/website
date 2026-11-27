@@ -336,3 +336,67 @@ describe("CSV export", () => {
     expect((await call("/api/orders.csv?status=nope")).status).toBe(400);
   });
 });
+
+describe("status email preview and resend", () => {
+  const resendCalls = () =>
+    fetchMock.mock.calls.filter(([u]) => new URL(String(u instanceof Request ? u.url : u)).hostname === "api.resend.com");
+
+  const insertEmail = (status: string, orderId = "ORD-0000000") =>
+    Number(
+      db.raw
+        .prepare(
+          `INSERT INTO email_outbox (order_id, kind, to_addr, subject, html, status, attempts, last_error, created_at)
+           VALUES (?, 'status_change', 'c0@ex.com', 'Update', '<p>h</p>', ?, 5, 'Resend 429: quota', 1)`,
+        )
+        .run(orderId, status).lastInsertRowid,
+    );
+
+  it("previews the email for a status without changing anything", async () => {
+    seed(1);
+    db.raw.prepare("UPDATE orders SET full_name = '<b>Eve</b>' WHERE id = 'ORD-0000000'").run();
+    const res = await call("/api/orders/ORD-0000000/status-email?status=won");
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { to: string; subject: string; html: string };
+    expect(body.to).toBe("c0@ex.com");
+    expect(body.subject).toContain("ORD-0000000");
+    expect(body.html).toContain("&lt;b&gt;Eve&lt;/b&gt;");
+    expect(db.raw.prepare("SELECT status FROM orders").get()).toEqual({ status: "quoted" });
+    expect(db.raw.prepare("SELECT COUNT(*) AS n FROM email_outbox").get()).toEqual({ n: 0 });
+    expect(resendCalls()).toHaveLength(0);
+    expect((await call("/api/orders/ORD-0000000/status-email?status=nope")).status).toBe(400);
+    expect((await call("/api/orders/ORD-MISSING/status-email?status=won")).status).toBe(404);
+  });
+
+  it("lists the order's emails without their HTML", async () => {
+    seed(1);
+    insertEmail("failed");
+    const body = (await (await call("/api/orders/ORD-0000000")).json()) as { emails: Record<string, unknown>[] };
+    expect(body.emails).toHaveLength(1);
+    expect(body.emails[0]).toMatchObject({ status: "failed", attempts: 5, last_error: "Resend 429: quota" });
+    expect(body.emails[0]).not.toHaveProperty("html");
+  });
+
+  it("resends a failed email once and records the outcome", async () => {
+    seed(1);
+    const emailId = insertEmail("failed");
+    const res = await call(`/api/orders/ORD-0000000/emails/${emailId}/resend`, { method: "POST" });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { sent: number; email: { status: string; attempts: number } };
+    expect(body.sent).toBe(1);
+    expect(body.email).toMatchObject({ status: "sent", attempts: 1 });
+    expect(resendCalls()).toHaveLength(1);
+  });
+
+  it("refuses emails that did not fail, belong to another order, or come cross-origin", async () => {
+    seed(2);
+    const sent = insertEmail("sent");
+    const other = insertEmail("failed", "ORD-0000001");
+    expect((await call(`/api/orders/ORD-0000000/emails/${sent}/resend`, { method: "POST" })).status).toBe(409);
+    expect((await call(`/api/orders/ORD-0000000/emails/${other}/resend`, { method: "POST" })).status).toBe(404);
+    expect((await call(`/api/orders/ORD-0000000/emails/abc/resend`, { method: "POST" })).status).toBe(404);
+    expect(
+      (await call(`/api/orders/ORD-0000001/emails/${other}/resend`, { method: "POST", origin: "https://evil.example" })).status,
+    ).toBe(403);
+    expect(resendCalls()).toHaveLength(0);
+  });
+});

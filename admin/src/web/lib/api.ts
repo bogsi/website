@@ -1,4 +1,4 @@
-import type { Order, OrderEvent, Status } from "../../shared/orders";
+import type { Order, OrderEmail, OrderEvent, Status } from "../../shared/orders";
 
 export class ApiError extends Error {
   constructor(readonly status: number, message: string) {
@@ -58,7 +58,17 @@ export const api = {
     const s = qs.toString();
     return `/api/orders.csv${s ? `?${s}` : ""}`;
   },
-  order: (id: string) => request<{ order: Order; events: OrderEvent[] }>(`/orders/${encodeURIComponent(id)}`),
+  order: (id: string) =>
+    request<{ order: Order; events: OrderEvent[]; emails: OrderEmail[] }>(`/orders/${encodeURIComponent(id)}`),
+  statusEmailPreview: (id: string, status: Status) =>
+    request<{ to: string; subject: string; html: string }>(
+      `/orders/${encodeURIComponent(id)}/status-email?status=${encodeURIComponent(status)}`,
+    ),
+  resendEmail: (id: string, emailId: number) =>
+    request<{ sent: number; failed: number; email: OrderEmail }>(
+      `/orders/${encodeURIComponent(id)}/emails/${emailId}/resend`,
+      { method: "POST" },
+    ),
   updateOrder: (id: string, body: { status?: Status; notes?: string }) =>
     request<{ order: Order; emailQueued: boolean }>(`/orders/${encodeURIComponent(id)}`, {
       method: "PATCH",
