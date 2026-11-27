@@ -6,10 +6,10 @@ framed = true
 
 I help teams on AWS spend less, automate their infrastructure and connect AI
 agents to their internal systems without opening a security hole. You work with me directly,
-from the first call to the handover, for a fixed price.
+from the first call to the handover, for a fixed price. The first call is free.
 
 {{< cta href="/order/" id="home-hero-inquiry" >}}Discuss your project{{< /cta >}}
-{{< cta href="/services/" id="home-hero-services" outline="true" >}}See services{{< /cta >}}
+{{< book-call id="home-book-call" >}}
 
 ## Sound familiar?
 
@@ -36,11 +36,3 @@ TypeScript · Python · MCP
 
 AWS Certified Solutions Architect – Associate. More [about me](/about/), my
 [projects](/projects/) and [articles on Medium](https://medium.com/@bogomilroussev).
-
-## Let's talk
-
-Tell me what you are dealing with. The first call is free, and you get a fixed
-price in writing before any work starts.
-
-{{< cta href="/order/" id="home-footer-inquiry" >}}Discuss your project{{< /cta >}}
-{{< book-call id="home-book-call" >}}
