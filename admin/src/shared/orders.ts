@@ -51,3 +51,19 @@ export function retentionDeleteAt(o: Pick<Order, "status" | "updated_at">): numb
     ? o.updated_at + RETENTION_DAYS * 24 * 60 * 60 * 1000
     : null;
 }
+
+/** One row of the email outbox as the dashboard sees it (no HTML body). */
+export type OrderEmail = {
+  id: number;
+  kind: "order_client" | "order_admin" | "status_change";
+  to_addr: string;
+  subject: string;
+  status: "pending" | "sent" | "failed";
+  attempts: number;
+  last_error: string;
+  created_at: number;
+  sent_at: number | null;
+};
+
+/** Resend's Free plan sends at most this many emails a day (resets 00:00 UTC). */
+export const RESEND_DAILY_LIMIT = 100;
