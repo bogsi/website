@@ -2,10 +2,13 @@
 
 > {{ site.Params.description }}
 
-{{ site.Title }} is an AWS & Terraform automation consultant working on AWS cost optimization, Terraform/OpenTofu automation and cloud infrastructure. This site publishes practical articles on AWS billing and cost control, and offers CostLens, a consultant-led read-only AWS cost audit.
+{{ site.Title }} is an AWS & Terraform automation consultant working on AWS cost optimization, Terraform/OpenTofu automation and cloud infrastructure. This site publishes practical articles on AWS billing and cost control, and offers a fixed-price AWS architecture review and CostLens, a consultant-led read-only AWS cost audit.
 
 ## Services
-{{ with site.GetPage "/services/cost-audit" }}
+{{ with site.GetPage "/services/architecture-review" }}
+- [{{ .Title }}]({{ .Permalink }}): {{ .Description }}
+{{- end }}
+{{- with site.GetPage "/services/cost-audit" }}
 - [{{ .Title }}]({{ .Permalink }}): {{ .Description }}
 {{- end }}
 {{- with site.GetPage "/services" }}

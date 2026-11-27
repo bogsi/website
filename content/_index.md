@@ -14,6 +14,10 @@ from the first call to the handover, for a fixed price. The first call is free.
 ## Sound familiar?
 
 {{< situations >}}
+{{< situation title="Nobody has looked at the whole AWS setup in a while" price="€1,800 fixed, 5 working days" href="/services/architecture-review/" link="See the review" id="home-card-architecture-review" >}}
+Parts were built by different people, some in Terraform, some by hand. I
+review one account read-only and tell you what to fix first.
+{{< /situation >}}
 {{< situation title="The AWS bill keeps growing" price="From €900, fixed" href="/services/cost-audit/" link="See the cost audit" id="home-card-cost-audit" >}}
 Nobody can say exactly where the money goes. I audit your accounts with
 read-only access and give you a ranked list of what to change.
