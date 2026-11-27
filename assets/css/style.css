@@ -1088,7 +1088,7 @@ figure figcaption {
   transform: translateX(10px);
 }
 
-.social-link i {
+.social-link .icon {
   font-size: 1.2em;
   color: var(--accent);
   width: 24px;
@@ -1133,7 +1133,7 @@ figure figcaption {
   transform: translateY(-2px);
 }
 
-.footer .social-link i {
+.footer .social-link .icon {
   background: var(--accent);
   color: var(--background);
   width: 32px;
@@ -1146,7 +1146,7 @@ figure figcaption {
   transition: all 0.2s ease;
 }
 
-.footer .social-link:hover i {
+.footer .social-link:hover .icon {
   transform: scale(1.1);
   background: var(--color);
   color: var(--background);
@@ -1175,7 +1175,7 @@ figure figcaption {
     justify-content: center;
   }
 
-  .footer .social-link i {
+  .footer .social-link .icon {
     width: 28px;
     height: 28px;
     font-size: 0.9rem;
@@ -1281,4 +1281,13 @@ figure figcaption {
   border: 1px solid var(--accent);
   margin: 2.5em 0 1.5em;
   padding: 0.5em 1.25em;
+}
+
+/* Inline SVG icons (layouts/partials/icon.html) */
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  flex-shrink: 0;
 }
