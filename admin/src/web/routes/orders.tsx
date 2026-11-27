@@ -43,6 +43,14 @@ export function Orders({ search }: { search: OrdersSearch }) {
           aria-label="Search orders"
           className="ml-auto w-full rounded border border-line bg-bg px-3 py-1.5 text-sm outline-none focus:border-accent sm:w-72"
         />
+        <a
+          href={api.ordersCsvUrl({ status: search.status, q: search.q })}
+          download
+          className="rounded border border-line px-3 py-1.5 text-sm text-muted hover:border-accent hover:text-ink"
+          title="Download every order that matches the current filter as CSV"
+        >
+          Export CSV
+        </a>
       </div>
 
       <ErrorNote error={list.error} />
