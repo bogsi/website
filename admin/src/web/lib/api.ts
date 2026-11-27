@@ -55,6 +55,11 @@ export const api = {
       method: "PATCH",
       body: JSON.stringify(body),
     }),
+  deleteOrder: (id: string) =>
+    request<{ deleted: string }>(`/orders/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      body: JSON.stringify({ confirm: id }),
+    }),
   addNote: (id: string, body: string) =>
     request<{ ok: true }>(`/orders/${encodeURIComponent(id)}/notes`, {
       method: "POST",

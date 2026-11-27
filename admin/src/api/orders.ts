@@ -21,6 +21,8 @@ const patchBody = z
   .refine((b) => b.status !== undefined || b.notes !== undefined, "Nothing to update");
 
 const noteBody = z.object({ body: z.string().trim().min(1).max(5_000) });
+// Deleting is irreversible, so the client must repeat the order id.
+const deleteBody = z.object({ confirm: z.string() });
 
 // Keyset pagination cursor: "<created_at>:<id>" in base64url.
 const encodeCursor = (o: Pick<Order, "created_at" | "id">) =>
@@ -156,6 +158,26 @@ export const orders = new Hono<AppEnv>()
       .bind(id, Date.now(), c.get("userEmail"), parsed.data.body)
       .run();
     return c.json({ ok: true }, 201);
+  })
+
+  // Erasure request (GDPR art. 17): removes the order, its timeline and its
+  // queued or sent emails in one batch. Only the id is logged.
+  .delete("/orders/:id", async (c) => {
+    const id = c.req.param("id");
+    const parsed = deleteBody.safeParse(await c.req.json().catch(() => null));
+    if (!parsed.success || parsed.data.confirm !== id) {
+      return c.json({ error: "Confirm by sending the order id" }, 400);
+    }
+    const db = c.env.DB;
+    const exists = await db.prepare("SELECT 1 FROM orders WHERE id = ?").bind(id).first();
+    if (!exists) return c.json({ error: "Not found" }, 404);
+    await db.batch([
+      db.prepare("DELETE FROM email_outbox WHERE order_id = ?").bind(id),
+      db.prepare("DELETE FROM order_events WHERE order_id = ?").bind(id),
+      db.prepare("DELETE FROM orders WHERE id = ?").bind(id),
+    ]);
+    console.log(`Order ${id} deleted`);
+    return c.json({ deleted: id });
   })
 
   .get("/stats", async (c) => {

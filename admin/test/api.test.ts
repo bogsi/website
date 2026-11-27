@@ -262,3 +262,30 @@ describe("security headers", () => {
     }
   });
 });
+
+describe("order deletion", () => {
+  beforeEach(() => seed(2));
+
+  it("removes the order, its events and its emails, and nothing else", async () => {
+    await call("/api/orders/ORD-0000000", { method: "PATCH", body: JSON.stringify({ status: "contacted" }) });
+    const res = await call("/api/orders/ORD-0000000", { method: "DELETE", body: JSON.stringify({ confirm: "ORD-0000000" }) });
+    expect(res.status).toBe(200);
+    const count = (table: string, col: string) =>
+      (db.raw.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE ${col} = 'ORD-0000000'`).get() as { n: number }).n;
+    expect([count("orders", "id"), count("order_events", "order_id"), count("email_outbox", "order_id")]).toEqual([0, 0, 0]);
+    expect(db.raw.prepare("SELECT COUNT(*) AS n FROM orders").get()).toEqual({ n: 1 });
+    expect((await call("/api/orders/ORD-0000000")).status).toBe(404);
+  });
+
+  it("needs the order id as confirmation, Access and a same-origin request", async () => {
+    expect((await call("/api/orders/ORD-0000000", { method: "DELETE", body: JSON.stringify({ confirm: "ORD-0000001" }) })).status).toBe(400);
+    expect((await call("/api/orders/ORD-0000000", { method: "DELETE", body: "{}" })).status).toBe(400);
+    expect((await call("/api/orders/ORD-0000000", { method: "DELETE", auth: null, body: JSON.stringify({ confirm: "ORD-0000000" }) })).status).toBe(401);
+    expect((await call("/api/orders/ORD-0000000", { method: "DELETE", origin: "https://evil.example", body: JSON.stringify({ confirm: "ORD-0000000" }) })).status).toBe(403);
+    expect(db.raw.prepare("SELECT COUNT(*) AS n FROM orders").get()).toEqual({ n: 2 });
+  });
+
+  it("returns 404 for an unknown order", async () => {
+    expect((await call("/api/orders/ORD-NOPE000", { method: "DELETE", body: JSON.stringify({ confirm: "ORD-NOPE000" }) })).status).toBe(404);
+  });
+});
