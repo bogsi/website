@@ -1,0 +1,4 @@
+# age public key(s) for the encrypted D1 backups (.github/workflows/d1-backup.yml).
+# Public keys are safe to publish. The matching private key is kept offline
+# by Bogomil and is never stored in this repository or in GitHub secrets.
+age135qm997zereqxz48lqe028sgdn7p3sne55elxqlcsp58y8lqpp4q8vwt98

@@ -1,0 +1,65 @@
+name: D1 backup
+
+# Weekly encrypted export of the roussev-orders database (task T30).
+# The dump is encrypted with age to the public key(s) in
+# admin/backup/recipients.txt before it leaves the runner: artifacts of a
+# public repository can be downloaded by any signed-in GitHub user, so the
+# plaintext is never uploaded. Restore steps: admin/README.md.
+
+on:
+  schedule:
+    - cron: "23 2 * * 0" # Sundays 02:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: d1-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            admin/backup
+            admin/package-lock.json
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@v7
+        with: { node-version: 24 }
+      - name: Install age
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq age
+      - name: Export and encrypt
+        id: backup
+        run: |
+          set -euo pipefail
+          umask 077
+          # Same wrangler version as the admin dashboard; run outside admin/ so
+          # its wrangler.jsonc (with placeholders) is not picked up.
+          WRANGLER=$(node -p "require('./admin/package-lock.json').packages['node_modules/wrangler'].version")
+          RECIPIENTS="$GITHUB_WORKSPACE/admin/backup/recipients.txt"
+          STAMP=$(date -u +%Y-%m-%d)
+          OUT="$RUNNER_TEMP/out"
+          mkdir -p "$OUT"
+          cd "$RUNNER_TEMP"
+          npx --yes "wrangler@$WRANGLER" d1 export roussev-orders --remote --output dump.sql
+          # Sanity checks print counts only, never data.
+          grep -q 'CREATE TABLE' dump.sql
+          grep -q 'orders' dump.sql
+          echo "Rows: $(grep -c '^INSERT INTO' dump.sql || true) INSERT statements, $(wc -c < dump.sql) bytes"
+          age -R "$RECIPIENTS" -o "$OUT/roussev-orders-$STAMP.sql.age" dump.sql
+          shred -u dump.sql
+          echo "stamp=$STAMP" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: d1-backup-${{ steps.backup.outputs.stamp }}
+          path: ${{ runner.temp }}/out/*.sql.age
+          if-no-files-found: error
+          retention-days: 30
