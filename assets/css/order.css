@@ -371,3 +371,9 @@
   background: var(--accent);
   color: #000 !important;
 }
+
+.form-privacy {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
