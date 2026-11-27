@@ -1,59 +1,45 @@
 +++
 title = "Bogomil Roussev"
-description = "AWS & Terraform automation consultant: read-only AWS cost audits with CostLens, cloud architecture, Terraform modules and CI/CD automation."
+description = "AWS consultant in Sofia: fixed-price AWS cost audits, production MCP servers for internal APIs, and Terraform automation for teams on AWS."
 framed = true
 +++
 
-```bash
-$ whoami
-bogomil_roussev
+I help teams on AWS spend less, automate their infrastructure and connect AI
+agents to their internal systems without opening a security hole. You work with me directly,
+from the first call to the handover, for a fixed price.
 
-$ cat about.txt
-AWS & Terraform Automation Consultant
-Specializing in cloud infrastructure and automation solutions
+{{< cta href="/order/" id="home-hero-inquiry" >}}Discuss your project{{< /cta >}}
+{{< cta href="/services/" id="home-hero-services" outline="true" >}}See services{{< /cta >}}
 
-$ ls -l services/
-total 6
-drwxr-xr-x  AWS-Cost-Audit/         # NEW: read-only CostLens cost audit
-drwxr-xr-x  AWS-Infrastructure/     # Design and optimize cloud architectures
-drwxr-xr-x  Terraform-Automation/   # Infrastructure as Code solutions
-drwxr-xr-x  Python-Development/     # Custom automation tools
-drwxr-xr-x  Cloud-Architecture/     # Scalable cloud solutions
-drwxr-xr-x  AI/                     # Building AI Agents and Workflows
+## Sound familiar?
 
-$ cat contact.txt
-Email: bogomil.roussev@gmail.com
-Phone: +359 878 880 112
-LinkedIn: linkedin.com/in/bogomilroussev
-GitHub: github.com/bogsi
-Blog: gitbook.io/bogomil-roussev
+{{< situations >}}
+{{< situation title="The AWS bill keeps growing" price="From €900, fixed" href="/services/cost-audit/" link="See the cost audit" id="home-card-cost-audit" >}}
+Nobody can say exactly where the money goes. I audit your accounts with
+read-only access and give you a ranked list of what to change.
+{{< /situation >}}
+{{< situation title="Your team wants AI agents on an internal system" price="€4,500, about 2 weeks" href="/services/mcp-server/" link="See the MCP service" id="home-card-mcp" >}}
+I build a production MCP server for one system: sign-in through your identity
+provider, scoped tools, an audit log, on your AWS.
+{{< /situation >}}
+{{< situation title="Infrastructure built by hand, or old Terraform" href="/services/" link="See Terraform work" id="home-card-terraform" >}}
+Click-built resources and Terraform nobody dares to touch. I bring them under
+clean, tested Terraform/OpenTofu your team can maintain. Priced per project
+after a free call.
+{{< /situation >}}
+{{< /situations >}}
 
-$ cat latest_projects.txt
-> CostLens: read-only AWS cost audit tool (v0.1.0)
-> AWS Infrastructure Automation with Terraform
-> Python-based Cloud Management Tools
-> DevOps Pipeline Optimization
-> Raspberry Pi IoT Solutions
+## What I work with
 
-$ echo "Ready to transform your cloud infrastructure?"
-Ready to transform your cloud infrastructure?
+AWS · Terraform / OpenTofu · Kubernetes · Cloudflare · GitHub Actions ·
+TypeScript · Python · MCP
 
-$ ./get_started.sh
-🚀 Let's build something amazing together!
-```
+AWS Certified Solutions Architect – Associate. More [about me](/about/), my
+[projects](/projects/) and [articles on Medium](https://medium.com/@bogomilroussev).
 
-## AWS & Terraform consulting
+## Let's talk
 
-- **[AWS Cost Audit with CostLens](/services/cost-audit/)** (new): a read-only,
-  consultant-led review of your AWS spending with a ranked report, evidence and
-  remediation examples. [Request an audit](/order/?service=CostLens%20AWS%20Cost%20Audit).
-- **[AWS management and migration](/services/)**: architecture reviews, migration
-  planning, security best practices and disaster recovery.
-- **[Terraform automation](/services/)**: reusable modules, state management and
-  multi-environment setups. See the [Terraform modules guide](/projects/terraform-modules-guide/).
-- **[CI/CD pipelines](/services/)**: Jenkins, GitHub Actions and GitLab CI with
-  testing, security scanning and deployment strategies.
+Tell me what you are dealing with. The first call is free, and you get a fixed
+price in writing before any work starts.
 
-## Get in touch
-
-[Book a consultation](/order/) or read more [about my background](/about/).
+{{< cta href="/order/" id="home-footer-inquiry" >}}Discuss your project{{< /cta >}}

@@ -1291,3 +1291,66 @@ figure figcaption {
   vertical-align: -0.125em;
   flex-shrink: 0;
 }
+
+/* Links styled as buttons (shortcodes cta.html and situation.html, service cards) */
+a.button {
+  display: inline-block;
+  margin: 0.25em 0.5em 0.25em 0;
+  padding: 5px 18px;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--background);
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.15s linear, color 0.15s linear;
+}
+
+a.button:hover {
+  background: transparent;
+  color: var(--accent);
+}
+
+a.button.outline {
+  background: transparent;
+  color: var(--accent);
+}
+
+a.button.outline:hover {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+/* Home page: common situations */
+.situations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin: 1.5em 0;
+}
+
+.situation {
+  display: flex;
+  flex-direction: column;
+  padding: 1em 1.25em;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+}
+
+.situation h3 {
+  margin-top: 0;
+  font-size: 1.05rem;
+}
+
+.situation p {
+  margin: 0 0 0.75em;
+}
+
+.situation .situation-price {
+  margin-top: auto;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.situation a.button {
+  align-self: flex-start;
+}
