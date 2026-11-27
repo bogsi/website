@@ -1,6 +1,6 @@
 +++
 title = "Services"
-description = "AWS management and migration, CostLens AWS cost audits, Terraform automation, CI/CD pipeline development and subscription support for cloud teams."
+description = "AWS cost audits with CostLens, production MCP servers for internal APIs, Terraform automation, CI/CD pipelines and AWS support for cloud teams."
 +++
 
 Cloud infrastructure services for teams running on AWS.
@@ -8,6 +8,7 @@ Cloud infrastructure services for teams running on AWS.
 ```bash
 $ ls -l services/
 drwxr-xr-x  AWS-Management/
+drwxr-xr-x  MCP-Servers/
 drwxr-xr-x  Terraform-Automation/
 drwxr-xr-x  CI-CD-Pipeline/
 drwxr-xr-x  Support/
@@ -23,6 +24,17 @@ Services:
   - Security best practices implementation
   - Performance monitoring and scaling
   - Disaster recovery planning
+{{< /service-pane >}}
+
+## MCP Servers for Internal APIs
+
+{{< service-pane card="services/mcp-server" >}}
+Delivers:
+  - MCP server for one internal system (5-10 tools)
+  - Sign-in through your identity provider (OAuth 2.1)
+  - Terraform deployment in your AWS account
+  - Audit log of every tool call
+  - Security review and handover docs
 {{< /service-pane >}}
 
 ## Terraform Automation
