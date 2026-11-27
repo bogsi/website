@@ -1292,7 +1292,10 @@ figure figcaption {
   flex-shrink: 0;
 }
 
-/* Links styled as buttons (shortcodes cta.html and situation.html, service cards) */
+/* Links styled as buttons (shortcodes cta.html and situation.html, service
+   cards). Prefixed with .post so they beat the body-link rules above
+   (".post-content a" colour, ".post p a" underline). */
+.post a.button,
 a.button {
   display: inline-block;
   margin: 0.25em 0.5em 0.25em 0;
@@ -1306,16 +1309,20 @@ a.button {
   transition: background 0.15s linear, color 0.15s linear;
 }
 
+.post a.button:hover,
 a.button:hover {
   background: transparent;
   color: var(--accent);
+  text-decoration: none;
 }
 
+.post a.button.outline,
 a.button.outline {
   background: transparent;
   color: var(--accent);
 }
 
+.post a.button.outline:hover,
 a.button.outline:hover {
   background: color-mix(in srgb, var(--accent) 15%, transparent);
 }
