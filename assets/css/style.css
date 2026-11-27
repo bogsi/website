@@ -425,7 +425,7 @@ button {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  max-width: 800px;
+  max-width: var(--page-width);
   margin: 0 auto;
 }
 
@@ -449,7 +449,7 @@ button {
   justify-content: space-between;
   margin: 0 auto;
   width: 100%;
-  max-width: 800px;
+  max-width: var(--page-width);
 }
 
 .header__logo {
@@ -586,13 +586,13 @@ button {
 .content {
   flex: 1;
   width: 100%;
-  max-width: 800px;
+  max-width: var(--page-width);
   margin: 0 auto;
 }
 
 .post {
   width: 100%;
-  max-width: 800px;
+  max-width: var(--page-width);
   text-align: left;
   padding: 20px;
   margin: 20px auto;
@@ -600,7 +600,7 @@ button {
 
 @media (max-width: 899px) {
   .post {
-    max-width: 660px;
+    max-width: 100%;
   }
 }
 
@@ -919,7 +919,7 @@ figure figcaption {
 /* Projects list specific styles */
 .posts {
   width: 100%;
-  max-width: 800px;
+  max-width: var(--page-width);
 }
 
 .post.on-list {
@@ -1433,4 +1433,32 @@ a.button.outline:hover {
   font-size: 0.72rem;
   color: var(--color, inherit);
   opacity: 0.7;
+}
+
+
+/* Desktop width (2026-11-27). The page used to be a fixed 800 px column,
+   which on a laptop looked like the phone layout. Pages now use up to
+   --page-width so card grids, badges and the inquiry form spread out,
+   while running text keeps a readable line length. */
+:root {
+  --page-width: 1120px;
+  --text-width: 76ch;
+}
+
+.post-content > p,
+.post-content > ul,
+.post-content > ol,
+.post-content > blockquote,
+.post > p,
+.post > ul,
+.post > ol,
+.post > blockquote {
+  max-width: var(--text-width);
+}
+
+@media (min-width: 1100px) {
+  .situations {
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.25rem;
+  }
 }
