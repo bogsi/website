@@ -34,5 +34,20 @@
     }
     document.addEventListener("zarazConsentAPIReady", syncGoogleConsent);
     document.addEventListener("zarazConsentChoicesUpdated", syncGoogleConsent);
+
+    // Click events (sent only with analytics consent): inquiry buttons and
+    // links to Medium. No personal data, only where the click happened.
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a || !window.zaraz || typeof zaraz.track !== "function") return;
+      var url;
+      try { url = new URL(a.href, location.href); } catch (_) { return; }
+      if (url.origin === location.origin && url.pathname.indexOf("/order") === 0 && location.pathname.indexOf("/order") !== 0) {
+        zaraz.track("cta_click", { cta_id: a.getAttribute("data-cta-id") || location.pathname });
+      } else if (url.hostname === "medium.com" || url.hostname.slice(-11) === ".medium.com") {
+        var parts = url.pathname.split("/").filter(Boolean);
+        zaraz.track("outbound_medium", { post_slug: parts.length > 1 ? parts[parts.length - 1] : "profile" });
+      }
+    });
   })();
 </script>
