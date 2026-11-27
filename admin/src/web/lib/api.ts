@@ -31,6 +31,7 @@ export type Account = {
   sessionExpiresAt: number | null;
   notifications: { adminEmail: string | null; fromEmail: string | null };
   outbox: { pending: number; failed: number };
+  retention: { days: number; lastRunAt: number | null };
 };
 
 /** Cloudflare Access ends the session here and shows its signed-out page. */

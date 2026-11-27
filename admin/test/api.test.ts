@@ -234,6 +234,15 @@ describe("account", () => {
     expect(a.sessionExpiresAt).toBeGreaterThan(Date.now());
   });
 
+  it("shows the retention period and when the cleanup last ran", async () => {
+    const before = (await (await call("/api/account")).json()) as { retention: unknown };
+    expect(before.retention).toEqual({ days: 730, lastRunAt: null });
+    const { purgeExpiredOrders } = await import("../src/api/retention");
+    await purgeExpiredOrders(db, 1_800_000_000_000);
+    const after = (await (await call("/api/account")).json()) as { retention: unknown };
+    expect(after.retention).toEqual({ days: 730, lastRunAt: 1_800_000_000_000 });
+  });
+
   it("retries pending and given-up emails on demand", async () => {
     seed(1);
     db.raw.prepare(
