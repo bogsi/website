@@ -1,4 +1,4 @@
 ---
 title: "Inquiry"
-description: "Book a consultation or request a CostLens AWS cost audit. Describe your project and get a reply about scope, timeline and budget."
+description: "Tell me about your AWS project: a cost audit, an MCP server or Terraform work. I reply within one working day, then a free call and a fixed price."
 ---
