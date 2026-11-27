@@ -50,6 +50,12 @@ export async function onRequestPost(context) {
     return reply(413, { error: "Request too large" });
   }
 
+  // D1 is the only store: without the binding no order can be kept.
+  if (!env.DB) {
+    console.error("Order storage is not configured (no DB binding)");
+    return reply(503, { error: "Order service unavailable" });
+  }
+
   let body;
   try {
     body = JSON.parse(raw);
@@ -81,41 +87,20 @@ export async function onRequestPost(context) {
 
   const orderId = generateOrderId();
   const now = Date.now();
-  const date = new Date(now).toISOString().split("T")[0];
-  const sheetRow = [
-    orderId, date, name, email,
-    company, service, description,
-    budget, deadline, "New",
-  ];
-
-  // D1 is the system of record once the DB binding exists. Until then the
-  // Google Sheet stays primary, so deploying this before D1 is set up is safe.
-  // While both are configured the Sheet is a best-effort mirror for the
-  // transition and can be dropped by removing GOOGLE_SPREADSHEET_ID.
   const order = { orderId, now, name, email, company, service, description, budget, deadline };
-  let outboxIds = null;
+  let outboxIds;
   try {
-    if (env.DB) {
-      outboxIds = await insertOrder(env.DB, env, order);
-      if (env.GOOGLE_SPREADSHEET_ID) {
-        context.waitUntil(
-          appendToSheet(env, sheetRow).catch((err) => console.error(`Sheets mirror error for ${orderId}: ${redact(err)}`))
-        );
-      }
-    } else {
-      await appendToSheet(env, sheetRow);
-    }
+    outboxIds = await insertOrder(env.DB, env, order);
   } catch (err) {
     console.error(`Order storage error for ${orderId}: ${redact(err)}`);
     return reply(500, { error: "Failed to save order" });
   }
 
-  // Emails run after the response is returned; a failure never loses the order.
-  // With D1 they were queued in the outbox together with the order, so a
+  // Emails run after the response is returned; a failure never loses the
+  // order. They were queued in the outbox together with the order, so a
   // failed send is retried by the admin Worker's hourly cron.
   context.waitUntil(
-    (outboxIds ? deliver(env.DB, env, outboxIds) : sendEmails(env, order))
-      .catch((err) => console.error(`Email error for ${orderId}: ${redact(err)}`))
+    deliver(env.DB, env, outboxIds).catch((err) => console.error(`Email error for ${orderId}: ${redact(err)}`))
   );
 
   return reply(200, { success: true, orderId });
@@ -172,108 +157,6 @@ async function insertOrder(db, env, o) {
   ]);
   // Statements 2 (customer, maybe skipped) and 4 (admin) return outbox ids.
   return [results[2], results[4]].flatMap((r) => r.results.map((row) => row.id));
-}
-
-async function appendToSheet(env, row) {
-  const { GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SPREADSHEET_ID } = env;
-
-  const token = await getGoogleToken(GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY);
-
-  // Resolve the real tab title from the spreadsheet instead of hard-coding it.
-  // Non-Latin sheet names (e.g. "Поръчки") must be single-quoted in A1 notation,
-  // and a stray space in the tab name silently breaks the range with
-  // "Unable to parse range". Looking it up removes both failure modes.
-  const sheetTitle = await getFirstSheetTitle(GOOGLE_SPREADSHEET_ID, token);
-  const range = encodeURIComponent(`'${sheetTitle.replace(/'/g, "''")}'!A:J`);
-
-  const url = `https://sheets.googleapis.com/v4/spreadsheets/${GOOGLE_SPREADSHEET_ID}/values/${range}:append?valueInputOption=RAW`;
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ values: [row] }),
-  });
-
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Sheets API error: ${res.status} ${text}`);
-  }
-}
-
-// Reads the title of the first tab so the append range never depends on a
-// hand-typed sheet name. The service account already has access (it can write),
-// so this read succeeds with the same token.
-async function getFirstSheetTitle(spreadsheetId, token) {
-  const res = await fetch(
-    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?fields=sheets.properties.title`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-
-  if (!res.ok) {
-    throw new Error(`Sheets metadata error: ${res.status} ${await res.text()}`);
-  }
-
-  const data = await res.json();
-  const title = data?.sheets?.[0]?.properties?.title;
-  if (!title) throw new Error("No sheets found in spreadsheet");
-  return title;
-}
-
-async function getGoogleToken(clientEmail, privateKeyPem) {
-  const now = Math.floor(Date.now() / 1000);
-  const payload = {
-    iss: clientEmail,
-    scope: "https://www.googleapis.com/auth/spreadsheets",
-    aud: "https://oauth2.googleapis.com/token",
-    exp: now + 3600,
-    iat: now,
-  };
-
-  const header = { alg: "RS256", typ: "JWT" };
-  const encode = (obj) => btoa(JSON.stringify(obj)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-  const signingInput = `${encode(header)}.${encode(payload)}`;
-
-  // Import private key — robust against literal "\n", real newlines, stray
-  // quotes, and PKCS1/PKCS8 marker variants. Order matters: convert escaped
-  // newlines and drop the BEGIN/END markers BEFORE stripping non-base64 chars,
-  // otherwise the marker letters would corrupt the decoded key.
-  const pemBody = privateKeyPem
-    .replace(/\\n/g, "\n")
-    .replace(/-----BEGIN [\w ]+-----/g, "")
-    .replace(/-----END [\w ]+-----/g, "")
-    .replace(/[^A-Za-z0-9+/=]/g, "");
-
-  if (!pemBody) {
-    throw new Error("GOOGLE_PRIVATE_KEY is empty or malformed");
-  }
-
-  const keyData = Uint8Array.from(atob(pemBody), (c) => c.charCodeAt(0));
-  const cryptoKey = await crypto.subtle.importKey(
-    "pkcs8", keyData.buffer,
-    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-    false, ["sign"]
-  );
-
-  const signature = await crypto.subtle.sign(
-    "RSASSA-PKCS1-v1_5",
-    cryptoKey,
-    new TextEncoder().encode(signingInput)
-  );
-
-  const jwt = `${signingInput}.${btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_")}`;
-
-  const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}`,
-  });
-
-  const tokenData = await tokenRes.json();
-  if (!tokenData.access_token) throw new Error("Failed to get Google token");
-  return tokenData.access_token;
 }
 
 // Validates the body and returns trimmed strings, or { error }.
@@ -436,29 +319,4 @@ function buildEmails(env, order) {
       html: adminHtml,
     },
   };
-}
-
-// Without D1 (legacy Sheets path): send both emails directly, no retry.
-async function sendEmails(env, order) {
-  const { RESEND_API_KEY, FROM_EMAIL } = env;
-  const mails = buildEmails(env, order);
-  const send = async (label, payload) => {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${String(RESEND_API_KEY).trim()}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: FROM_EMAIL, ...payload }),
-    });
-    if (!res.ok) {
-      throw new Error(`Resend ${label} email failed: ${res.status} ${await res.text()}`);
-    }
-  };
-
-  const asPayload = (m) => ({ to: m.to, reply_to: m.replyTo, subject: m.subject, html: m.html });
-  const results = await Promise.allSettled([
-    send("client", asPayload(mails.client)),
-    send("admin", asPayload(mails.admin)),
-  ]);
-  for (const r of results) {
-    if (r.status === "rejected") console.error(`${order.orderId}: ${redact(r.reason)}`);
-  }
 }

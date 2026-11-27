@@ -88,9 +88,9 @@ Safe to re-run: existing IDs are skipped. Unknown status values become `new`,
 with the original kept in notes. Keep the CSV and `import.sql` out of Git: they
 contain client data.
 
-After a week without problems, remove `GOOGLE_SERVICE_ACCOUNT_EMAIL`,
-`GOOGLE_PRIVATE_KEY` and `GOOGLE_SPREADSHEET_ID` from the Pages project. While
-they exist, new orders are also mirrored to the Sheet.
+The order form no longer writes to the Sheet; D1 is the only store. The
+`GOOGLE_*` variables on the Pages project are unused: delete them, and delete
+the service account's key in Google Cloud.
 
 ## Backups (weekly, encrypted)
 

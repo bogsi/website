@@ -15,13 +15,8 @@ beforeEach(() => {
     const url = String(input);
     urls.push(url.split("?")[0]!);
     if (url.includes("siteverify")) return Response.json({ success: true, action: "order", hostname: "roussev.dev" });
-    if (url.includes("oauth2")) return Response.json({ access_token: "t" });
-    if (url.includes("fields=sheets")) return Response.json({ sheets: [{ properties: { title: "S" } }] });
     return Response.json({});
   }));
-  // The Sheets path signs a JWT; stub WebCrypto so no real key is needed.
-  vi.spyOn(crypto.subtle, "importKey").mockResolvedValue({} as CryptoKey);
-  vi.spyOn(crypto.subtle, "sign").mockResolvedValue(new ArrayBuffer(8));
 });
 afterEach(() => vi.restoreAllMocks());
 
@@ -30,7 +25,6 @@ const body = {
   description: "Need help", budget: "2k", deadline: "July", website: "", "cf-turnstile-response": "tok",
 };
 const baseEnv = { TURNSTILE_SECRET_KEY: "s", TURNSTILE_HOSTNAMES: "roussev.dev", RESEND_API_KEY: "r", FROM_EMAIL: "f@x", ADMIN_EMAIL: "a@x" };
-const sheetsEnv = { GOOGLE_SERVICE_ACCOUNT_EMAIL: "g", GOOGLE_SPREADSHEET_ID: "id", GOOGLE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nQUJD\n-----END PRIVATE KEY-----" };
 
 async function submit(env: Record<string, unknown>) {
   const request = new Request("https://roussev.dev/api/order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -40,9 +34,9 @@ async function submit(env: Record<string, unknown>) {
 }
 
 describe("intake", () => {
-  it("writes the order and a created event to D1 and mirrors to the Sheet", async () => {
+  it("writes the order and a created event to D1", async () => {
     const db = createD1();
-    const r = await submit({ ...baseEnv, ...sheetsEnv, DB: db });
+    const r = await submit({ ...baseEnv, DB: db });
     expect(r.status).toBe(200);
     const row = db.raw.prepare("SELECT * FROM orders").get() as Record<string, unknown>;
     expect(row).toMatchObject({ id: r.json.orderId, full_name: "Jane Smith", email: "jane@example.com", aws_service: "Terraform Automation", status: "new", source: "form", budget: "2k" });
@@ -57,7 +51,7 @@ describe("intake", () => {
       { kind: "order_admin", to_addr: "a@x", reply_to: "jane@example.com", status: "sent" },
     ]);
     expect(db.raw.prepare("SELECT notify_status FROM orders").get()).toEqual({ notify_status: "sent" });
-    expect(urls.some((u) => u.includes(":append"))).toBe(true);
+    expect(urls.some((u) => u.includes("googleapis"))).toBe(false);
   });
 
   it("keeps the order and queues emails for retry when Resend fails", async () => {
@@ -76,16 +70,10 @@ describe("intake", () => {
     expect(db.raw.prepare("SELECT notify_status FROM orders").get()).toEqual({ notify_status: "pending" });
   });
 
-  it("uses D1 only when no Sheet is configured", async () => {
-    const db = createD1();
-    expect((await submit({ ...baseEnv, DB: db })).status).toBe(200);
-    expect(urls.some((u) => u.includes("sheets.googleapis"))).toBe(false);
-  });
-
-  it("falls back to the Sheet when D1 is not bound yet", async () => {
-    const r = await submit({ ...baseEnv, ...sheetsEnv });
-    expect(r.status).toBe(200);
-    expect(urls.some((u) => u.includes(":append"))).toBe(true);
+  it("returns 503 without a D1 binding, before Turnstile or any email", async () => {
+    const r = await submit({ ...baseEnv, GOOGLE_SPREADSHEET_ID: "id" });
+    expect(r.status).toBe(503);
+    expect(urls).toEqual([]);
   });
 
   it("caps customer confirmations per address and keeps the order and admin email", async () => {

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { STATUSES, STATUS_LABEL, type OrderEvent, type Status } from "../../shared/orders";
 import { api, fmtDate, fmtDateTime } from "../lib/api";
@@ -25,6 +25,18 @@ export function OrderDetail({ id }: { id: string }) {
     qc.invalidateQueries({ queryKey: ["orders"] });
     qc.invalidateQueries({ queryKey: ["stats"] });
   };
+
+  const navigate = useNavigate();
+  const [confirmId, setConfirmId] = useState("");
+  const remove = useMutation({
+    mutationFn: () => api.deleteOrder(id),
+    onSuccess: () => {
+      qc.removeQueries({ queryKey: ["order", id] });
+      qc.invalidateQueries({ queryKey: ["orders"] });
+      qc.invalidateQueries({ queryKey: ["stats"] });
+      void navigate({ to: "/orders" });
+    },
+  });
 
   const update = useMutation({
     mutationFn: (body: { status?: Status; notes?: string }) => api.updateOrder(id, body),
@@ -149,6 +161,27 @@ export function OrderDetail({ id }: { id: string }) {
                 Save notes
               </Button>
             </div>
+          </Panel>
+
+          <Panel title="delete order">
+            <p className="text-xs text-muted">
+              For erasure requests. Removes the order, its timeline and its emails for good. Backups expire within 30 days.
+            </p>
+            <input
+              value={confirmId}
+              onChange={(e) => setConfirmId(e.target.value)}
+              placeholder={`Type ${order.id} to confirm`}
+              aria-label="Type the order id to confirm deletion"
+              className="mt-2 w-full rounded border border-line bg-bg px-3 py-2 text-sm outline-none focus:border-accent"
+            />
+            <Button
+              className="mt-2 w-full border-red-500/60 text-red-400"
+              disabled={confirmId !== order.id || remove.isPending}
+              onClick={() => remove.mutate()}
+            >
+              {remove.isPending ? "Deleting…" : "Delete permanently"}
+            </Button>
+            {remove.isError && <ErrorNote error={remove.error} />}
           </Panel>
         </div>
       </div>
