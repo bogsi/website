@@ -4,6 +4,17 @@ description: "Read-only AWS cost audit with a ranked savings report and remediat
 draft: false
 service_summary: "Review AWS spending, investigate growth and assess possible savings with a consultant-led, read-only audit. From €900, fixed price per engagement."
 inquiry_service: "CostLens AWS Cost Audit"
+faq:
+  - q: "Will you change anything in our AWS accounts?"
+    a: "No. The role you deploy is read-only, and your team decides which changes to make. When the audit is over, you delete the role stack and my access is gone."
+  - q: "Do you put our data into an AI tool?"
+    a: "Not unless you approve it in writing first."
+  - q: "What does the audit cost us on AWS?"
+    a: "The audit makes a small number of Cost Explorer API requests, which AWS bills to your account. The estimate is part of the written scope."
+  - q: "Do we need AWS Organizations?"
+    a: "No. A Quick Scan covers one account. Organizations and many accounts are what the Deep Audit is for."
+  - q: "What if there is not much to save?"
+    a: "If your setup looks lean, I will say so on the first call, before you pay anything. Savings in the report are estimates, never a promise about your bill."
 ---
 
 <!-- Publishable preview prepared after the signed private CostLens 0.1.0
@@ -76,6 +87,8 @@ Report copies and backups follow the retention we agree on.
 
 I do not send your data to an AI provider unless you approve it in writing
 first. My access stays read-only for the whole audit.
+
+{{< faq >}}
 
 ## Next step
 

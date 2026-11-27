@@ -4,6 +4,15 @@ description: "A production MCP server that lets Claude and other AI agents use o
 draft: false
 service_summary: "Give AI agents safe, audited access to one internal system through a production MCP server in your own AWS account. €4,500 fixed, about 2 weeks."
 inquiry_service: "Production MCP Server"
+faq:
+  - q: "Our API is old and undocumented. Will this work?"
+    a: "Usually. If it has an HTTP API or a database I can read, we will find out on the first call. If it does not, I will tell you before you pay anything."
+  - q: "Which AI clients can use it?"
+    a: "Any client that supports remote MCP servers with OAuth, such as Claude and several IDE agents. We confirm yours during scoping."
+  - q: "What does it cost to run on AWS?"
+    a: "That depends on usage and on Lambda versus Fargate. You get the estimate with the written scope."
+  - q: "What happens after delivery?"
+    a: "The code, the infrastructure and the documentation are yours. More tools or another system are a new quote."
 ---
 
 Your team wants Claude or an IDE agent to work with one of your internal
@@ -71,23 +80,7 @@ Prompt injection cannot be ruled out completely. I return data from your system
 as untrusted content and keep write tools apart from read tools, which limits
 the damage. The security review says plainly what is still possible.
 
-## FAQ
-
-**Our API is old and undocumented. Will this work?**
-Usually. If it has an HTTP API or a database I can read, we will find out on
-the first call. If it does not, I will tell you before you pay anything.
-
-**Which AI clients can use it?**
-Any client that supports remote MCP servers with OAuth, such as Claude and
-several IDE agents. We confirm yours during scoping.
-
-**What does it cost to run on AWS?**
-That depends on usage and on Lambda versus Fargate. You get the estimate with
-the written scope.
-
-**What happens after delivery?**
-The code, the infrastructure and the documentation are yours. More tools or
-another system are a new quote.
+{{< faq >}}
 
 ## Next step
 

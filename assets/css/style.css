@@ -1363,3 +1363,17 @@ a.button.outline:hover {
 .situation a.button {
   align-self: flex-start;
 }
+
+/* FAQ and "How I work" blocks (shortcodes faq.html, how-i-work.html) */
+.faq h3 {
+  margin: 1.25em 0 0.25em;
+  font-size: 1rem;
+}
+
+.faq p {
+  margin-top: 0;
+}
+
+.how-i-work ol li {
+  margin-bottom: 0.5em;
+}

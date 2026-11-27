@@ -1,0 +1,18 @@
+{{- /*
+  Renders the page's front matter "faq" list (each item: q, a in Markdown).
+  The same list feeds the FAQPage JSON-LD in partials/structured-data.html,
+  so the visible text and the structured data cannot drift apart.
+  Usage: {{< faq >}}   (optional title="...", default "FAQ")
+*/ -}}
+{{- $faq := .Page.Params.faq -}}
+{{- if not $faq -}}
+  {{- errorf "faq: page %q has no faq front matter at %s" .Page.File.Path .Position -}}
+{{- end -}}
+<section class="faq">
+  <h2 id="faq">{{ .Get "title" | default "FAQ" }}</h2>
+  {{- range $faq }}
+    {{- if not (and .q .a) -}}{{- errorf "faq: every item needs q and a in %q" $.Page.File.Path -}}{{- end }}
+  <h3>{{ .q }}</h3>
+  {{ .a | markdownify | safeHTML }}
+  {{- end }}
+</section>
