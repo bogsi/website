@@ -1,9 +1,9 @@
-  {{/* Social links from params.social in hugo.toml (email, github, linkedin).
+  {{/* Social links from params.social in hugo.toml (email, github, linkedin, medium).
        This partial replaces the theme's footer, so they are rendered here. */}}
   {{ with site.Params.social }}
     <nav class="social-links" aria-label="Contact and profiles">
       {{ range . }}
-        {{ $label := dict "email" "Email" "github" "GitHub" "linkedin" "LinkedIn" }}
+        {{ $label := dict "email" "Email" "github" "GitHub" "linkedin" "LinkedIn" "medium" "Medium" }}
         <a class="social-link" href="{{ .url }}"{{ if not (hasPrefix .url "mailto:") }} target="_blank" rel="noopener"{{ end }}>
           {{ partial "icon.html" .name }}
           <span>{{ index $label .name | default .name }}</span>

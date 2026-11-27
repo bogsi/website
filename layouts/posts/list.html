@@ -6,20 +6,13 @@
       {{ .Content }}
     </div>
 
+    {{/* Articles live on Medium. No feed fetch: the third-party RSS proxy
+         failed and showed "Could not load articles". */}}
     <div class="medium-section">
-      <div class="medium-header">
-        <span class="prompt">$</span> curl https://medium.com/@bogomilroussev/feed | parse --latest
-      </div>
-
-      <div id="medium-posts" class="posts-group">
-        <div class="post-year">Loading articles...</div>
-      </div>
-
-      <div class="medium-cta">
-        <a href="https://medium.com/@bogomilroussev" target="_blank" rel="noopener noreferrer" class="medium-button">
-          Read all articles on Medium →
-        </a>
-      </div>
+      <a href="https://medium.com/@bogomilroussev" target="_blank" rel="noopener noreferrer" class="medium-button">
+        {{ partial "icon.html" "medium" }}
+        <span>Read my articles on Medium</span>
+      </a>
     </div>
 
     {{ $localPosts := where .Site.RegularPages "Type" "posts" }}
@@ -42,47 +35,10 @@
 .medium-section {
   margin-top: 2rem;
 }
-.medium-header {
-  color: var(--color-secondary, #888);
-  font-size: 0.85rem;
-  margin-bottom: 1rem;
-  font-family: monospace;
-}
-.medium-header .prompt {
-  color: var(--color-primary, #00ff00);
-  margin-right: 0.5rem;
-}
-.medium-post-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 0.4rem 0;
-  border-bottom: 1px solid var(--border-color, #333);
-  gap: 1rem;
-}
-.medium-post-item a {
-  color: inherit;
-  text-decoration: none;
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.medium-post-item a:hover {
-  text-decoration: underline;
-}
-.medium-post-date {
-  color: var(--color-secondary, #888);
-  font-size: 0.85rem;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.medium-cta {
-  margin-top: 1.5rem;
-}
 .medium-button {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   padding: 0.6rem 1.4rem;
   border: 1px solid currentColor;
   color: inherit;
@@ -92,50 +48,10 @@
   transition: background 0.15s, color 0.15s;
 }
 .medium-button:hover {
-  background: var(--color-primary, #00ff00);
-  color: var(--background-color, #000);
-  border-color: var(--color-primary, #00ff00);
-}
-.medium-error {
-  color: var(--color-secondary, #888);
-  font-style: italic;
+  background: var(--accent);
+  color: var(--background);
+  border-color: var(--accent);
 }
 </style>
 
-<script>
-(function() {
-  var container = document.getElementById('medium-posts');
-  var rssUrl = 'https://medium.com/feed/@bogomilroussev';
-  var apiUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl) + '&count=10';
-
-  fetch(apiUrl)
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (!data.items || data.items.length === 0) {
-        container.innerHTML = '<div class="post-year">Coming soon on Medium</div>'
-          + '<div class="medium-post-item" style="color:var(--color-secondary,#888);font-style:italic;">No published articles yet — follow the profile to be notified.</div>';
-        return;
-      }
-      var esc = function(s) {
-        return String(s).replace(/[&<>"']/g, function(c) {
-          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-        });
-      };
-      var html = '<div class="post-year">Latest from Medium</div>';
-      data.items.forEach(function(item) {
-        if (!/^https:\/\//.test(item.link)) return;
-        var date = new Date(item.pubDate);
-        var formatted = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        html += '<div class="medium-post-item">'
-          + '<a href="' + esc(item.link) + '" target="_blank" rel="noopener noreferrer">' + esc(item.title) + '</a>'
-          + '<span class="medium-post-date">' + formatted + '</span>'
-          + '</div>';
-      });
-      container.innerHTML = html;
-    })
-    .catch(function() {
-      container.innerHTML = '<div class="post-year medium-error">Could not load articles — <a href="https://medium.com/@bogomilroussev" target="_blank">view on Medium</a></div>';
-    });
-})();
-</script>
 {{ end }}

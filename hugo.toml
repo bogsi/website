@@ -63,6 +63,10 @@ enableRobotsTXT = true
   name = "linkedin"
   url = "https://linkedin.com/in/bogomilroussev"
 
+[[params.social]]
+  name = "medium"
+  url = "https://medium.com/@bogomilroussev"
+
 # Syntax highlighting
 [markup]
   [markup.highlight]
