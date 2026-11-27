@@ -15,7 +15,28 @@ Thumbs.db
 # Temporary files
 *.swp
 *~
+
+# Secrets and local environment files (never commit)
+.env
+.env.*
 *.env
+.dev.vars
+.dev.vars.*
+.wrangler/
+*.pem
+*.key
+
+# Backups and restore leftovers: decrypted dumps contain customer data
+*.sql.age
+restore.sql
+restore.db
+d1-backup-*.zip
+
+# Hugo lock file
+.hugo_build.lock
+
+# Private planning notes (kept in the Claude project, not in this public repo)
+tasks/
 
 # Claude Code local settings and worktrees (CLAUDE.md stays tracked)
 .claude/
