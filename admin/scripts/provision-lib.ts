@@ -64,48 +64,56 @@ export async function getTeamDomain(cf: Cf, accountId: string): Promise<string> 
   );
 }
 
+// Login page branding is set by hand (Zero Trust → Settings → Custom pages):
+// the organizations API rejects a full PUT with 12062 invalid_org_config, and
+// an automated PUT would overwrite what was set by hand. This only reports.
 export const ORG_BRANDING = {
   name: "roussev.dev",
   login_design: {
-    background_color: "#1f2125",
-    text_color: "#e6e6e6",
+    background_color: "#282c34",
+    text_color: "#abb2bf",
     header_text: "roussev.dev · Control Room",
     footer_text: "Private admin area",
   },
 } as const;
 
-type Org = Record<string, unknown> & { name?: string; login_design?: Record<string, unknown> };
+type Org = { name?: string; login_design?: Record<string, unknown> };
+
+/** Read-only: says whether the login page shows the expected name and header. */
+export async function checkOrgBranding(cf: Cf, accountId: string, log: Log): Promise<boolean> {
+  try {
+    const org = await cf<Org>("GET", `/accounts/${accountId}/access/organizations`);
+    const ok = org.name === ORG_BRANDING.name && org.login_design?.header_text === ORG_BRANDING.login_design.header_text;
+    log(
+      ok
+        ? "Access: login page branding set"
+        : `Access: login page still shows "${org.name ?? ""}"; set it under Zero Trust → Settings → Custom pages (see admin/README.md)`,
+    );
+    return ok;
+  } catch (err) {
+    log(`Access: could not read login page branding (${(err as Error).message})`);
+    return false;
+  }
+}
+
+// ── Resend key ─────────────────────────────────────────────────────────────
 
 /**
- * Sets the name and colours shown on the Access login page (by default the
- * name is the random team name Cloudflare picked at signup). The organization
- * is sent back whole, with only these fields changed, so no other Zero Trust
- * setting is touched. Best effort: a failure is logged, not fatal.
+ * Checks the key with Resend before it is stored, so a wrong or revoked key
+ * fails the deploy instead of the next order. A sending-only key answers
+ * "restricted_api_key" on any non-send endpoint: that means it is valid.
+ * The key itself is never logged or put in an error message.
  */
-export async function ensureOrgBranding(cf: Cf, accountId: string, log: Log) {
-  const path = `/accounts/${accountId}/access/organizations`;
-  try {
-    const org = await cf<Org>("GET", path);
-    const same =
-      org.name === ORG_BRANDING.name &&
-      Object.entries(ORG_BRANDING.login_design).every(([k, v]) => org.login_design?.[k] === v);
-    if (same) {
-      log("Access: login page branding already set");
-      return;
-    }
-    // Read-only timestamps and empty values (e.g. "" durations) make the PUT
-    // fail with 12062 invalid_org_config, so only real settings go back.
-    const { created_at: _c, updated_at: _u, ...rest } = org;
-    const kept = Object.fromEntries(Object.entries(rest).filter(([, v]) => v !== null && v !== ""));
-    await cf("PUT", path, {
-      ...kept,
-      name: ORG_BRANDING.name,
-      login_design: { ...(org.login_design ?? {}), ...ORG_BRANDING.login_design },
-    });
-    log(`Access: login page now titled "${ORG_BRANDING.name}" (was "${org.name ?? ""}")`);
-  } catch (err) {
-    log(`Access: could not set login page branding (${(err as Error).message}); set it under Zero Trust → Settings → Custom pages`);
+export async function checkResendKey(rawKey: string, fetchImpl: typeof fetch = fetch): Promise<string> {
+  const key = rawKey.trim();
+  if (!/^re_[A-Za-z0-9_]{10,}$/.test(key)) {
+    throw new Error("RESEND_API_KEY does not look like a Resend key (re_…); check the secret for quotes or a partial copy");
   }
+  const res = await fetchImpl("https://api.resend.com/domains", { headers: { Authorization: `Bearer ${key}` } });
+  if (res.ok) return key;
+  const body = (await res.json().catch(() => ({}))) as { name?: string; message?: string };
+  if (res.status === 401 && (body.name === "restricted_api_key" || /restricted/i.test(body.message ?? ""))) return key;
+  throw new Error(`Resend rejected RESEND_API_KEY (HTTP ${res.status}${body.name ? `, ${body.name}` : ""}); create a new key and update the secret`);
 }
 
 // ── D1 ─────────────────────────────────────────────────────────────────────
