@@ -19,7 +19,8 @@ import {
   ensureAccessApp,
   ensureD1,
   ensureGithubIdp,
-  ensureOrgBranding,
+  checkOrgBranding,
+  checkResendKey,
   ensurePagesBinding,
   ensurePagesExclude,
   ensurePolicy,
@@ -70,13 +71,22 @@ async function main() {
     const hasIdp = (await cf<{ type: string }[]>("GET", `/accounts/${accountId}/access/identity_providers`)).some((i) => i.type === "github");
     log(`Access GitHub login: ${hasIdp ? "configured" : "not yet (needs ACCESS_GITHUB_CLIENT_ID/SECRET)"}`);
     log(`Admin access will be allowed for: ${allowed.join(", ") || "nobody (set ADMIN_ALLOWED_EMAILS)"}`);
-    log(`Resend key for the admin Worker: ${process.env.RESEND_API_KEY ? "provided" : "not provided"}`);
+    if (process.env.RESEND_API_KEY) {
+      await checkResendKey(process.env.RESEND_API_KEY);
+      log("Resend key for the admin Worker: valid");
+    } else {
+      log("Resend key for the admin Worker: not provided");
+    }
     return;
   }
   if (mode !== "deploy") throw new Error(`unknown mode "${mode}" (use check or deploy)`);
   if (!fromEmail || !adminEmail) {
     throw new Error("FROM_EMAIL and ADMIN_EMAIL must be plain-text variables on the Pages project (the order form already uses them).");
   }
+
+  // Before any change: a bad key fails the run here, not the next order.
+  const resendKey = process.env.RESEND_API_KEY ? await checkResendKey(process.env.RESEND_API_KEY) : undefined;
+  if (resendKey) log("Resend key: valid");
 
   const databaseId = await ensureD1(cf, accountId, log);
   const idpId = await ensureGithubIdp(
@@ -87,7 +97,7 @@ async function main() {
   );
   const policyId = await ensurePolicy(cf, accountId, allowed, log);
   const aud = await ensureAccessApp(cf, accountId, idpId, policyId, log);
-  await ensureOrgBranding(cf, accountId, log);
+  await checkOrgBranding(cf, accountId, log);
 
   // Access is in place before the Worker gets its public hostname.
   const config = renderWranglerConfig(readFileSync(`${adminDir}/wrangler.jsonc`, "utf8"), {
@@ -97,8 +107,8 @@ async function main() {
 
   wrangler(["d1", "migrations", "apply", NAMES.database, "--remote", "-c", "wrangler.ci.jsonc"]);
   wrangler(["deploy", "-c", "wrangler.ci.jsonc"]);
-  if (process.env.RESEND_API_KEY) {
-    wrangler(["secret", "put", "RESEND_API_KEY", "-c", "wrangler.ci.jsonc"], process.env.RESEND_API_KEY);
+  if (resendKey) {
+    wrangler(["secret", "put", "RESEND_API_KEY", "-c", "wrangler.ci.jsonc"], resendKey);
   } else {
     log("RESEND_API_KEY not provided: status emails stay queued until it is set");
   }

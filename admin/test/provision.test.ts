@@ -6,7 +6,8 @@ import {
   ensureAccessApp,
   ensureD1,
   ensureGithubIdp,
-  ensureOrgBranding,
+  checkOrgBranding,
+  checkResendKey,
   ORG_BRANDING,
   ensurePagesBinding,
   ensurePagesExclude,
@@ -210,29 +211,45 @@ describe("provisioning", () => {
 });
 
 describe("login page branding", () => {
-  it("renames the organization once and keeps its other settings", async () => {
+  it("only reports and never writes the organization", async () => {
     const { state, cf } = fakeCloudflare();
     const log: string[] = [];
-    await ensureOrgBranding(cf, ACC, (l) => log.push(l));
-    expect(state.org).toMatchObject({
-      name: ORG_BRANDING.name,
-      auth_domain: "roussev.cloudflareaccess.com",
-      session_duration: "24h",
-      login_design: ORG_BRANDING.login_design,
-    });
-    expect(state.org).not.toHaveProperty("created_at");
-    expect(state.org).not.toHaveProperty("warp_auth_session_duration");
-    expect(log[0]).toContain('was "quiet-grass-cb24');
-
-    state.calls.length = 0;
-    await ensureOrgBranding(cf, ACC, (l) => log.push(l));
-    expect(state.calls.filter((c) => c.method === "PUT")).toHaveLength(0);
+    expect(await checkOrgBranding(cf, ACC, (l) => log.push(l))).toBe(false);
+    expect(log[0]).toContain("quiet-grass-cb24");
+    expect(state.calls.filter((c) => c.method !== "GET")).toHaveLength(0);
   });
 
   it("never fails the deploy", async () => {
     const { cf } = fakeCloudflare({ org: false });
     const log: string[] = [];
-    await expect(ensureOrgBranding(cf, ACC, (l) => log.push(l))).resolves.toBeUndefined();
-    expect(log[0]).toContain("could not set login page branding");
+    await expect(checkOrgBranding(cf, ACC, (l) => log.push(l))).resolves.toBe(false);
+  });
+
+  it("keeps the brand colours of the site", () => {
+    expect(ORG_BRANDING.login_design.background_color).toBe("#282c34");
+  });
+});
+
+describe("Resend key check", () => {
+  const KEY = "re_AbCdEf123456_xyz";
+  const reply = (status: number, body: unknown) =>
+    (async () => new Response(JSON.stringify(body), { status })) as unknown as typeof fetch;
+
+  it("accepts a sending-only key and trims whitespace", async () => {
+    await expect(checkResendKey(` ${KEY}\n`, reply(401, { name: "restricted_api_key", message: "This API key is restricted to only send emails" }))).resolves.toBe(KEY);
+  });
+
+  it("rejects an invalid key without echoing it", async () => {
+    const err = await checkResendKey(KEY, reply(401, { name: "validation_error", message: "API key is invalid" })).catch((e: Error) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect((err as Error).message).toContain("401");
+    expect((err as Error).message).not.toContain(KEY);
+  });
+
+  it("rejects something that is not a Resend key before any request", async () => {
+    let called = false;
+    const spy = (async () => { called = true; return new Response("{}"); }) as unknown as typeof fetch;
+    await expect(checkResendKey('"re_short"', spy)).rejects.toThrow(/does not look like/);
+    expect(called).toBe(false);
   });
 });

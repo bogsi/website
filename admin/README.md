@@ -92,6 +92,23 @@ After a week without problems, remove `GOOGLE_SERVICE_ACCOUNT_EMAIL`,
 `GOOGLE_PRIVATE_KEY` and `GOOGLE_SPREADSHEET_ID` from the Pages project. While
 they exist, new orders are also mirrored to the Sheet.
 
+## Login page branding (manual, once)
+
+The Access organizations API rejects automated changes (12062), so
+`provision.ts` only reports whether this is set. In Zero Trust → Settings →
+Custom pages → Login page: organization name `roussev.dev`, header
+`roussev.dev · Control Room`, footer `Private admin area`, background
+`#282c34`, text `#abb2bf`.
+
+## Rotating the Resend key
+
+Create a sending-only key for `roussev.dev` in Resend, then update it in both
+places: the GitHub secret `RESEND_API_KEY` (run "Admin dashboard" with
+`deploy`; the run checks the key with Resend first and fails if it is invalid)
+and the Pages project variable `RESEND_API_KEY` (encrypted; retry the latest
+production deployment). Delete the old key in Resend last. Keys are never
+logged or shown after they are saved.
+
 ## Zone hardening (one-shot)
 
 `.github/workflows/zone-hardening.yml` (run by hand) enables DNSSEC, sets safe

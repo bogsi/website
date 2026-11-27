@@ -445,7 +445,7 @@ async function sendEmails(env, order) {
   const send = async (label, payload) => {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${String(RESEND_API_KEY).trim()}`, "Content-Type": "application/json" },
       body: JSON.stringify({ from: FROM_EMAIL, ...payload }),
     });
     if (!res.ok) {
