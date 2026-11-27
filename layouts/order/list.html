@@ -63,17 +63,14 @@
           <label for="inq-service">Service <span class="req">*</span></label>
           <select id="inq-service" name="service" required>
             <option value="">— select a service —</option>
-            <option value="AWS Infrastructure Setup">AWS Infrastructure Setup</option>
-            <option value="Terraform Automation">Terraform Automation</option>
-            <option value="CI/CD Pipeline">CI/CD Pipeline</option>
-            <option value="Cloud Cost Optimisation">Cloud Cost Optimisation</option>
+            {{- /* Priced offers first, from service pages' inquiry_service. */}}
             {{ range where .Site.RegularPages "Section" "services" }}
               {{ with .Params.inquiry_service }}
                 <option value="{{ . }}">{{ . }}</option>
               {{ end }}
             {{ end }}
-            <option value="Security &amp; Compliance">Security &amp; Compliance</option>
-            <option value="Consulting / Audit">Consulting / Audit</option>
+            <option value="Terraform Automation">Terraform Automation</option>
+            <option value="CI/CD Pipeline">CI/CD Pipeline</option>
             <option value="Other">Other</option>
           </select>
         </div>
