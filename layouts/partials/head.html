@@ -1,10 +1,3 @@
-<!-- Critical CSS -->
-{{ with resources.Get "css/critical.css" }}
-  {{ with .Content }}
-    <style>{{ . | safeCSS }}</style>
-  {{ end }}
-{{ end }}
-
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -98,8 +91,6 @@
   }
 </style>
 
-<!-- Favicon -->
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
 
 <!-- RSS -->
 {{ range .AlternativeOutputFormats -}}
@@ -117,22 +108,12 @@
 <!-- Google Analytics (production only, so local dev doesn't pollute GA) -->
 {{ if hugo.IsProduction }}{{ template "_internal/google_analytics.html" . }}{{ end }}
 
-<!-- Deferred CSS -->
-{{ with resources.Get "css/deferred.css" }}
-  {{ $deferred := . | minify | fingerprint }}
-  <link rel="preload" href="{{ $deferred.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-{{ end }}
-
 {{ with resources.Get "css/menu.css" }}
   {{ $menu := . | minify | fingerprint }}
   <link rel="preload" href="{{ $menu.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
 {{ end }}
 
 <noscript>
-  {{ with resources.Get "css/deferred.css" }}
-    {{ $deferred := . | minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $deferred.RelPermalink }}">
-  {{ end }}
   {{ with resources.Get "css/menu.css" }}
     {{ $menu := . | minify | fingerprint }}
     <link rel="stylesheet" href="{{ $menu.RelPermalink }}">
