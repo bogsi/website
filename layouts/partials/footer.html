@@ -1,4 +1,6 @@
   <div class="copyright">
+    <span><a href="#" id="cookie-settings" role="button">Cookie settings</a></span>
+    <span>::</span>
     {{ if $.Site.Copyright }}
       {{ $.Site.Copyright }}
     {{ else }}
@@ -7,3 +9,30 @@
       <span>Theme made by <a href="https://github.com/panr">panr</a></span>
     {{ end }}
   </div> 
+
+<script>
+  // Zaraz consent (GA4 only after "Accept"). The link reopens the consent
+  // modal; choices are mirrored to Google Consent Mode v2 for the GA4 tool.
+  (function () {
+    var link = document.getElementById("cookie-settings");
+    if (link) {
+      link.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (window.zaraz && zaraz.showConsentModal) zaraz.showConsentModal();
+      });
+    }
+    function syncGoogleConsent() {
+      if (!window.zaraz || !zaraz.consent || !zaraz.set) return;
+      var choices = zaraz.consent.getAll() || {};
+      var analytics = Object.keys(choices).some(function (k) { return choices[k] === true; });
+      zaraz.set("google_consent_update", {
+        ad_storage: "denied",
+        ad_user_data: "denied",
+        ad_personalization: "denied",
+        analytics_storage: analytics ? "granted" : "denied"
+      });
+    }
+    document.addEventListener("zarazConsentAPIReady", syncGoogleConsent);
+    document.addEventListener("zarazConsentChoicesUpdated", syncGoogleConsent);
+  })();
+</script>

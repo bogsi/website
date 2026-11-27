@@ -105,8 +105,8 @@
 {{ template "_internal/opengraph.html" . }}
 {{ template "_internal/twitter_cards.html" . }}
 
-<!-- Google Analytics (production only, so local dev doesn't pollute GA) -->
-{{ if hugo.IsProduction }}{{ template "_internal/google_analytics.html" . }}{{ end }}
+<!-- Analytics: Cloudflare Zaraz injects itself at the edge and loads GA4 only
+     after consent (Zaraz Consent Management). Nothing to include here. -->
 
 {{ with resources.Get "css/menu.css" }}
   {{ $menu := . | minify | fingerprint }}

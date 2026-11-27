@@ -3,7 +3,8 @@ locale = "en-us"
 title = "Bogomil Roussev"
 theme = "terminal"
 enableRobotsTXT = true
-googleAnalytics = "G-M9Z0JHNLVT"
+# Analytics: GA4 is loaded by Cloudflare Zaraz (with its consent banner), not
+# by Hugo. Keep googleAnalytics unset so the page never loads gtag.js.
 
 [pagination]
   pagerSize = 5
@@ -76,8 +77,7 @@ googleAnalytics = "G-M9Z0JHNLVT"
   [privacy.disqus]
     disable = true
   [privacy.googleAnalytics]
-    disable = false
-    respectDoNotTrack = true
+    disable = true
   [privacy.instagram]
     disable = true
   [privacy.x]
