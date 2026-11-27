@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { RETENTION_DAYS, purgeExpiredOrders } from "../src/api/retention";
+import { LAST_RUN_KEY, RETENTION_DAYS, purgeExpiredOrders } from "../src/api/retention";
+import { retentionDeleteAt } from "../src/shared/orders";
 import { createD1 } from "./d1-shim";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -40,5 +41,18 @@ describe("retention", () => {
       expect(left).toEqual({ n: 0 });
     }
     expect(await purgeExpiredOrders(db, NOW)).toBe(0);
+  });
+
+  it("records when it ran, also when nothing was deleted", async () => {
+    const db = createD1();
+    await purgeExpiredOrders(db, NOW);
+    await purgeExpiredOrders(db, NOW + DAY);
+    expect(db.raw.prepare("SELECT value FROM app_meta WHERE key = ?").get(LAST_RUN_KEY)).toEqual({ value: String(NOW + DAY) });
+  });
+
+  it("gives the deletion date only for closed orders, matching the cleanup cutoff", () => {
+    expect(retentionDeleteAt({ status: "done", updated_at: NOW })).toBe(NOW + RETENTION_DAYS * DAY);
+    expect(retentionDeleteAt({ status: "lost", updated_at: NOW })).toBe(NOW + RETENTION_DAYS * DAY);
+    expect(retentionDeleteAt({ status: "won", updated_at: NOW })).toBeNull();
   });
 });

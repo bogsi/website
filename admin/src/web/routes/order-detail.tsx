@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { STATUSES, STATUS_LABEL, type OrderEvent, type Status } from "../../shared/orders";
+import { STATUSES, STATUS_LABEL, retentionDeleteAt, type OrderEvent, type Status } from "../../shared/orders";
 import { api, fmtDate, fmtDateTime } from "../lib/api";
 import { Button, ErrorNote, Panel, Spinner, StatusBadge } from "../ui";
 
@@ -79,6 +79,11 @@ export function OrderDetail({ id }: { id: string }) {
         >
           · emails {order.notify_status === "sent" ? "delivered" : order.notify_status === "pending" ? "pending retry" : "failed"}
         </span>
+        {retentionDeleteAt(order) !== null && (
+          <span className="text-sm text-muted" title="Closed orders are deleted 24 months after their last change.">
+            · deleted automatically on {fmtDate(retentionDeleteAt(order)!)}
+          </span>
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { LOGOUT_URL, api, fmtDateTime } from "../lib/api";
+import { LOGOUT_URL, api, fmtDate, fmtDateTime } from "../lib/api";
 import { Button, ErrorNote, Panel, Spinner } from "../ui";
 
 export function AccountPage() {
@@ -68,6 +68,17 @@ export function AccountPage() {
           )}
         </div>
         <ErrorNote error={retry.error} />
+      </Panel>
+
+      <Panel title="data retention">
+        <dl className="grid gap-3 text-sm sm:grid-cols-2">
+          <Row label="Closed orders are deleted after">{Math.round(a.retention.days / 365)} years ({a.retention.days} days) without changes</Row>
+          <Row label="Last cleanup">{a.retention.lastRunAt ? fmtDate(a.retention.lastRunAt) : "not run yet"}</Row>
+        </dl>
+        <p className="mt-3 text-xs text-muted">
+          Applies to Done and Lost orders only, with their timeline and emails. The cleanup runs daily at 03:00 UTC. The
+          same period is stated on the privacy page.
+        </p>
       </Panel>
     </div>
   );

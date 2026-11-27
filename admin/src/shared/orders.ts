@@ -40,3 +40,14 @@ export type OrderEvent = {
   to_status: Status | null;
   body: string;
 };
+
+/** Closed orders are deleted this many days after their last change (T31). */
+export const RETENTION_DAYS = 730;
+export const CLOSED_STATUSES = ["done", "lost"] as const satisfies readonly Status[];
+
+/** When a closed order will be deleted automatically, or null while it is open. */
+export function retentionDeleteAt(o: Pick<Order, "status" | "updated_at">): number | null {
+  return (CLOSED_STATUSES as readonly Status[]).includes(o.status)
+    ? o.updated_at + RETENTION_DAYS * 24 * 60 * 60 * 1000
+    : null;
+}
