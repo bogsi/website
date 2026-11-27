@@ -338,6 +338,9 @@ describe("CSV export", () => {
 });
 
 describe("status email preview and resend", () => {
+  const resendCalls = () =>
+    fetchMock.mock.calls.filter(([u]) => new URL(String(u instanceof Request ? u.url : u)).hostname === "api.resend.com");
+
   const insertEmail = (status: string, orderId = "ORD-0000000") =>
     Number(
       db.raw
@@ -359,7 +362,7 @@ describe("status email preview and resend", () => {
     expect(body.html).toContain("&lt;b&gt;Eve&lt;/b&gt;");
     expect(db.raw.prepare("SELECT status FROM orders").get()).toEqual({ status: "quoted" });
     expect(db.raw.prepare("SELECT COUNT(*) AS n FROM email_outbox").get()).toEqual({ n: 0 });
-    expect(fetchMock.mock.calls.some(([u]) => String(u).includes("resend.com"))).toBe(false);
+    expect(resendCalls()).toHaveLength(0);
     expect((await call("/api/orders/ORD-0000000/status-email?status=nope")).status).toBe(400);
     expect((await call("/api/orders/ORD-MISSING/status-email?status=won")).status).toBe(404);
   });
@@ -381,7 +384,7 @@ describe("status email preview and resend", () => {
     const body = (await res.json()) as { sent: number; email: { status: string; attempts: number } };
     expect(body.sent).toBe(1);
     expect(body.email).toMatchObject({ status: "sent", attempts: 1 });
-    expect(fetchMock.mock.calls.filter(([u]) => String(u).includes("resend.com"))).toHaveLength(1);
+    expect(resendCalls()).toHaveLength(1);
   });
 
   it("refuses emails that did not fail, belong to another order, or come cross-origin", async () => {
@@ -394,6 +397,6 @@ describe("status email preview and resend", () => {
     expect(
       (await call(`/api/orders/ORD-0000001/emails/${other}/resend`, { method: "POST", origin: "https://evil.example" })).status,
     ).toBe(403);
-    expect(fetchMock.mock.calls.some(([u]) => String(u).includes("resend.com"))).toBe(false);
+    expect(resendCalls()).toHaveLength(0);
   });
 });
