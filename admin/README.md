@@ -92,6 +92,32 @@ After a week without problems, remove `GOOGLE_SERVICE_ACCOUNT_EMAIL`,
 `GOOGLE_PRIVATE_KEY` and `GOOGLE_SPREADSHEET_ID` from the Pages project. While
 they exist, new orders are also mirrored to the Sheet.
 
+## Backups (weekly, encrypted)
+
+`.github/workflows/d1-backup.yml` exports `roussev-orders` every Sunday (and
+on demand: Actions → "D1 backup" → Run workflow), encrypts it with
+[age](https://age-encryption.org) to the public key in
+`admin/backup/recipients.txt` and keeps it as a 30-day artifact. Only the
+offline private key (`roussev-backup.key`) can open it. D1 Time Travel (7 days
+on Free) remains the first resort for recent mistakes.
+
+Restore test (local, no Cloudflare changes):
+
+```bash
+# download the artifact from the run page and unzip it, then:
+age -d -i roussev-backup.key -o restore.sql roussev-orders-YYYY-MM-DD.sql.age
+sqlite3 restore.db < restore.sql
+sqlite3 restore.db "SELECT COUNT(*) FROM orders; SELECT id FROM orders ORDER BY created_at DESC LIMIT 1;"
+rm restore.sql restore.db   # the plaintext contains customer data
+```
+
+Real restore into D1: `npx wrangler d1 create roussev-restore`, then
+`npx wrangler d1 execute roussev-restore --remote --file restore.sql`, check
+it, and switch the `DB` binding only after that.
+
+To rotate the key: generate a new pair with `age-keygen`, replace the line in
+`recipients.txt`, keep the old private key until its last backup expires.
+
 ## Login page branding (manual, once)
 
 The Access organizations API rejects automated changes (12062), so
