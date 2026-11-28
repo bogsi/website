@@ -1,13 +1,16 @@
 @import "tailwindcss";
 
-/* Matches roussev.dev: dark terminal look with the orange accent. */
+/* roussev.dev brand palette (docs/brand.md), same values as the public
+   site's assets/css/tokens.css. Tailwind generates the bg-*, text-* and
+   border-* utilities from these, so the components need no changes.
+   Buttons with bg-accent use text-bg (near-black on teal, 7.7:1). */
 @theme {
-  --color-bg: #1f2125;
-  --color-panel: #26282d;
-  --color-line: #3a3d44;
-  --color-ink: #e6e6e6;
-  --color-muted: #9aa0a6;
-  --color-accent: #f0912f;
+  --color-bg: #0B0F14;      /* brand near-black */
+  --color-panel: #111821;   /* surface */
+  --color-line: #263241;    /* borders and dividers */
+  --color-ink: #FFFFFF;     /* brand white: headings and strong text */
+  --color-muted: #8B96A3;   /* secondary text, 6.4:1 on bg */
+  --color-accent: #14B8A6;  /* brand teal, 7.7:1 on bg */
   --font-mono: "Fira Code", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
