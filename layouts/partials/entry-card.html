@@ -1,0 +1,23 @@
+{{- /*
+  A card for one post or project in a list: date, reading time, title,
+  description (or summary) and tags. The whole card is clickable through the
+  title link (see .entry-card__title a::after in style.css).
+  Usage: {{ partial "entry-card.html" (dict "page" . "level" 2) }}
+  level is the heading level of the title (2 on list pages, 3 under an h2).
+*/ -}}
+{{- $level := .level | default 2 -}}
+{{- with .page -}}
+<article class="entry-card">
+  <p class="entry-card__meta">
+    {{- with .Date }}{{ if not .IsZero }}<time datetime="{{ .Format "2006-01-02" }}">{{ .Format "2 Jan 2006" }}</time>{{ end }}{{ end -}}
+    <span>{{ .ReadingTime }} min read</span>
+  </p>
+  {{ printf `<h%d class="entry-card__title">` $level | safeHTML }}<a href="{{ .RelPermalink }}">{{ .Title | markdownify }}</a>{{ printf `</h%d>` $level | safeHTML }}
+  <p class="entry-card__summary">{{ .Description | default (.Summary | plainify | truncate 180) | markdownify }}</p>
+  {{- with .Params.tags }}
+  <ul class="entry-card__tags" aria-label="Tags">
+    {{- range first 4 . }}<li class="tag">{{ . }}</li>{{ end }}
+  </ul>
+  {{- end }}
+</article>
+{{- end -}}

@@ -1,0 +1,12 @@
+{{ define "main" }}
+<div class="post terms">
+  <header class="page-header">
+    <h1 class="post-title">{{ .Title }}</h1>
+  </header>
+  <ul>
+    {{ range .Data.Terms.Alphabetical }}
+    <li><a class="tag" href="{{ .Page.RelPermalink }}">{{ .Page.Title }} <span aria-label="{{ .Count }} pages">({{ .Count }})</span></a></li>
+    {{ end }}
+  </ul>
+</div>
+{{ end }}

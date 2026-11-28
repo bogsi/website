@@ -1,57 +1,27 @@
 {{ define "main" }}
-  <div class="post">
-    <h1 class="post-title">{{ .Title }}</h1>
+<div class="post">
+  {{ partial "page-header.html" . }}
 
-    <div class="post-content terminal-output">
-      {{ .Content }}
-    </div>
+  {{/* Longer articles live on Medium. No feed fetch: the CSP only allows
+       connections to 'self', and a third-party RSS proxy proved unreliable. */}}
+  <aside class="external-panel" aria-label="Articles on Medium">
+    <p><strong>More articles on Medium</strong>Longer pieces on AWS, Terraform and cloud automation are published on Medium.</p>
+    <a class="button outline" href="https://medium.com/@bogomilroussev" target="_blank" rel="noopener noreferrer">
+      {{ partial "icon.html" "medium" }} Read on Medium
+    </a>
+  </aside>
 
-    {{/* Articles live on Medium. No feed fetch: the third-party RSS proxy
-         failed and showed "Could not load articles". */}}
-    <div class="medium-section">
-      <a href="https://medium.com/@bogomilroussev" target="_blank" rel="noopener noreferrer" class="medium-button">
-        {{ partial "icon.html" "medium" }}
-        <span>Read my articles on Medium</span>
-      </a>
-    </div>
+  {{ with .Content }}
+  <div class="post-content">{{ . }}</div>
+  {{ end }}
 
-    {{ $localPosts := where .Site.RegularPages "Type" "posts" }}
-    {{ if $localPosts }}
-    <div class="posts-group" style="margin-top: 2rem;">
-      <div class="post-year">Local Posts</div>
-      {{ range $localPosts }}
-        <div class="post-item">
-          <a href="{{ .RelPermalink }}">
-            <span class="post-title">{{ .Title }}</span>
-            <span class="post-day">{{ .Date.Format "Jan 2, 2006" }}</span>
-          </a>
-        </div>
-      {{ end }}
-    </div>
+  {{ $posts := where site.RegularPages "Type" "posts" }}
+  {{ with $posts }}
+  <ul class="card-list card-list--grid">
+    {{ range .ByDate.Reverse }}
+    <li>{{ partial "entry-card.html" (dict "page" . "level" 2) }}</li>
     {{ end }}
-  </div>
-
-<style>
-.medium-section {
-  margin-top: 2rem;
-}
-.medium-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 1.4rem;
-  border: 1px solid currentColor;
-  color: inherit;
-  text-decoration: none;
-  font-family: monospace;
-  font-size: 0.95rem;
-  transition: background 0.15s, color 0.15s;
-}
-.medium-button:hover {
-  background: var(--accent);
-  color: var(--background);
-  border-color: var(--accent);
-}
-</style>
-
+  </ul>
+  {{ end }}
+</div>
 {{ end }}

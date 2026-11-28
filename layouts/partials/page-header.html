@@ -1,0 +1,10 @@
+{{- /*
+  Page title block for section pages: optional eyebrow, the h1, and an
+  optional lead paragraph from front matter (`eyebrow`, `lead`).
+  Usage: {{ partial "page-header.html" . }}
+*/ -}}
+<header class="page-header">
+  {{ with .Params.eyebrow }}<p class="eyebrow">{{ . }}</p>{{ end }}
+  <h1 class="post-title">{{ .Title }}</h1>
+  {{ with .Params.lead }}<p class="page-lead">{{ . | markdownify }}</p>{{ end }}
+</header>

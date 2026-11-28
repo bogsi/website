@@ -1,37 +1,14 @@
 {{ define "main" }}
 <div class="post">
-  <h1 class="post-title">{{ .Title }}</h1>
-  
+  {{ partial "page-header.html" . }}
   {{ with .Content }}
-  <div class="post-content">
-    {{ . }}
-  </div>
+  <div class="post-content">{{ . }}</div>
   {{ end }}
 
-  <div class="posts">
+  <ul class="card-list card-list--grid">
     {{ range .Pages.ByDate.Reverse }}
-      <article class="post on-list">
-        <h2 class="post-title">
-          <a href="{{ .RelPermalink }}">{{ .Title | markdownify }}</a>
-        </h2>
-
-        <div class="post-meta">
-          {{ if .Date }}
-            <time class="post-date">{{ .Date.Format "2006-01-02" }}</time>
-          {{ end }}
-        </div>
-
-        {{ with .Description }}
-          <div class="post-content">{{ . | markdownify }}</div>
-        {{ else }}
-          <div class="post-content">{{ .Summary }}</div>
-        {{ end }}
-
-        <div>
-          <a class="read-more button" href="{{ .RelPermalink }}">Read →</a>
-        </div>
-      </article>
+    <li>{{ partial "entry-card.html" (dict "page" . "level" 2) }}</li>
     {{ end }}
-  </div>
+  </ul>
 </div>
-{{ end }} 
+{{ end }}

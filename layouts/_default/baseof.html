@@ -1,64 +1,30 @@
 <!DOCTYPE html>
-<html lang="{{ $.Site.Language }}">
+<html lang="{{ site.Language.Lang }}">
 <head>
   {{ block "title" . }}
-    <title>{{ if .IsHome }}{{ $.Site.Title }}{{ with $.Site.Params.subtitle }} | {{ . }}{{ end }}{{ else }}{{ .Title }} :: {{ $.Site.Title }}{{ end }}</title>
+    <title>{{ if .IsHome }}{{ site.Title }}{{ with site.Params.subtitle }} | {{ . }}{{ end }}{{ else }}{{ .Title }} :: {{ site.Title }}{{ end }}</title>
   {{ end }}
   {{ partial "head.html" . }}
-  <style>
-    :root {
-      --accent: #ff8700;
-      --background: #282c34;
-      --color: #abb2bf;
-      --border-color: #ff8700;
-      --terminal-shadow: 0 5px 15px rgba(255, 135, 0, 0.2);
-    }
-  </style>
+  {{/* Lets CSS collapse the mobile menu only when the script that opens it
+       can run. Without JavaScript the menu stays visible. */}}
+  <script>document.documentElement.classList.add("js");</script>
 </head>
-<body class="terminal">
-  <div class="container {{ if .Site.Params.fullWidthTheme }}full{{ else }}center{{ end }}">
-    <header class="header">
-      <div class="header__inner">
-        {{ if .Site.Params.logo.logoText }}
-          <div class="header__logo">
-            {{ partial "logo.html" . }}
-          </div>
-        {{ end }}
+<body class="section-{{ .Section | default "home" }}{{ if .IsHome }} is-home{{ end }}">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-        <div class="header__right">
-          {{ partial "menu.html" . }}
-        </div>
-      </div>
-    </header>
-    <main class="content" id="main">
-      {{ block "main" . }}{{ end }}
-    </main>
-
-    <footer class="footer">
-      <div class="footer__inner">
-        {{ partial "footer.html" . }}
-      </div>
-    </footer>
-  </div>
-
-  {{ if gt (len .Site.Menus.main) .Site.Params.showMenuItems }}
-    <div class="submenu">
-      {{ range last (sub (len .Site.Menus.main) .Site.Params.showMenuItems) .Site.Menus.main }}
-        <a href="{{ .URL | absLangURL }}">{{ .Name }}</a>
-      {{ end }}
+  <header class="site-header">
+    <div class="site-header__inner">
+      {{ partial "logo.html" . }}
+      {{ partial "menu.html" . }}
     </div>
-  {{ end }}
+  </header>
 
-  <!-- Terminal cursor animation -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const pre = document.querySelector('pre');
-      if (pre) {
-        const cursor = document.createElement('span');
-        cursor.className = 'cursor';
-        pre.appendChild(cursor);
-      }
-    });
-  </script>
+  <main class="site-main" id="main" tabindex="-1">
+    {{ block "main" . }}{{ end }}
+  </main>
+
+  <footer class="site-footer">
+    {{ partial "footer.html" . }}
+  </footer>
 </body>
-</html> 
+</html>

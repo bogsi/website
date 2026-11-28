@@ -1,0 +1,28 @@
+{{- /* Markdown tables: wrapped so wide tables scroll sideways on small
+       screens. The wrapper is focusable and labelled so keyboard users can
+       scroll it too (WCAG 2.1.1). */ -}}
+<div class="table-wrap" role="region" aria-label="Table" tabindex="0">
+  <table
+    {{- range $k, $v := .Attributes }}
+      {{- if $v }}{{ printf " %s=%q" $k $v | safeHTMLAttr }}{{ end }}
+    {{- end }}>
+    <thead>
+      {{- range .THead }}
+        <tr>
+          {{- range . }}
+            <th{{ with .Alignment }} style="text-align: {{ . }}"{{ end }}>{{ .Text }}</th>
+          {{- end }}
+        </tr>
+      {{- end }}
+    </thead>
+    <tbody>
+      {{- range .TBody }}
+        <tr>
+          {{- range . }}
+            <td{{ with .Alignment }} style="text-align: {{ . }}"{{ end }}>{{ .Text }}</td>
+          {{- end }}
+        </tr>
+      {{- end }}
+    </tbody>
+  </table>
+</div>

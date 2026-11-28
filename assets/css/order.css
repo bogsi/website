@@ -24,6 +24,7 @@
 }
 
 .inquiry-info__cmd {
+  font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--color);
   margin-bottom: 1rem;
@@ -59,9 +60,9 @@
 }
 
 .inquiry-block__label {
+  font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--accent);
-  opacity: 0.7;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 0.7rem;
@@ -107,9 +108,11 @@
 }
 
 .step-num {
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   color: var(--accent);
-  border: 1px solid var(--accent);
+  border: 1px solid var(--accent-line);
+  border-radius: 4px;
   padding: 1px 5px;
   min-width: 2rem;
   text-align: center;
@@ -138,18 +141,21 @@
 }
 
 .prompt {
+  font-family: var(--font-mono);
   color: var(--accent);
   margin-right: 0.3em;
 }
 
 /* ── Right panel: form ── */
 .inquiry-form-wrap {
-  background: rgba(255, 135, 0, 0.03);
-  border: 1px solid rgba(255, 135, 0, 0.2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
   padding: 2rem;
 }
 
 .inquiry-form-cmd {
+  font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--color);
   margin-bottom: 1.5rem;
@@ -184,42 +190,52 @@
 }
 
 .field-group label {
-  font-size: 0.8rem;
-  color: var(--accent);
-  letter-spacing: 0.04em;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text);
   text-align: left;
 }
 
 .req {
-  color: #e06c75;
+  color: var(--danger);
 }
 
 .field-group input,
 .field-group select,
 .field-group textarea {
-  background: var(--background);
-  border: 1px solid rgba(255, 135, 0, 0.35);
-  color: var(--color);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
   font-family: inherit;
-  font-size: 0.9rem;
-  padding: 0.55rem 0.75rem;
-  outline: none;
-  transition: border-color 0.15s;
+  font-size: 0.9375rem;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.8rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
   width: 100%;
   box-sizing: border-box;
-  border-radius: 0;
+  border-radius: var(--radius-sm);
   -webkit-appearance: none;
 }
 
 .field-group input::placeholder,
 .field-group textarea::placeholder {
-  opacity: 0.35;
+  color: var(--muted);
+  opacity: 0.8;
 }
 
+/* Visible focus ring (the browser outline is replaced, not removed) */
 .field-group input:focus,
 .field-group select:focus,
 .field-group textarea:focus {
+  outline: none;
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.field-group input:hover,
+.field-group select:hover,
+.field-group textarea:hover {
+  border-color: color-mix(in srgb, var(--brand-teal) 40%, var(--border));
 }
 
 .field-group select option {
@@ -237,20 +253,26 @@
   align-items: center;
   justify-content: space-between;
   background: var(--accent);
-  color: #000;
+  color: var(--on-accent);
   border: none;
+  border-radius: var(--radius-sm);
   font-family: inherit;
-  font-size: 0.95rem;
-  font-weight: bold;
-  letter-spacing: 0.06em;
+  font-size: 1rem;
+  font-weight: 600;
+  min-height: 3rem;
   padding: 0.75rem 1.25rem;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: background-color 0.15s;
   margin-top: 0.4rem;
 }
 
 .btn-send:hover {
-  opacity: 0.85;
+  background: var(--accent-hover);
+}
+
+.btn-send:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
 }
 
 .btn-send:disabled {
@@ -289,7 +311,7 @@
 }
 
 .form-status--error {
-  color: #e06c75;
+  color: var(--danger);
   opacity: 1;
 }
 
@@ -324,7 +346,9 @@
   font-size: 1.1rem;
   color: var(--accent);
   letter-spacing: 0.1em;
-  border: 1px solid rgba(255, 135, 0, 0.3);
+  font-family: var(--font-mono);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-sm);
   padding: 0.4rem 0.8rem;
   display: inline-block;
 }
@@ -350,8 +374,7 @@
 }
 
 .step-pending {
-  color: var(--color);
-  opacity: 0.35;
+  color: var(--muted);
   margin-left: auto;
 }
 
@@ -362,14 +385,16 @@
   color: var(--accent) !important;
   font-size: 0.9rem;
   text-decoration: none;
-  border: 1px solid rgba(255, 135, 0, 0.4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   padding: 0.5rem 1rem;
   transition: background 0.2s, color 0.2s;
 }
 
 .btn-home:hover {
   background: var(--accent);
-  color: #000 !important;
+  border-color: var(--accent);
+  color: var(--on-accent) !important;
 }
 
 .form-privacy {
