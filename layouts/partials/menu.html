@@ -1,51 +1,53 @@
-{{ $currentPage := . }}
-
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  var menus = document.querySelectorAll('.menu');
-  document.body.addEventListener('click', function () {
-    menus.forEach(function (m) { m.classList.remove('open'); });
-  });
-  menus.forEach(function (menu) {
-    var trigger = menu.querySelector('.menu__trigger');
-    if (!trigger) return;
-    trigger.addEventListener('click', function (e) {
-      e.stopPropagation();
-      var isOpen = menu.classList.contains('open');
-      menus.forEach(function (m) { m.classList.remove('open'); });
-      if (!isOpen) menu.classList.add('open');
-    });
-  });
-});
-</script>
-
-<nav class="navigation-menu">
-  {{/* Desktop: flat list of all items */}}
-  <ul class="navigation-menu__inner menu--desktop">
-    {{ range .Site.Menus.main }}
+{{- /*
+  Main navigation from [languages.en.menu.main] in hugo.toml.
+  - The current section is marked with aria-current, so /services/cost-audit/
+    highlights "Services".
+  - The menu item that points at params.cta.href (the inquiry form) is shown as
+    the site's one call to action, with params.cta.label, so the header says
+    the same thing as every other button.
+  - Below 760 px the list collapses behind a button. The "js" class on <html>
+    (set in baseof.html) enables the collapse, so without JavaScript the
+    links stay visible.
+*/ -}}
+{{- $current := . -}}
+{{- $cta := site.Params.cta -}}
+<nav class="site-nav" aria-label="Main">
+  <button class="site-nav__toggle" type="button" aria-expanded="false" aria-controls="site-nav-list">
+    <span class="site-nav__toggle-bars" aria-hidden="true"></span>
+    <span>Menu</span>
+  </button>
+  <ul class="site-nav__list" id="site-nav-list">
+    {{- range site.Menus.main }}
+      {{- $url := .URL | relLangURL -}}
+      {{- $isCTA := and $cta (eq (strings.TrimSuffix "/" .URL) (strings.TrimSuffix "/" $cta.href)) -}}
+      {{- $active := or (eq $current.RelPermalink $url) (eq $current.RelPermalink (printf "%s/" $url)) (and (ne $current.Section "") (eq (printf "/%s" $current.Section) (strings.TrimSuffix "/" .URL))) -}}
       <li>
-        <a href="{{ .URL | absLangURL }}"
-          {{- if eq $currentPage.RelPermalink (.URL | absLangURL) }} class="active"{{ end }}>
-          {{ .Name }}
-        </a>
+        {{- if $isCTA }}
+        <a class="button button--small" href="{{ $cta.href | relLangURL }}" data-cta-id="header-cta"{{ if $active }} aria-current="page"{{ end }}>{{ $cta.label }}</a>
+        {{- else }}
+        <a class="site-nav__link" href="{{ $url }}"{{ if $active }} aria-current="page"{{ end }}>{{ .Name }}</a>
+        {{- end }}
       </li>
-    {{ end }}
-  </ul>
-
-  {{/* Mobile: hamburger trigger + dropdown */}}
-  <ul class="menu menu--mobile">
-    <li class="menu__trigger">Menu&nbsp;▾</li>
-    <li>
-      <ul class="menu__dropdown">
-        {{ range .Site.Menus.main }}
-          <li>
-            <a href="{{ .URL | absLangURL }}"
-              {{- if eq $currentPage.RelPermalink (.URL | absLangURL) }} class="active"{{ end }}>
-              {{ .Name }}
-            </a>
-          </li>
-        {{ end }}
-      </ul>
-    </li>
+    {{- end }}
   </ul>
 </nav>
+<script>
+  (function () {
+    var toggle = document.querySelector(".site-nav__toggle");
+    var list = document.getElementById("site-nav-list");
+    if (!toggle || !list) return;
+    function setOpen(open) {
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      list.classList.toggle("is-open", open);
+    }
+    toggle.addEventListener("click", function () {
+      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  })();
+</script>

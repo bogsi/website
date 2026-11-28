@@ -1,6 +1,55 @@
 {{ define "main" }}
-  <div class="post">
-    <h1 class="post-title">{{ .Title }}</h1>
+{{- $hero := .Params.hero -}}
+{{- $cta := site.Params.cta -}}
+{{- if not $hero }}{{ errorf "index.html: content/_index.md needs a [hero] table" }}{{ end -}}
+
+<section class="hero" aria-labelledby="hero-title">
+  {{ with $hero.eyebrow }}<p class="eyebrow">{{ . }}</p>{{ end }}
+  <h1 class="hero__title" id="hero-title">{{ $hero.title | markdownify }}</h1>
+  {{ with $hero.lead }}<p class="hero__lead">{{ . | markdownify }}</p>{{ end }}
+  <div class="hero__actions">
+    <a class="button" href="{{ $cta.href | relLangURL }}" data-cta-id="home-hero-inquiry">{{ $cta.label }}</a>
+    {{ with $hero.secondary_href }}<a class="text-link" href="{{ . | relLangURL }}">{{ $hero.secondary_label }}</a>{{ end }}
+  </div>
+  {{ with $hero.facts }}
+  <ul class="hero__facts">
+    {{ range . }}<li>{{ . }}</li>{{ end }}
+  </ul>
+  {{ end }}
+</section>
+
+<section class="section" aria-labelledby="situations-title">
+  <div class="section__header">
+    <h2 class="section__title" id="situations-title">Sound familiar?</h2>
+    <a class="text-link" href="{{ "services/" | relLangURL }}">All services</a>
+  </div>
+  <div class="post-content">
     {{ .Content }}
   </div>
+</section>
+
+{{ with .Params.tools }}
+<section class="section" aria-labelledby="tools-title">
+  <div class="section__header">
+    <h2 class="section__title" id="tools-title">What I work with</h2>
+    <a class="text-link" href="{{ "about/" | relLangURL }}">More about me</a>
+  </div>
+  <ul class="tool-list">
+    {{ range . }}<li>{{ . }}</li>{{ end }}
+  </ul>
+</section>
+{{ end }}
+
+{{- $writing := where site.RegularPages "Section" "in" (slice "posts" "projects") -}}
+{{ with first 3 $writing.ByDate.Reverse }}
+<section class="section" aria-labelledby="writing-title">
+  <div class="section__header">
+    <h2 class="section__title" id="writing-title">Recent writing</h2>
+    <a class="text-link" href="https://medium.com/@bogomilroussev" target="_blank" rel="noopener noreferrer">More on Medium</a>
+  </div>
+  <ul class="card-list card-list--grid">
+    {{ range . }}<li>{{ partial "entry-card.html" (dict "page" . "level" 3) }}</li>{{ end }}
+  </ul>
+</section>
+{{ end }}
 {{ end }}

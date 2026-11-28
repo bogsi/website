@@ -1,9 +1,9 @@
-{{ if $.Site.Params.Logo.LogoHomeLink }}
-  <a href="{{ $.Site.Params.Logo.LogoHomeLink }}" class="logo">
-    root@localhost:>
-  </a>
-{{ else }}
-  <a href="{{ $.Site.BaseURL }}" class="logo">
-    {{ with $.Site.Params.Logo.logoText }}{{ . }}{{ else }}Terminal{{ end }}
-  </a>
-{{ end }} 
+{{/* Header logo: the brand pack's R mark (static/brand/mark-transparent.svg,
+     used as supplied) next to the roussev.dev wordmark set in Inter. The
+     wordmark SVG files are not used here because text inside an <img> SVG
+     cannot use the page's web font. The mark is decorative: the link's
+     accessible name comes from aria-label. */}}
+<a class="brand" href="{{ "/" | relLangURL }}" aria-label="{{ site.Title }}, home">
+  <img class="brand__mark" src="{{ "brand/mark-transparent.svg" | relURL }}" alt="" width="36" height="36">
+  <span class="brand__name" aria-hidden="true">roussev<span class="brand__tld">.dev</span></span>
+</a>

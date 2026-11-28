@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<!-- Source of static/images/og-default.png, the default social preview
+     (1200x630). Render it at a 1200x630 viewport, for example:
+       npx playwright screenshot --viewport-size=1200,630 \
+         docs/og-default.html static/images/og-default.png
+     Needs the Inter font installed locally (static/fonts/ has the web
+     version). The mark is static/brand/mark-transparent.svg, inlined as
+     supplied. Colors follow docs/brand.md. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>roussev.dev social preview</title>
+<style>
+  :root { --teal: #14B8A6; --bg: #0B0F14; --text: #F8FAFC; --muted: #94A3B8; --border: #263341; --surface: #111820; }
+  html, body { margin: 0; }
+  body {
+    width: 1200px; height: 630px; overflow: hidden; position: relative;
+    background: var(--bg); color: var(--text);
+    font-family: "Inter", system-ui, sans-serif;
+  }
+  .grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 56px 56px; opacity: .35;
+    -webkit-mask-image: radial-gradient(ellipse 45% 70% at 85% 50%, #000 15%, transparent 75%);
+            mask-image: radial-gradient(ellipse 45% 70% at 85% 50%, #000 15%, transparent 75%);
+  }
+  .wrap { position: absolute; inset: 0; padding: 88px 96px; display: flex; flex-direction: column; }
+  .brand { display: flex; align-items: center; gap: 22px; }
+  .mark { width: 92px; height: 92px; }
+  .wordmark { font-size: 52px; font-weight: 750; letter-spacing: -0.03em; }
+  .wordmark span { color: var(--teal); }
+  h1 { margin: 64px 0 0; font-size: 64px; line-height: 1.08; font-weight: 750; letter-spacing: -0.035em; max-width: 900px; }
+  .role { margin: 20px 0 0; font-size: 30px; color: var(--muted); }
+  .foot { margin-top: auto; display: flex; gap: 28px; font-size: 22px; color: var(--muted); letter-spacing: .16em; text-transform: uppercase; }
+  .foot b { color: var(--teal); font-weight: 600; }
+  .rule { position: absolute; left: 0; top: 0; bottom: 0; width: 8px; background: var(--teal); }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="rule"></div>
+  <div class="wrap">
+    <div class="brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" aria-hidden="true" class="mark"><path d="M32 22H69C88 22 99 34 99 50S88 77 70 77H55L32 100V22Z" fill="none" stroke="#14B8A6" stroke-width="13" stroke-linejoin="round"/><path d="M56 77L83 106" stroke="#14B8A6" stroke-width="13" stroke-linecap="square"/><path d="M76 100L101 75M91 75H101V85" stroke="#14B8A6" stroke-width="8" stroke-linecap="square"/><path d="M39 49H66" stroke="#14B8A6" stroke-width="7" stroke-linecap="square"/><rect x="26" y="42" width="13" height="14" fill="none" stroke="#14B8A6" stroke-width="6"/><rect x="63" y="43" width="12" height="12" fill="none" stroke="#14B8A6" stroke-width="5"/><rect x="26" y="91" width="13" height="13" fill="none" stroke="#14B8A6" stroke-width="6"/></svg>
+      <div class="wordmark">roussev<span>.dev</span></div>
+    </div>
+    <h1>Bogomil Roussev</h1>
+    <p class="role">Cloud &amp; Platform Engineer · AWS Consultant</p>
+    <p class="foot">Build <b>·</b> Automate <b>·</b> Scale <b>·</b> Ship</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{{- /* Generic list (tag and category pages). Section pages have their own. */ -}}
+{{ define "main" }}
+<div class="post">
+  <header class="page-header">
+    {{ if eq .Kind "term" }}<p class="eyebrow">{{ .Data.Singular | humanize }}</p>{{ end }}
+    <h1 class="post-title">{{ .Title }}</h1>
+  </header>
+  {{ with .Content }}<div class="post-content">{{ . }}</div>{{ end }}
+  <ul class="card-list card-list--grid">
+    {{ range .Paginator.Pages }}
+    <li>{{ partial "entry-card.html" (dict "page" . "level" 2) }}</li>
+    {{ end }}
+  </ul>
+  {{ if gt .Paginator.TotalPages 1 }}
+  <nav class="pagination" aria-label="Pagination">
+    {{ with .Paginator.Prev }}<a class="text-link" href="{{ .URL }}">Newer</a>{{ else }}<span></span>{{ end }}
+    {{ with .Paginator.Next }}<a class="text-link" href="{{ .URL }}">Older</a>{{ end }}
+  </nav>
+  {{ end }}
+</div>
+{{ end }}

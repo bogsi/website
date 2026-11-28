@@ -1,46 +1,35 @@
 {{ define "main" }}
-<article class="post">
-  <div class="post-header terminal-prompt">
+<article class="post article">
+  <header class="post-header">
+    {{ with .Section }}{{ if in (slice "posts" "projects") . }}
+      <p class="eyebrow"><a href="{{ printf "%s/" . | relLangURL }}">{{ if eq . "posts" }}Blog{{ else }}Projects{{ end }}</a></p>
+    {{ end }}{{ end }}
     <h1 class="post-title">{{ .Title }}</h1>
+    {{ with .Description }}<p class="page-lead">{{ . | markdownify }}</p>{{ end }}
 
     {{ if .Params.date }}
-      <div class="post-meta">
-        <span class="post-date">
-          <span class="prompt-symbol">$</span> date
-          {{ .Date.Format "2006-01-02" }}
-        </span>
+      <p class="post-meta">
         {{ with .Params.author | default site.Params.author }}
-          <span class="post-author">
-            <span class="prompt-symbol">$</span> whoami
-            <a href="{{ "about/" | relLangURL }}" rel="author">{{ . }}</a>
-          </span>
+          <span class="post-author">By <a href="{{ "about/" | relLangURL }}" rel="author">{{ . }}</a></span>
         {{ end }}
-      </div>
+        <time class="post-date" datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+        {{ if gt .ReadingTime 0 }}<span>{{ .ReadingTime }} min read</span>{{ end }}
+      </p>
     {{ end }}
-  </div>
+  </header>
 
   <div class="post-content">
     {{ .Content }}
   </div>
 
-  {{ partial "article-cta.html" . }}
-
-  {{ if .Params.tags }}
-    <div class="post-tags">
-      <span class="prompt-symbol">$</span> ls -l tags/
-      {{ range .Params.tags }}
-        <a href="{{ (urlize (printf "tags/%s/" .)) | absLangURL }}" class="tag">{{ . }}</a>
+  {{ with .Params.tags }}
+    <ul class="post-tags" aria-label="Tags">
+      {{ range . }}
+        <li><a href="{{ (urlize (printf "tags/%s/" .)) | relLangURL }}" class="tag">{{ . }}</a></li>
       {{ end }}
-    </div>
+    </ul>
   {{ end }}
-</article>
 
-{{ if and (.Site.Params.comments) (eq .Site.Params.comments.engine "disqus") (.Site.Params.comments.disqusShortname) }}
-  <div class="comments">
-    <div class="comments-header">
-      <span class="prompt-symbol">$</span> ./load-comments.sh
-    </div>
-    {{ template "_internal/disqus.html" . }}
-  </div>
+  {{ partial "article-cta.html" . }}
+</article>
 {{ end }}
-{{ end }} 

@@ -1,29 +1,51 @@
-  {{/* Social links from params.social in hugo.toml (email, github, linkedin, medium).
-       This partial replaces the theme's footer, so they are rendered here. */}}
-  {{ with site.Params.social }}
-    <nav class="social-links" aria-label="Contact and profiles">
-      {{ range . }}
-        {{ $label := dict "email" "Email" "github" "GitHub" "linkedin" "LinkedIn" "medium" "Medium" }}
+{{- /*
+  Site footer. Social links come from params.social in hugo.toml (email,
+  github, linkedin, medium); navigation from the main menu. The script below
+  drives the Zaraz cookie settings and the consent-gated click events.
+*/ -}}
+{{- $label := dict "email" "Email" "github" "GitHub" "linkedin" "LinkedIn" "medium" "Medium" -}}
+<div class="site-footer__inner">
+  <div class="site-footer__brand">
+    <a class="brand brand--footer" href="{{ "/" | relLangURL }}" aria-label="{{ site.Title }}, home">
+      <img class="brand__mark" src="{{ "brand/mark-transparent.svg" | relURL }}" alt="" width="32" height="32" loading="lazy">
+      <span class="brand__name" aria-hidden="true">roussev<span class="brand__tld">.dev</span></span>
+    </a>
+    <p class="site-footer__tagline">Cloud · Platform · Infrastructure</p>
+    <p class="site-footer__about">{{ site.Params.author }} · {{ site.Params.subtitle }} · Sofia, Bulgaria</p>
+  </div>
+
+  <nav class="site-footer__col" aria-label="Footer">
+    <h2 class="site-footer__heading">Site</h2>
+    <ul>
+      {{- range site.Menus.main }}
+      <li><a href="{{ .URL | relLangURL }}">{{ .Name }}</a></li>
+      {{- end }}
+      <li><a href="{{ "privacy/" | relLangURL }}">Privacy</a></li>
+    </ul>
+  </nav>
+
+  {{- with site.Params.social }}
+  <div class="site-footer__col">
+    <h2 class="site-footer__heading">Elsewhere</h2>
+    <ul class="social-links">
+      {{- range . }}
+      <li>
         <a class="social-link" href="{{ .url }}"{{ if not (hasPrefix .url "mailto:") }} target="_blank" rel="noopener"{{ end }}>
           {{ partial "icon.html" .name }}
           <span>{{ index $label .name | default .name }}</span>
         </a>
-      {{ end }}
-    </nav>
-  {{ end }}
-  <div class="copyright">
-    <span><a href="{{ "privacy/" | relLangURL }}">Privacy</a></span>
-    <span>::</span>
-    <span><a href="#" id="cookie-settings" role="button">Cookie settings</a></span>
-    <span>::</span>
-    {{ if $.Site.Copyright }}
-      {{ $.Site.Copyright }}
-    {{ else }}
-      <span>© {{ now.Year }} Powered by <a href="https://gohugo.io">Hugo</a></span>
-      <span>::</span>
-      <span>Theme made by <a href="https://github.com/panr">panr</a></span>
-    {{ end }}
-  </div> 
+      </li>
+      {{- end }}
+    </ul>
+  </div>
+  {{- end }}
+</div>
+
+<div class="site-footer__bottom">
+  <p>© {{ now.Year }} {{ site.Params.author }}</p>
+  <p><a href="#" id="cookie-settings" role="button">Cookie settings</a></p>
+  <p>Built with <a href="https://gohugo.io" rel="noopener" target="_blank">Hugo</a>, hosted on Cloudflare Pages</p>
+</div>
 
 <script>
   // Zaraz consent (GA4 only after "Accept"). The link reopens the consent

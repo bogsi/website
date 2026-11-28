@@ -6,17 +6,16 @@
   with its own call to action.
 */ -}}
 {{- if and (in (slice "posts" "projects") .Section) (not .Params.hide_cta) -}}
-<aside class="article-cta" aria-label="Work with me">
-  <p><span class="prompt-symbol">$</span> ./next-step.sh</p>
+<aside class="article-cta" aria-labelledby="article-cta-title">
+  <h2 id="article-cta-title">Need a hand with your AWS setup?</h2>
   <p>
-    <strong>Need a hand with your AWS setup?</strong>
     The <a href="{{ "services/architecture-review/" | relLangURL }}">architecture review</a>
     tells you what to fix first, for a fixed price. If the bill is the problem, the
     <a href="{{ "services/cost-audit/" | relLangURL }}">CostLens cost audit</a>
     goes deep on spending. For Terraform or CI/CD work, tell me what you need.
   </p>
   {{- with site.Params.cta }}
-  <p><a class="button" href="{{ .href | relLangURL }}" data-cta-id="article-cta">{{ .label }}</a></p>
+  <a class="button" href="{{ .href | relLangURL }}" data-cta-id="article-cta">{{ .label }}</a>
   {{- else }}{{ errorf "article-cta: params.cta is missing in hugo.toml" }}{{ end }}
 </aside>
 {{- end -}}

@@ -2,15 +2,20 @@
 title = "Bogomil Roussev"
 description = "AWS consultant in Sofia: fixed-price AWS cost audits, production MCP servers for internal APIs, and Terraform automation for teams on AWS."
 framed = true
+
+# "What I work with" chips on the home page
+tools = ["AWS", "Terraform / OpenTofu", "Kubernetes", "Cloudflare", "GitHub Actions", "TypeScript", "Python", "MCP"]
+
+# Hero (layouts/index.html). Facts only: every line here is stated elsewhere
+# on the site (about, services, how-i-work).
+[hero]
+  eyebrow = "Cloud & Platform Engineer · Sofia"
+  title = "Reliable AWS infrastructure your team can *run without me*."
+  lead = "I help teams on AWS spend less, automate their infrastructure and connect AI agents to their internal systems without opening a security hole. You work with me directly, from the first call to the handover, for a fixed price."
+  secondary_label = "See services and prices"
+  secondary_href = "/services/"
+  facts = ["AWS Certified Solutions Architect – Associate", "Fixed price, agreed before any work", "The first call is free"]
 +++
-
-I help teams on AWS spend less, automate their infrastructure and connect AI
-agents to their internal systems without opening a security hole. You work with me directly,
-from the first call to the handover, for a fixed price. The first call is free.
-
-{{< cta id="home-hero-inquiry" />}}
-
-## Sound familiar?
 
 {{< situations >}}
 {{< situation title="Nobody has looked at the whole AWS setup in a while" price="€1,800 fixed, 5 working days" href="/services/architecture-review/" link="See the review" id="home-card-architecture-review" >}}
@@ -31,11 +36,3 @@ clean, tested Terraform/OpenTofu your team can maintain. Priced per project
 after a free call.
 {{< /situation >}}
 {{< /situations >}}
-
-## What I work with
-
-AWS · Terraform / OpenTofu · Kubernetes · Cloudflare · GitHub Actions ·
-TypeScript · Python · MCP
-
-AWS Certified Solutions Architect – Associate. More [about me](/about/), my
-[projects](/projects/) and [articles on Medium](https://medium.com/@bogomilroussev).

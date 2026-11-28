@@ -1,5 +1,6 @@
 +++
 title = "About Me"
+eyebrow = "Cloud & Platform Engineer · Sofia"
 description = "Bogomil Roussev, AWS and platform engineer in Sofia: background from data centres to AWS, certifications, what I build and how to reach me."
 +++
 

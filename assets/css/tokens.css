@@ -1,0 +1,98 @@
+/* roussev.dev design tokens: the single source of colors, type, spacing and
+   radii. The --brand-* values are copied unchanged from the brand pack's
+   brand-tokens.css; docs/brand.md documents them with contrast ratios.
+
+   Bundled first (layouts/partials/head.html), before style.css. Do not
+   redefine these variables in templates or inline styles: change them here. */
+
+/* Fonts are self-hosted (static/fonts/, SIL OFL 1.1), so the CSP needs no
+   third-party font host. Latin subset only: the site is in English. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("/fonts/inter-latin-wght-normal.woff2") format("woff2-variations"),
+       url("/fonts/inter-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url("/fonts/jetbrains-mono-latin-wght-normal.woff2") format("woff2-variations"),
+       url("/fonts/jetbrains-mono-latin-wght-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Brand pack (brand-tokens.css), unchanged */
+  --brand-teal: #14B8A6;
+  --brand-teal-hover: #0D9488;
+  --brand-bg: #0B0F14;
+  --brand-surface: #111820;
+  --brand-surface-raised: #17212B;
+  --brand-text: #F8FAFC;
+  --brand-muted: #94A3B8;
+  --brand-border: #263341;
+  --brand-radius: 12px;
+  --brand-radius-lg: 20px;
+
+  /* Semantic colors. Use these in components, not the --brand-* values. */
+  --bg: var(--brand-bg);
+  --surface: var(--brand-surface);
+  --surface-raised: var(--brand-surface-raised);
+  --text: var(--brand-text);
+  /* Body copy: a step down from --text so headings stand out. 12.9:1 on --bg. */
+  --text-body: #CBD5E1;
+  --muted: var(--brand-muted);          /* 7.5:1 on --bg */
+  --border: var(--brand-border);
+  --accent: var(--brand-teal);          /* 7.7:1 on --bg */
+  --accent-hover: #2DD4BF;              /* lighter on hover: stays readable on dark */
+  --accent-soft: color-mix(in srgb, var(--brand-teal) 12%, transparent);
+  --accent-line: color-mix(in srgb, var(--brand-teal) 40%, transparent);
+  /* Text on a teal background: near-black (7.7:1). White on teal is 2.5:1. */
+  --on-accent: var(--brand-bg);
+  --danger: #F87171;                    /* 7.0:1 on --bg */
+  --focus: var(--brand-teal);
+
+  /* Aliases for the names the terminal theme and order.css use */
+  --background: var(--bg);
+  --color: var(--text-body);
+  --foreground: var(--text);
+  --border-color: var(--border);
+
+  /* Type */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-xs: 0.8125rem;
+  --fs-sm: 0.9375rem;
+  --fs-base: 1.0625rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: clamp(1.5rem, 1.2rem + 1.2vw, 1.875rem);
+  --fs-2xl: clamp(1.875rem, 1.4rem + 2vw, 2.5rem);
+  --fs-hero: clamp(2.25rem, 1.5rem + 3.4vw, 3.75rem);
+
+  /* Spacing (4 px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+
+  /* Shape and layout */
+  --radius: var(--brand-radius);
+  --radius-lg: var(--brand-radius-lg);
+  --radius-sm: 6px;
+  --page-width: 1120px;
+  --text-width: 70ch;
+  --header-height: 4.5rem;
+  --transition: 150ms ease;
+}
