@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="18 14 98 98">
+  <!-- roussev.dev "R" mark. The bowl of the R is cut out with a mask, so the
+       mark is transparent inside and works on dark and light backgrounds. -->
+  <defs>
+    <mask id="r-counter">
+      <rect x="0" y="0" width="128" height="128" fill="#fff"/>
+      <path fill="#000" d="M45 39H75C82 39 87 43 87 49C87 56 82 60 75 60H45Z"/>
+    </mask>
+  </defs>
+  <g fill="#14B8A6" mask="url(#r-counter)">
+    <path d="M22 18H76C96 18 108 31 108 49C108 63 100 73 87 78L108 108H82L62 80H45L22 101V18ZM45 39V60H75C82 60 87 56 87 49C87 43 82 39 75 39H45Z"/>
+    <path d="M22 18H45V39H22Z M22 60H45V101H22Z M38 29H68V36H38Z M68 29H78V39H68Z M55 73L70 73L98 108H82Z M80 89L104 65L111 72L87 96Z M99 62H112V75Z"/>
+  </g>
+</svg>

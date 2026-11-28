@@ -122,9 +122,13 @@
 
 
 
-<!-- Icons -->
-<link rel="shortcut icon" href="{{ "favicon.png" | absURL }}">
+<!-- Icons: the brand "R" mark (static/favicon.svg). The SVG is preferred by
+     modern browsers; favicon.png is the fallback. These files in static/
+     replace the terminal theme's default icons of the same name. -->
+<link rel="icon" href="{{ "favicon.svg" | absURL }}" type="image/svg+xml">
+<link rel="icon" href="{{ "favicon.png" | absURL }}" type="image/png" sizes="48x48">
 <link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | absURL }}">
+<meta name="theme-color" content="#0B0F14">
 
 <!-- Extended head section-->
 {{ partial "extended_head.html" . }}
