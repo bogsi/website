@@ -1,0 +1,43 @@
+/* roussev.dev design tokens: the single source of the site's colors.
+   Values and contrast ratios are documented in docs/brand.md.
+
+   This file is bundled before style.css (layouts/partials/head.html), so
+   every rule in style.css and order.css can use these variables. Do not
+   redefine them in templates or inline <style> blocks: change them here. */
+
+:root {
+  /* Brand palette (the three colors from the brand kit) */
+  --brand-teal: #14B8A6;
+  --brand-ink: #0B0F14;
+  --brand-white: #FFFFFF;
+
+  /* Supporting interface colors, derived from the palette */
+  --brand-surface: #111821;
+  --brand-line: #263241;
+  --brand-text: #CBD5E1;
+  --brand-muted: #8B96A3;
+  --brand-danger: #F87171;
+
+  /* Semantic tokens. The names --accent, --background, --color,
+     --foreground and --border-color come from the terminal theme and are
+     used throughout style.css, so they are kept. */
+  --accent: var(--brand-teal);
+  --background: var(--brand-ink);
+  --color: var(--brand-text);
+  --foreground: var(--brand-white);
+  /* Borders follow the accent, as they did with the old orange palette. */
+  --border-color: var(--accent);
+  --surface: var(--brand-surface);
+  --line: var(--brand-line);
+  --muted: var(--brand-muted);
+  --danger: var(--brand-danger);
+  /* Text on an accent background. White on teal fails contrast (2.5:1);
+     near-black on teal passes (7.7:1). */
+  --on-accent: var(--brand-ink);
+  --terminal-shadow: 0 5px 15px color-mix(in srgb, var(--accent) 20%, transparent);
+
+  /* Layout tokens (unchanged from the theme) */
+  --radius: 0;
+  --font-size: 1rem;
+  --line-height: 1.54em;
+}

@@ -16,20 +16,14 @@
 <link rel="canonical" href="{{ .Permalink }}">
 
 <!-- Theme CSS -->
+{{/* tokens.css (brand colors) must come first: style.css uses its variables. */}}
+{{ $tokens := resources.Get "css/tokens.css" }}
 {{ $style := resources.Get "css/style.css" | resources.ExecuteAsTemplate "css/style.css" . }}
-{{ $bundle := slice $style | resources.Concat "css/bundle.css" | minify | fingerprint }}
+{{ $bundle := slice $tokens $style | resources.Concat "css/bundle.css" | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $bundle.RelPermalink }}" integrity="{{ $bundle.Data.Integrity }}">
 
-<!-- Custom styles -->
+<!-- Custom styles. Colors come from assets/css/tokens.css. -->
 <style>
-  :root {
-    --accent: #ff8700;
-    --background: #282c34;
-    --color: #abb2bf;
-    --border-color: #ff8700;
-    --terminal-shadow: 0 5px 15px rgba(255, 135, 0, 0.2);
-  }
-
   /* Terminal prompt styling */
   .prompt-symbol {
     color: var(--accent);

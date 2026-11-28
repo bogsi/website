@@ -5,15 +5,6 @@
     <title>{{ if .IsHome }}{{ $.Site.Title }}{{ with $.Site.Params.subtitle }} | {{ . }}{{ end }}{{ else }}{{ .Title }} :: {{ $.Site.Title }}{{ end }}</title>
   {{ end }}
   {{ partial "head.html" . }}
-  <style>
-    :root {
-      --accent: #ff8700;
-      --background: #282c34;
-      --color: #abb2bf;
-      --border-color: #ff8700;
-      --terminal-shadow: 0 5px 15px rgba(255, 135, 0, 0.2);
-    }
-  </style>
 </head>
 <body class="terminal">
   <div class="container {{ if .Site.Params.fullWidthTheme }}full{{ else }}center{{ end }}">

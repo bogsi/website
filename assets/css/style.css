@@ -1,16 +1,8 @@
 /* Fira Code (https://github.com/tonsky/FiraCode) is loaded by a <link> in
    layouts/partials/extended_head.html, not @import, to avoid a blocking chain. */
 
-/* Terminal Theme */
-:root {
-  --accent: #ff8700;
-  --background: #292a2d;
-  --color: #a9a9b3;
-  --border-color: #4a4b50;
-  --radius: 0;
-  --font-size: 1rem;
-  --line-height: 1.54em;
-}
+/* Terminal Theme. Colors and layout variables live in tokens.css,
+   which is bundled before this file. */
 
 html {
   box-sizing: border-box;
@@ -714,14 +706,14 @@ button {
 }
 
 .post-content code {
-  background: rgba(255, 135, 0, 0.1);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
   padding: 2px 6px;
   font-size: 0.95em;
   border-radius: 3px;
 }
 
 .post-content pre {
-  background: #1a1a1d;
+  background: var(--surface);
   padding: 20px;
   border-radius: 8px;
   font-size: 0.95em;
@@ -739,7 +731,7 @@ button {
   margin: 2em 0;
   padding: 10px 20px;
   border-left: 3px solid var(--accent);
-  background: rgba(255, 135, 0, 0.1);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 .post-content img {
@@ -1248,7 +1240,7 @@ figure figcaption {
   border: 1px solid var(--accent);
   border-radius: 4px;
   background-color: var(--background);
-  box-shadow: var(--terminal-shadow, 0 5px 15px rgba(255, 135, 0, 0.2));
+  box-shadow: var(--terminal-shadow);
 }
 
 .service-pane .highlight,

@@ -29,8 +29,8 @@ enableRobotsTXT = true
   # the list of articles will be on this page
   contentTypeName = "posts"
 
-  # ["orange", "blue", "red", "green", "pink"]
-  # default is orange
+  # Not used: the site's colors come from assets/css/tokens.css (see
+  # docs/brand.md). Kept because the terminal theme expects the key.
   themeColor = "orange"
 
   # if you set this to 0, only submenu trigger will be visible
