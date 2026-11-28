@@ -1,6 +1,5 @@
 ---
 title: "Projects"
-description: "A collection of technical projects and deep dives into various technologies"
+description: "Technical write-ups and small tools by Bogomil Roussev: a practical guide to Terraform modules and a dBm to mW converter for wireless work."
+lead: "Write-ups and small tools I have built, with the code and reasoning behind them."
 ---
-
-Welcome to my projects section! Here you'll find detailed write-ups of various technical projects, deep dives into specific technologies, and practical examples from real-world implementations. Each article aims to provide valuable insights and hands-on experience that you can apply to your own work. 

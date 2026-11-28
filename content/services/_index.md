@@ -1,5 +1,6 @@
 +++
 title = "Services"
+lead = "Architecture reviews, cost audits and MCP servers at a published fixed price. Terraform, CI/CD and ongoing help are priced after a free call."
 description = "AWS architecture reviews, cost audits and MCP servers at fixed prices, plus Terraform, CI/CD and ongoing help for teams on AWS, priced after a call."
 faq = [
   { q = "What happens on the first call?", a = "You tell me what you are dealing with, and I ask questions. It is free. If I am not the right person for it, I will say so." },

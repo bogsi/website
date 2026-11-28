@@ -36,6 +36,8 @@
   "url" (printf "%s/" $base)
   "description" site.Params.description
   "founder" (dict "@id" $personID)
+  "logo" (printf "%s/brand/icon-512.png" $base)
+  "image" (printf "%s/images/og-default.png" $base)
   "areaServed" "Worldwide"
   "serviceType" (slice "AWS cost audit" "MCP server development" "AWS infrastructure consulting" "Terraform automation" "CI/CD pipeline development")
 -}}

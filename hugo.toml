@@ -19,7 +19,7 @@ enableRobotsTXT = true
   # from the inquiry page, as the "rather talk first?" option. The build fails
   # while it is empty.
   bookingURL = "https://calendar.app.google/PNGwrcqC15GjBFve9"
-  subtitle = "AWS & Terraform Automation Consultant"
+  subtitle = "Cloud & Platform Engineer, AWS Consultant"
   # Default og:image / twitter:image (1200x630) for pages without their own
   # `images` front matter. Its presence also switches twitter:card to
   # summary_large_image.
@@ -105,7 +105,7 @@ enableRobotsTXT = true
   [languages.en]
     label = "English"
     title = "Bogomil Roussev"
-    subtitle = "AWS & Terraform Automation Consultant"
+    subtitle = "Cloud & Platform Engineer, AWS Consultant"
     owner = "Bogomil Roussev"
     keywords = "AWS, Terraform, Cloud, Infrastructure, Automation, DevOps"
     copyright = ""
