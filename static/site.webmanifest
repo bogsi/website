@@ -1,0 +1,14 @@
+{
+  "name": "Bogomil Roussev · roussev.dev",
+  "short_name": "roussev.dev",
+  "description": "Cloud and platform engineer: AWS cost audits, architecture reviews, MCP servers and Terraform automation.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#0B0F14",
+  "theme_color": "#0B0F14",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "/apple-touch-icon.png", "type": "image/png", "sizes": "180x180" },
+    { "src": "/brand/icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ]
+}

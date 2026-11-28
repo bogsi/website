@@ -1,5 +1,5 @@
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 {{/* <title> is rendered once, in layouts/_default/baseof.html. */}}
 
@@ -15,82 +15,16 @@
 
 <link rel="canonical" href="{{ .Permalink }}">
 
-<!-- Theme CSS -->
-{{ $style := resources.Get "css/style.css" | resources.ExecuteAsTemplate "css/style.css" . }}
-{{ $bundle := slice $style | resources.Concat "css/bundle.css" | minify | fingerprint }}
+{{/* Fonts are self-hosted (assets/css/tokens.css declares them). Preloading
+     the body font avoids a late swap on the first view. */}}
+<link rel="preload" href="{{ "fonts/inter-latin-wght-normal.woff2" | relURL }}" as="font" type="font/woff2" crossorigin>
+
+{{/* One stylesheet: tokens.css (design tokens and @font-face) must come
+     first, because style.css uses its variables. */}}
+{{ $tokens := resources.Get "css/tokens.css" }}
+{{ $style := resources.Get "css/style.css" }}
+{{ $bundle := slice $tokens $style | resources.Concat "css/bundle.css" | minify | fingerprint }}
 <link rel="stylesheet" href="{{ $bundle.RelPermalink }}" integrity="{{ $bundle.Data.Integrity }}">
-
-<!-- Custom styles -->
-<style>
-  :root {
-    --accent: #ff8700;
-    --background: #282c34;
-    --color: #abb2bf;
-    --border-color: #ff8700;
-    --terminal-shadow: 0 5px 15px rgba(255, 135, 0, 0.2);
-  }
-
-  /* Terminal prompt styling */
-  .prompt-symbol {
-    color: var(--accent);
-    margin-right: 0.5em;
-  }
-
-  /* Code block styling */
-  pre {
-    background-color: var(--background) !important;
-    border: 1px solid var(--accent) !important;
-    box-shadow: var(--terminal-shadow) !important;
-  }
-
-  /* Link styling */
-  a {
-    color: var(--accent) !important;
-    text-decoration: none;
-    transition: opacity 0.2s;
-  }
-
-  a:hover {
-    opacity: 0.8;
-  }
-
-  /* Tag styling */
-  .tag {
-    background-color: var(--background);
-    border: 1px solid var(--accent);
-    border-radius: 3px;
-    color: var(--accent);
-    display: inline-block;
-    margin: 0 0.5em 0.5em 0;
-    padding: 0.2em 0.5em;
-  }
-
-  .tag:hover {
-    background-color: var(--accent);
-    color: var(--background) !important;
-  }
-
-  /* Post title styling */
-  .post-title {
-    color: var(--accent) !important;
-  }
-
-  /* Terminal cursor animation */
-  .cursor {
-    animation: blink 1s step-end infinite;
-    background-color: var(--accent);
-    display: inline-block;
-    height: 1em;
-    margin-left: 2px;
-    width: 2px;
-  }
-
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-</style>
-
 
 <!-- RSS -->
 {{ range .AlternativeOutputFormats -}}
@@ -108,29 +42,14 @@
 <!-- Analytics: Cloudflare Zaraz injects itself at the edge and loads GA4 only
      after consent (Zaraz Consent Management). Nothing to include here. -->
 
-{{ with resources.Get "css/menu.css" }}
-  {{ $menu := . | minify | fingerprint }}
-  <link rel="preload" href="{{ $menu.RelPermalink }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-{{ end }}
-
-<noscript>
-  {{ with resources.Get "css/menu.css" }}
-    {{ $menu := . | minify | fingerprint }}
-    <link rel="stylesheet" href="{{ $menu.RelPermalink }}">
-  {{ end }}
-</noscript>
-
-
-
-<!-- Icons -->
-<link rel="shortcut icon" href="{{ "favicon.png" | absURL }}">
-<link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | absURL }}">
+<!-- Icons: the brand pack's favicon (R mark on near-black). The SVG is used by
+     modern browsers; the PNG/ICO files are fallbacks. They replace the
+     terminal theme's default icons of the same name. -->
+<link rel="icon" href="{{ "favicon.svg" | relURL }}" type="image/svg+xml">
+<link rel="icon" href="{{ "favicon.png" | relURL }}" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="{{ "apple-touch-icon.png" | relURL }}">
+<link rel="manifest" href="{{ "site.webmanifest" | relURL }}">
+<meta name="theme-color" content="#0B0F14">
 
 <!-- Extended head section-->
 {{ partial "extended_head.html" . }}
-
-<!-- Fallback for old browsers -->
-<script>
-  /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
-  !function(e){"use strict";var n=function(n,t,o){function i(e){return a.body?e():void setTimeout(function(){i(e)})}function r(){l.addEventListener&&l.removeEventListener("load",r),l.media=o||"all"}var d,a=e.document,l=a.createElement("link");if(t)d=t;else{var s=(a.body||a.getElementsByTagName("head")[0]).childNodes;d=s[s.length-1]}var f=a.styleSheets;l.rel="stylesheet",l.href=n,l.media="only x",i(function(){d.parentNode.insertBefore(l,t?d:d.nextSibling)});var u=function(e){for(var n=l.href,t=f.length;t--;)if(f[t].href===n)return e();setTimeout(function(){u(e)})};return l.addEventListener&&l.addEventListener("load",r),l.onloadcssdefined=u,u(r),l};"undefined"!=typeof exports?exports.loadCSS=n:e.loadCSS=n}("undefined"!=typeof global?global:this);
-</script> 

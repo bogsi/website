@@ -1,8 +1,4 @@
-{{/* css/style.css is bundled once in head.html. */}}
-
-<!-- Fira Code: the site's only web font (its host is allowed by the CSP in static/_headers) -->
-<link rel="preconnect" href="https://cdn.staticdelivr.com" crossorigin>
-<link rel="stylesheet" href="https://cdn.staticdelivr.com/gfonts/css2?family=Fira+Code:wght@300..700&display=swap">
+{{/* tokens.css and style.css are bundled once in head.html. */}}
 
 <!-- Order form styles -->
 {{ if eq .Section "order" }}
@@ -10,13 +6,3 @@
     <link rel="stylesheet" href="{{ .RelPermalink }}">
   {{ end }}
 {{ end }}
-
-<!-- Custom styles -->
-<style>
-  :root {
-    --accent: #ff8700;
-    --background: #1a170f;
-    --foreground: #eceae5;
-    --radius: 0;
-  }
-</style> 
