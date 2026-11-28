@@ -1,9 +1,19 @@
-{{ if $.Site.Params.Logo.LogoHomeLink }}
-  <a href="{{ $.Site.Params.Logo.LogoHomeLink }}" class="logo">
-    root@localhost:>
-  </a>
-{{ else }}
-  <a href="{{ $.Site.BaseURL }}" class="logo">
-    {{ with $.Site.Params.Logo.logoText }}{{ . }}{{ else }}Terminal{{ end }}
-  </a>
-{{ end }} 
+{{/* Header logo: the brand "R" mark followed by the roussev.dev wordmark,
+     set in the site font (see docs/brand.md). The mark is inline SVG so it
+     takes its color from --accent and needs no extra request. It is
+     decorative (aria-hidden): the link's accessible name is the site title. */}}
+<a href="{{ with $.Site.Params.Logo.LogoHomeLink }}{{ . }}{{ else }}{{ $.Site.BaseURL }}{{ end }}" class="logo" aria-label="{{ $.Site.Title }}, home">
+  <svg class="logo__mark" viewBox="18 14 98 98" width="28" height="28" aria-hidden="true" focusable="false">
+    <defs>
+      <mask id="logo-r-counter">
+        <rect x="0" y="0" width="128" height="128" fill="#fff"/>
+        <path fill="#000" d="M45 39H75C82 39 87 43 87 49C87 56 82 60 75 60H45Z"/>
+      </mask>
+    </defs>
+    <g fill="currentColor" mask="url(#logo-r-counter)">
+      <path d="M22 18H76C96 18 108 31 108 49C108 63 100 73 87 78L108 108H82L62 80H45L22 101V18ZM45 39V60H75C82 60 87 56 87 49C87 43 82 39 75 39H45Z"/>
+      <path d="M22 18H45V39H22Z M22 60H45V101H22Z M38 29H68V36H38Z M68 29H78V39H68Z M55 73L70 73L98 108H82Z M80 89L104 65L111 72L87 96Z M99 62H112V75Z"/>
+    </g>
+  </svg>
+  <span class="logo__text">roussev<span class="logo__tld">.dev</span></span>
+</a>

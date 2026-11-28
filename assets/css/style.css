@@ -397,11 +397,30 @@ button {
   font-weight: bold;
 }
 
-/* Logo with blinking cursor */
+/* Logo: brand mark + wordmark + blinking cursor (layouts/partials/logo.html) */
 .logo {
   text-decoration: none;
   font-weight: bold;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.logo__mark {
+  flex: 0 0 auto;
+  width: 1.75em;
+  height: 1.75em;
+  color: var(--accent);
+}
+
+/* "roussev" in the heading color, ".dev" in the accent, as in the wordmark */
+.logo__text {
+  color: var(--foreground, #fff);
+  letter-spacing: -0.01em;
+}
+
+.logo__tld {
+  color: var(--accent);
 }
 
 .logo::after {
@@ -418,6 +437,13 @@ button {
 @keyframes blink {
   0% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+/* Keep the cursor visible but still for visitors who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  .logo::after {
+    animation: none;
+  }
 }
 
 .container {
