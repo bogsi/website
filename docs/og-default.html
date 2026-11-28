@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!-- Source of static/images/og-default.png, the default social preview
+     (1200x630). Open this file in a browser at a 1200x630 viewport and take a
+     screenshot, or render it headless, for example:
+       npx playwright screenshot --viewport-size=1200,630 \
+         docs/og-default.html static/images/og-default.png
+     Colors follow docs/brand.md. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>roussev.dev social preview</title>
+<style>
+  @font-face {
+    font-family: "Fira Code";
+    font-weight: 400 700;
+    /* Fira Code must be installed locally (https://github.com/tonsky/FiraCode),
+       or the preview falls back to the default monospace font. */
+    src: local("Fira Code"), local("FiraCode-Regular");
+  }
+  :root {
+    --teal: #14B8A6;
+    --ink: #0B0F14;
+    --white: #FFFFFF;
+    --text: #CBD5E1;
+    --muted: #8B96A3;
+  }
+  html, body { margin: 0; }
+  body {
+    width: 1200px;
+    height: 630px;
+    background: var(--ink);
+    font-family: "Fira Code", monospace;
+    color: var(--text);
+    overflow: hidden;
+  }
+  .frame {
+    position: absolute;
+    inset: 40px;
+    border: 3px solid var(--teal);
+    padding: 64px 60px 0;
+  }
+  .mark {
+    position: absolute;
+    top: 64px;
+    right: 60px;
+    width: 150px;
+    height: 150px;
+    color: var(--teal);
+  }
+  .prompt { color: var(--teal); font-size: 34px; margin: 18px 0 0; }
+  h1 { color: var(--white); font-size: 66px; font-weight: 700; margin: 28px 0 0; letter-spacing: -0.02em; }
+  .role { color: var(--white); font-size: 34px; margin: 26px 0 0; }
+  ul { list-style: none; padding: 0; margin: 40px 0 0; font-size: 28px; color: var(--muted); line-height: 1.75; }
+  li::before { content: "> "; color: var(--teal); }
+  .url { position: absolute; left: 60px; bottom: 30px; margin: 0; font-size: 34px; color: var(--white); font-weight: 700; }
+  .url span { color: var(--teal); }
+</style>
+</head>
+<body>
+  <div class="frame">
+    <svg class="mark" viewBox="18 14 98 98" aria-hidden="true">
+      <defs>
+        <mask id="r-counter">
+          <rect x="0" y="0" width="128" height="128" fill="#fff"/>
+          <path fill="#000" d="M45 39H75C82 39 87 43 87 49C87 56 82 60 75 60H45Z"/>
+        </mask>
+      </defs>
+      <g fill="currentColor" mask="url(#r-counter)">
+        <path d="M22 18H76C96 18 108 31 108 49C108 63 100 73 87 78L108 108H82L62 80H45L22 101V18ZM45 39V60H75C82 60 87 56 87 49C87 43 82 39 75 39H45Z"/>
+        <path d="M22 18H45V39H22Z M22 60H45V101H22Z M38 29H68V36H38Z M68 29H78V39H68Z M55 73L70 73L98 108H82Z M80 89L104 65L111 72L87 96Z M99 62H112V75Z"/>
+      </g>
+    </svg>
+    <p class="prompt">$ whoami</p>
+    <h1>Bogomil Roussev</h1>
+    <p class="role">AWS &amp; Terraform Automation Consultant</p>
+    <ul>
+      <li>read-only AWS cost audits with CostLens</li>
+      <li>cloud infrastructure, Terraform, CI/CD</li>
+    </ul>
+    <p class="url">roussev<span>.dev</span></p>
+  </div>
+</body>
+</html>
